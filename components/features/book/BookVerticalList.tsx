@@ -1,8 +1,8 @@
-import { Book } from "@/features/book/book.types";
+import { BookCardWithAuthor } from "@/modules/book/book.types";
 import { BookRowItem } from "./BookRowItem";
 
 type Props = {
-  books: Book[];
+  books: BookCardWithAuthor[];
 };
 
 export const BookVerticalList = ({ books }: Props) => {

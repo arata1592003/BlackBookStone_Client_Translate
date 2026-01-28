@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
       "bizweb.dktcdn.net",
       "danhmucsach.thuvienmay.vn",
       "upload.wikimedia.org",
-      "encrypted-tbn0.gstatic.com"
+      "encrypted-tbn0.gstatic.com",
+      "cdn.static.17k.com"
       // "xxxx.supabase.co",
     ],
   },

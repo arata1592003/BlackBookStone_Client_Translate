@@ -1,0 +1,67 @@
+import { ChapterContent } from "@/components/features/chapter/ChapterContent";
+import { HomeHeader } from "@/components/layout/HomeHeader";
+import { Breadcrumb } from "@/components/ui/BreadCumb";
+import { Pagination } from "@/components/ui/Pagination";
+import { getChapterDetailBySlugAndNumber } from "@/modules/chapter/chapter.service";
+
+interface PageProps {
+  params: {
+    slug: string;
+    chapterNumber: string;
+  };
+}
+
+export default async function ChapterReadPage({ params }: PageProps) {
+  const { slug, chapterNumber } = await params;
+
+  const chapterNumberic = Number(chapterNumber);
+
+  if (!Number.isInteger(chapterNumberic)) {
+    throw new Error("Invalid chapter number");
+  }
+
+  const chapter = await getChapterDetailBySlugAndNumber(
+    slug,
+    chapterNumberic
+  );
+
+  if (!chapter) {
+    // Handle case where chapter is not found
+    return <div>Chapter not found</div>;
+  }
+  console.log(chapter.content)
+
+  return (
+    <div className="mx-auto flex flex-col relative bg-white min-h-screen">
+      <HomeHeader/>
+      <div className="flex flex-col items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-[#292929]">
+        <Breadcrumb
+          slug={slug}
+          bookTitle={chapter.book_name}
+          chapterTitle={chapter.title}
+          chapterNumber={chapter.chapter_number}
+        />
+
+        <Pagination
+          slug={slug}
+          prevChapter={chapter.prev_chapter}
+          nextChapter={chapter.next_chapter}
+        />
+
+        <ChapterContent
+          chapterNumber={chapter.chapter_number}
+          title={chapter.title}
+          wordCount={chapter.total_words}
+          createdAt={chapter.created_at}
+          content={chapter.content}
+        />
+
+        <Pagination
+          slug={slug}
+          prevChapter={chapter.prev_chapter}
+          nextChapter={chapter.next_chapter}
+        />
+      </div>
+    </div>
+  );
+}

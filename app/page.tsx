@@ -1,16 +1,16 @@
 "use client";
 
+import { HomeOverviewSection } from "@/components/features/home/HomeOverviewSection";
 import { HomeHeader } from "@/components/layout/HomeHeader";
-import { HomeOverviewSection } from "@/components/sections/HomeOverviewSection";
-import { getNewestBooks } from "@/features/book/book.service";
-import { Book } from "@/features/book/book.types";
+import { getNewestBookList } from "@/modules/book/book.service";
+import { BookCardWithAuthor } from "@/modules/book/book.types";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookCardWithAuthor[]>([]);
 
   useEffect(() => {
-    getNewestBooks().then(setBooks);
+    getNewestBookList().then(setBooks);
   }, []);
 
   return (

@@ -1,9 +1,9 @@
-import { BookVerticalList } from "@/components/book/BookVerticalList";
-import { HorizontalBookScroller } from "@/components/book/HorizontalBookScroller";
-import { Book } from "@/features/book/book.types";
+import { BookVerticalList } from "@/components/features/book/BookVerticalList";
+import { HorizontalBookScroller } from "@/components/features/book/HorizontalBookScroller";
+import { BookCardWithAuthor } from "@/modules/book/book.types";
 
 type Props = {
-  books: Book[];
+  books: BookCardWithAuthor[];
 };
 
 export const HomeOverviewSection = ({ books }: Props) => {

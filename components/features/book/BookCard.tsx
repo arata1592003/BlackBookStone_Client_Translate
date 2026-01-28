@@ -1,8 +1,8 @@
-import { Book } from "@/features/book/book.types";
+import { BookCardWithAuthor } from "@/modules/book/book.types";
 import Image from "next/image";
 import Link from "next/link";
 
-export const BookCard = ({ book }: { book: Book }) => {
+export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
   return (
     <Link
       href={`/truyen/${book.slug}`}

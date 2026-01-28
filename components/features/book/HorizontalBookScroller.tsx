@@ -1,13 +1,13 @@
 "use client";
 
-import { Book } from "@/features/book/book.types";
+import { BookCardWithAuthor } from "@/modules/book/book.types";
 import { useEffect, useRef, useState } from "react";
 import { BookCard } from "./BookCard";
 
 const GAP = 128; // gap-6
 
 type Props = {
-  books: Book[];
+  books: BookCardWithAuthor[];
 };
 
 export const HorizontalBookScroller = ({ books }: Props) => {
