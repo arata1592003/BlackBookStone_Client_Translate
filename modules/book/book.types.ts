@@ -70,3 +70,21 @@ export type BookInfo = {
 
   cover_image_url: string | null;
 };
+
+export type UserBookItem = {
+  id: string;
+  slug: string;
+
+  title: string | null;
+  author: string | null;
+  status: string | null;
+
+  coverImageUrl: string | null;
+
+  totalChapters: number;
+  translatedChapters: number;  
+
+  updatedAt: string;
+
+  genres: string[];
+};

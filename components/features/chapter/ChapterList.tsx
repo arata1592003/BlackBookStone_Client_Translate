@@ -6,6 +6,7 @@ import {
 } from "@/modules/chapter/chapter.service";
 import type { ChapterRow } from "@/modules/chapter/chapter.type";
 import { timeAgo } from "@/utils/date";
+import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from 'lucide-react'; // Import Lucide icons
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -83,7 +84,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
   return (
     <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
       <div className="flex items-start gap-2.5 px-5 py-2.5 relative self-stretch w-full flex-[0_0_auto]">
-        <label className="flex items-center gap-2.5 cursor-pointer">
+        <label className="inline-flex items-center gap-2.5 cursor-pointer"> {/* Added inline-flex for icon alignment */}
           <input
             type="checkbox"
             className="relative w-5 h-5 bg-white rounded-[5px] aspect-[1] appearance-none checked:bg-white"
@@ -94,7 +95,8 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
               setCurrentPage(1);
             }}
           />
-          <span className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <ArrowDownWideNarrow size={20} className="text-gray-300" /> {/* Added icon */}
+          <span className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
             Mới nhất
           </span>
         </label>
@@ -103,26 +105,26 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
       <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
         <div className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-white">
           <div className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto]">
-            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
               STT
             </div>
           </div>
           <div className="flex items-center gap-2.5 p-2.5 relative flex-1 grow">
-            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
               Tiêu đề chương
             </div>
           </div>
           <div className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto]">
-            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+            <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
               Thời gian
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-white text-center py-6 w-full">Đang tải...</div>
+          <div className="text-gray-300 text-center py-6 w-full">Đang tải...</div>
         ) : chapters.length === 0 ? (
-          <div className="text-white text-center py-6 w-full opacity-70">
+          <div className="text-gray-300 text-center py-6 w-full opacity-70">
             Không có chương nào
           </div>
         ) : (
@@ -130,20 +132,20 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
             <Link
               key={chapter.id}
               href={`/truyen/${slug}/chuong/${chapter.chapter_number}`}
-              className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-white no-underline text-white hover:bg-white/10"
+              className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-white no-underline text-gray-300 hover:bg-white/10"
             >
               <div className="flex w-[52px] items-center justify-center gap-2.5 p-2.5 relative">
-                <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
+                <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
                   {chapter.chapter_number}
                 </div>
               </div>
               <div className="flex w-[757px] items-center gap-2.5 p-2.5 relative">
-                <p className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                <p className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
                   {chapter.chapter_title_translated}
                 </p>
               </div>
               <div className="flex w-[91px] items-center justify-end gap-2.5 p-2.5 relative">
-                <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
                   {timeAgo(chapter.created_at)}
                 </div>
               </div>
@@ -162,12 +164,12 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
           className="inline-flex items-center justify-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#3600c0] rounded-[5px] disabled:opacity-50"
           aria-label="Previous page"
         >
-          <div className="relative w-5 h-5 aspect-[1] bg-[url(/frame-108.png)] bg-cover bg-[50%_50%]" />
+          <ChevronLeft size={20} className="text-gray-300" />
         </button>
 
         {pageNumbers.map((pageNum, index) =>
           pageNum === "..." ? (
-            <span key={`ellipsis-${index}`} className="px-2 text-white opacity-60">
+            <span key={`ellipsis-${index}`} className="px-2 text-gray-300 opacity-60">
               ...
             </span>
           ) : (
@@ -187,7 +189,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
             >
               <div
                 className={`relative flex items-center justify-center w-[19px] h-[19px] mt-[-1.00px] aspect-[1] [font-family:'Inter-Medium',Helvetica] font-medium text-base text-center tracking-[0] leading-[normal] whitespace-nowrap ${
-                  pageNum === currentPage ? "text-white" : "text-black"
+                  pageNum === currentPage ? "text-gray-300" : "text-black"
                 }`}
               >
                 {pageNum}
@@ -202,7 +204,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
           className="inline-flex items-center justify-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#3600c0] rounded-[5px] disabled:opacity-50"
           aria-label="Next page"
         >
-          <div className="relative w-5 h-5 aspect-[1] bg-[url(/frame-108-2.png)] bg-cover bg-[50%_50%]" />
+          <ChevronRight size={20} className="text-gray-300" />
         </button>
       </nav>
     </div>

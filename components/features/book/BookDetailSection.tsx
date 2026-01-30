@@ -27,14 +27,14 @@ export function BookDetailSection({
   return (
     <div className="flex items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-[#292929]">
       <div className="inline-flex flex-col items-start gap-[30px] relative flex-[0_0_auto]">
-        <BookInfoCard bookInfo={bookInfo} onGoChapterList={goToChapterList} />
-        <div ref={chapterTabRef}>
-          <BookDetailTabs slug={slug} description={null} />
-        </div>
+        <BookInfoCard bookInfo={bookInfo} onGoChapterList={goToChapterList} />  
         <ChapterNewestList
           slug={slug}
           newestChapterList={newestChapterList}
         />
+        <div ref={chapterTabRef}>
+          <BookDetailTabs slug={slug} description={null} />
+        </div>
       </div>
     </div>
   );

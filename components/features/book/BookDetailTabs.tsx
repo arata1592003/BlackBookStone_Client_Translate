@@ -46,7 +46,7 @@ export const BookDetailTabs = ({
                 : "hover:bg-[#3a3a3a]"
             }`}
           >
-            <span className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-white text-base tracking-[0] leading-[normal] whitespace-nowrap">
+            <span className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
               {tabItem.label}
             </span>
           </button>
@@ -55,7 +55,7 @@ export const BookDetailTabs = ({
 
       <div className="flex flex-col items-start gap-2.5 px-0 py-2.5 relative self-stretch w-full flex-[0_0_auto]">
         {tab === "intro" && (
-          <div className="p-4 text-white text-base leading-relaxed font-roboto font-normal">
+          <div className="p-4 text-gray-300 text-base leading-relaxed font-roboto font-normal">
             {description || "Chưa có giới thiệu"}
           </div>
         )}
@@ -63,7 +63,7 @@ export const BookDetailTabs = ({
         {tab === "chapters" && <ChapterList slug={slug} />}
 
         {tab === "comments" && (
-          <div className="p-4 text-white text-base opacity-70 font-roboto font-normal">
+          <div className="p-4 text-gray-300 text-base opacity-70 font-roboto font-normal">
             Bình luận sẽ cập nhật
           </div>
         )}

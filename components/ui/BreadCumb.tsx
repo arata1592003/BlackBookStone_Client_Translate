@@ -29,18 +29,18 @@ export const Breadcrumb = ({
           {item.href ? (
             <Link
               href={item.href}
-              className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-white text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap no-underline hover:underline"
+              className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap no-underline hover:underline"
             >
               {item.text}
             </Link>
           ) : (
-            <p className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-white text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+            <p className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
               {item.text}
             </p>
           )}
 
           {index < breadcrumbItems.length - 1 && (
-            <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-white text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+            <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
               /
             </div>
           )}

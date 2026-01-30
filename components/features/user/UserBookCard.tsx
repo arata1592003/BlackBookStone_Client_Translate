@@ -1,0 +1,169 @@
+'use client';
+
+import { ActionButton } from "@/components/ui/ActionButton";
+import { UserBookItem } from "@/modules/book/book.types";
+import { timeAgo } from "@/utils/date";
+import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react"; // Make sure Trash and SquarePen are imported
+import Image from "next/image"; // Added Image import
+
+interface UserBookCardProps {
+  novel: UserBookItem;
+}
+
+const backgroundPath = "/dark-rock-wall-seamless-texture-free-105.png"
+
+const handleNovelAction = (novelId: string, action: string) => {
+  console.log(`Novel ${novelId}: ${action} action triggered`);
+};
+
+// A simple utility to get color based on status
+const getStatusStyles = (status: string | null) => {
+  switch (status) {
+    case "Đang ra":
+      return { backgroundColor: "#1c3a3a", color: "#b1f5f5" };
+    case "Hoàn thành":
+      return { backgroundColor: "#1c3a2f", color: "#b1f5d5" };
+    default:
+      return { backgroundColor: "#3a1f1c", color: "#f5b7b1" };
+  }
+};
+
+export const UserBookCard = ({ novel }: UserBookCardProps) => {
+  const statusStyles = getStatusStyles(novel.status);
+
+  console.log(novel)
+
+  return (
+    <article
+      key={novel.id}
+      className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-[20px] overflow-hidden border border-solid border-[#868686] shadow-[0px_4px_12px_#000000]"
+    >
+      <Image
+        src={backgroundPath || '/placeholder.jpg'}
+        alt={novel.title || "Book Cover"}
+        fill
+        style={{ objectFit: 'cover' }}
+        className="z-0"
+      />
+      <div className="relative h-full z-10 flex items-start gap-5 self-stretch w-full">
+        <div className="items-center h-full flex-1 grow flex gap-2.5  relative bg-opacity-50 rounded-lg">
+          <div className="self-stretch flex flex-col border-r border-white/30">
+          {/* VIEW */}
+          <div
+            className="
+              flex-1
+              flex items-center justify-center
+              cursor-pointer
+              transition-colors
+              hover:bg-blue-500/70
+              group
+              px-4
+            "
+            onClick={() => handleNovelAction(novel.id, "view")}
+          >
+            <Eye
+              size={20}
+              className="text-white/70 group-hover:text-white"
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="h-px w-full bg-white/20" />
+
+          {/* DELETE */}
+          <div
+            className="
+              flex-1
+              flex items-center justify-center
+              cursor-pointer
+              transition-colors
+              hover:bg-red-900/70
+              group
+            "
+            onClick={() => handleNovelAction(novel.id, "delete")}
+          >
+            <Trash
+              size={20}
+              className="text-white/70 group-hover:text-white"
+            />
+          </div>
+
+        </div>
+
+          <div className="flex flex-col items-start justify-between px-5 py-[5px] relative flex-1 self-stretch grow">
+            <div className="flex gap-2.5 self-stretch w-full items-center relative flex-[0_0_auto]">
+              <h3 className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Bold',Helvetica] font-bold text-white text-xl tracking-[0.10px] leading-9 whitespace-nowrap">
+                {novel.title}
+              </h3>
+
+              {novel.status && (
+                <span
+                  className="inline-flex items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-[10px] overflow-hidden"
+                  style={{ backgroundColor: statusStyles.backgroundColor }}
+                >
+                  <span
+                    className="relative w-fit mt-[-1.00px] [font-family:'Inter-Regular',Helvetica] font-normal text-lg tracking-[0] leading-[normal] whitespace-nowrap"
+                    style={{ color: statusStyles.color }}
+                  >
+                    {novel.status}
+                  </span>
+                </span>
+              )}
+              <div className="self-stretch flex items-center justify-center px-1 hover:bg-blue-900/20 transition-colors cursor-pointer"
+                onClick={() => handleNovelAction(novel.id, "edit")}>
+                <SquarePen size={20} className="text-white" />
+                </div>
+              </div>
+                
+            <div className="flex gap-5 self-stretch w-full items-center relative flex-[0_0_auto]">
+              <p className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-lg tracking-[0.10px] leading-8 whitespace-nowrap">
+                Tình trạng: {novel.translatedChapters}/{novel.totalChapters}
+              </p>
+
+              <p className="relative flex items-center justify-center w-fit [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-lg tracking-[0.10px] leading-6 whitespace-nowrap">
+                Cập nhật: {timeAgo(novel.updatedAt)}
+              </p>
+            </div>
+
+            <div className="inline-flex justify-center gap-5 items-center relative flex-[0_0_auto]">
+              {novel.genres.map((genre, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#ffffff33] rounded-[10px] overflow-hidden"
+                >
+                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-base text-center tracking-[0.10px] leading-[normal] whitespace-nowrap">
+                    {genre}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <nav
+          className="w-[120px] items-start self-stretch flex gap-5 px-2.5 py-[5px] relative"
+          aria-label={`Actions for ${novel.title}`}
+        >
+          <div className="flex-col items-start gap-2.5 flex-1 grow flex relative self-stretch">
+            <ActionButton
+              label="Cào"
+              onClick={() => handleNovelAction(novel.id, "crawl")}
+              icon={<AppWindowMac size={20} className="text-white" />}
+              variant="success"
+            />
+            <ActionButton
+              label="Dịch"
+              onClick={() => handleNovelAction(novel.id, "translate")}
+              variant="accent"
+            />
+            <ActionButton
+              label="Tải"
+              onClick={() => handleNovelAction(novel.id, "download")}
+              variant="info"
+            />
+          </div>
+        </nav>
+      </div>
+    </article>
+  );
+};

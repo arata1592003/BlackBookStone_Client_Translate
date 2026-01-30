@@ -31,7 +31,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
       <p className="
         mt-2
         text-xs sm:text-sm
-        text-white
+        text-gray-300
         line-clamp-1
         text-center
         group-hover:text-red-400

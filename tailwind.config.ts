@@ -16,6 +16,9 @@ const config: Config = {
         xl: ["20px", "28px"],
         "2xl": ["24px", "32px"],
       },
+      colors: {
+        primary: "#7c3aed"
+      }
     },
   },
   plugins: [],

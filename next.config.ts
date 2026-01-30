@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
       "danhmucsach.thuvienmay.vn",
       "upload.wikimedia.org",
       "encrypted-tbn0.gstatic.com",
-      "cdn.static.17k.com"
+      "cdn.static.17k.com",
+      "img.22biqu.com"
       // "xxxx.supabase.co",
     ],
   },

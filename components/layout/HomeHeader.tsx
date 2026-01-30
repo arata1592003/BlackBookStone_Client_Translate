@@ -3,24 +3,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { supabaseClient } from "@/lib/supabase/client";
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
-import { getCurrentUser } from "@/modules/user/user.service"; // New import
-import { User } from "@/modules/user/user.type"; // New import
+import { getCurrentUser } from "@/modules/user/user.service";
+import { User } from "@/modules/user/user.type";
+
+import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth"; // New import
+import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth"; // New import
+import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown"; // New import
 
 export const HomeHeader = () => {
-  const [q, setQ] = useState("");
   const router = useRouter();
 
   const [tags, setTags] = useState<Tag[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null); // New state for current user
+  const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      // Fetch tags
       try {
         const fetchedTags = await getAllTags();
         setTags(fetchedTags);
@@ -28,7 +33,6 @@ export const HomeHeader = () => {
         console.error("Failed to fetch tags:", error);
       }
 
-      // Fetch current user
       try {
         const user = await getCurrentUser();
         setCurrentUser(user);
@@ -37,18 +41,53 @@ export const HomeHeader = () => {
       }
     };
     fetchInitialData();
-  }, []); // Run once on mount
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [userDropdownRef]);
 
   const handleLoginClick = () => {
-    router.push("/login");
+    router.push("/dang-nhap");
   };
 
   const handleRegisterClick = () => {
-    router.push("/register");
+    router.push("/dang-ky");
   };
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      setCurrentUser(null);
+      router.push("/");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+      alert("Đăng xuất thất bại. Vui lòng thử lại.");
+    }
+  };
+
+  const userMenuItems = [
+    { id: "ban-lam-viec", label: "Bàn làm việc", href: "/tai-khoan/ban-lam-viec" },
+    { id: "tu-truyen", label: "Tủ truyện", href: "/tai-khoan/tu-truyen" },
+    { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
+    { id: "lich-su-giao-dich", label: "Lịch sử giao dịch", href: "/tai-khoan/lich-su-giao-dich" },
+    { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
+  ];
+
   return (
-    <header className="bg-black text-white">
+    <header className="bg-[url('/sidebar-user.png')] bg-cover bg-center text-white">
       {/* ================= TOP ================= */}
       <div
         className="
@@ -61,70 +100,46 @@ export const HomeHeader = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-between">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={160}
-            height={50}
-            className="h-auto w-auto max-w-[140px] sm:max-w-[160px]"
+          <Link href="/trang-chu">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={160}
+              height={50}
+              className="h-auto w-auto max-w-[140px] sm:max-w-[160px] cursor-pointer"
+            />
+          </Link>
+          <HomeHeaderMobileAuth
+            currentUser={currentUser}
+            handleLoginClick={handleLoginClick}
+            handleRegisterClick={handleRegisterClick}
+            handleLogout={handleLogout}
+            isUserDropdownOpen={isUserDropdownOpen}
+            setIsUserDropdownOpen={setIsUserDropdownOpen}
+            userDropdownRef={userDropdownRef}
+            userMenuItems={userMenuItems}
           />
-
-          {/* Mobile auth */}
-          <div className="flex gap-2 lg:hidden">
-            {currentUser ? (
-              <span className="text-sm font-medium">{currentUser.fullName}</span>
-              // TODO: Add Logout button here
-            ) : (
-              <>
-                <button
-                  className="px-3 py-1.5 rounded bg-white/20 text-sm"
-                  onClick={handleLoginClick}
-                >
-                  Đăng nhập
-                </button>
-                <button
-                  className="px-3 py-1.5 rounded bg-white/20 text-sm"
-                  onClick={handleRegisterClick}
-                >
-                  Đăng ký
-                </button>
-              </>
-            )}
-          </div>
         </div>
 
         {/* Search */}
         <div className="w-full lg:max-w-[360px]">
           <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
             placeholder="Tìm kiếm..."
             className="w-full px-4 py-2 rounded text-black bg-white"
           />
         </div>
 
         {/* Desktop auth */}
-        <div className="hidden lg:flex gap-3">
-          {currentUser ? (
-            <span className="text-base font-medium">{currentUser.fullName}</span>
-            // TODO: Add Logout button here
-          ) : (
-            <>
-              <button
-                className="px-4 py-2 rounded bg-white/20"
-                onClick={handleLoginClick}
-              >
-                Đăng nhập
-              </button>
-              <button
-                className="px-4 py-2 rounded bg-white/20"
-                onClick={handleRegisterClick}
-              >
-                Đăng ký
-              </button>
-            </>
-          )}
-        </div>
+        <HomeHeaderDesktopAuth
+          currentUser={currentUser}
+          handleLoginClick={handleLoginClick}
+          handleRegisterClick={handleRegisterClick}
+          handleLogout={handleLogout}
+          isUserDropdownOpen={isUserDropdownOpen}
+          setIsUserDropdownOpen={setIsUserDropdownOpen}
+          userDropdownRef={userDropdownRef}
+          userMenuItems={userMenuItems}
+        />
       </div>
 
       {/* ================= NAV ================= */}
@@ -143,35 +158,11 @@ export const HomeHeader = () => {
           "
         >
           {/* Thể loại */}
-          <div
-            className="relative"
-            onMouseEnter={() => setIsDropdownOpen(true)}
-            onMouseLeave={() => setIsDropdownOpen(false)}
-          >
-            <span
-              className="whitespace-nowrap cursor-pointer"
-              onClick={() => setIsDropdownOpen((v) => !v)} // hỗ trợ mobile
-            >
-              Thể loại
-            </span>
-
-            {isDropdownOpen && tags.length > 0 && (
-              <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50">
-                <ul className="py-1 text-gray-700 max-h-96 overflow-y-auto">
-                  {tags.map((tag) => (
-                    <li key={tag.id}>
-                      <Link
-                        href={`/the-loai/${tag.name}`}
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        {tag.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          <HomeHeaderTagsDropdown
+            tags={tags}
+            isTagsDropdownOpen={isTagsDropdownOpen}
+            setIsTagsDropdownOpen={setIsTagsDropdownOpen}
+          />
 
           <span className="whitespace-nowrap cursor-pointer">Sắp xếp</span>
           <span className="whitespace-nowrap cursor-pointer">Trạng thái</span>

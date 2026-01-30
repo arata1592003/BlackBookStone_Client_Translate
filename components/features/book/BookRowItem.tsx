@@ -63,7 +63,7 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
             className="
               text-sm
               sm:text-base
-              text-white
+              text-gray-300
               font-medium
               line-clamp-1
               group-hover:text-red-400

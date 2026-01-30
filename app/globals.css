@@ -6,6 +6,7 @@
   --border: #222;
   --text-main: #eaeaea;
   --accent-red: #b30000;
+  --bg-primary: #7c3aed;
 }
 
 @theme inline {
@@ -22,7 +23,9 @@
   }
 }
 
-body {
+html, body { /* Added html selector */
+  height: 100%;
+  min-height: 100vh; /* Ensures it covers full viewport height */
   margin: 0;
   background: var(--bg-main);
   color: var(--text-main);

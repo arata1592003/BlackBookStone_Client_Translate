@@ -1,10 +1,11 @@
 // modules/book/book.mapper.ts
 import {
-    BookCardWithAuthorRow,
-    BookInfoRow,
-    ChapterStatRow,
+  BookCardWithAuthorRow,
+  BookInfoRow,
+  ChapterStatRow,
+  UserBookItemRow,
 } from "@/modules/book/book.repo";
-import { BookCardWithAuthor, BookInfo } from "@/modules/book/book.types";
+import { BookCardWithAuthor, BookInfo, UserBookItem } from "@/modules/book/book.types";
 
 export const mapToBookCardWithAuthor = (
   row: BookCardWithAuthorRow
@@ -48,5 +49,34 @@ export const mapToBookInfo = (
     count_chapter,
     count_word,
     view,
+  };
+};
+
+export const mapToUserBookItem = (
+  row: UserBookItemRow
+): UserBookItem => {
+  const genres =
+    row.book_tags
+      ?.map(bt => bt.tags?.name)
+      .filter((name): name is string => Boolean(name)) ?? [];
+
+  const stats = row.book_chapter_stats?.[0];
+
+  const totalChapters = stats?.total_chapters ?? 0;
+  const translatedChapters = stats?.translated_chapters ?? 0;
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.book_name_translated,
+    author: row.author_name_translated,
+    status: row.publication_status,
+    coverImageUrl: row.cover_image_url,
+
+    totalChapters,
+    translatedChapters,
+
+    updatedAt: row.updated_at,
+    genres,
   };
 };

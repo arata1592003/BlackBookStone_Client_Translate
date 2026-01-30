@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight, List } from 'lucide-react'; // Import Lucide icons
 import Link from "next/link";
 
 interface Props {
@@ -23,10 +24,12 @@ export const Pagination = ({
           href={`/truyen/${slug}/chuong/${prevChapter}`}
           className={`${commonButtonClasses} ${hoverEffectClasses}`}
         >
+          <ChevronLeft size={20} aria-hidden="true" />
           Chương trước
         </Link>
       ) : (
         <span className={`${commonButtonClasses} ${disabledClasses}`}>
+          <ChevronLeft size={20} aria-hidden="true" />
           Chương trước
         </span>
       )}
@@ -36,7 +39,7 @@ export const Pagination = ({
         className={`${commonButtonClasses}`}
         disabled
       >
-        ...
+        <List size={20} className="text-white" />
       </button>
 
       {/* Next */}
@@ -46,10 +49,12 @@ export const Pagination = ({
           className={`${commonButtonClasses} ${hoverEffectClasses}`}
         >
           Chương tiếp
+          <ChevronRight size={20} aria-hidden="true" />
         </Link>
       ) : (
         <span className={`${commonButtonClasses} ${disabledClasses}`}>
           Chương tiếp
+          <ChevronRight size={20} aria-hidden="true" />
         </span>
       )}
     </nav>
