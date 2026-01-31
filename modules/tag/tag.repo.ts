@@ -7,8 +7,6 @@ export async function fetchAllTags(): Promise<TagEntity[]> {
     .select("*")
     .order("created_at", { ascending: false });
 
-  console.log(data)
-
   if (error) throw error;
   return data ?? [];
 }

@@ -25,7 +25,6 @@ export async function getBookInfo(
   if (!book) return null;
 
   const chapters = await fetchChapterStatsByBookId(book.id);
-  console.log(chapters)
   return mapToBookInfo(book, chapters);
 }
 
