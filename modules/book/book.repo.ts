@@ -177,3 +177,43 @@ export async function fetchBooksByOwner(
 
   return data ?? [];
 }
+
+export async function fetchFollowedBooksByUserId(
+  userId: string
+): Promise<UserBookItemRow[]> {
+  const { data, error } = await supabaseClient
+    .from("book_follows")
+    .select(
+      `
+      books (
+        id,
+        slug,
+        book_name_translated,
+        author_name_translated,
+        publication_status,
+        cover_image_url,
+        is_published,
+        draft_expires_at,
+        updated_at,
+        book_tags (
+          tags ( name )
+        ),
+        book_chapter_stats (
+          total_chapters,
+          translated_chapters
+        )
+      )
+      `
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching followed books:", error.message);
+    return [];
+  }
+
+  // The query returns an array of { books: { ... } }, so we map to get the book object.
+  // We also need to filter out any null book entries that might occur.
+  return data?.map(item => item.books).filter(Boolean) as UserBookItemRow[] ?? [];
+}

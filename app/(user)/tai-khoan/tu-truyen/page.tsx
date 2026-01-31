@@ -1,10 +1,50 @@
 'use client';
 
-export default function TuTruyenPage() { // Changed to default export function
+import { BookCabinetItem } from "@/components/features/user/BookCabinetItem";
+import { getFollowedBooksForCurrentUser } from "@/modules/book/book.service";
+import { UserBookItem } from "@/modules/book/book.types";
+import { useEffect, useState } from "react";
+
+export default function TuTruyenPage() {
+  const [books, setBooks] = useState<UserBookItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      setLoading(true);
+      try {
+        const followedBooks = await getFollowedBooksForCurrentUser(); // Changed function call
+        setBooks(followedBooks);
+      } catch (error) {
+        console.error("Failed to fetch followed books:", error); // Updated error message
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  const handleDelete = (id: string) => {
+    // In a real app, you would call a service to delete the book
+    // and then update the state.
+    console.log(`Deleting book with id: ${id}`);
+    setBooks(prevBooks => prevBooks.filter(book => book.id !== id));
+  };
+
   return (
-    <div className="flex-1 p-5 text-white bg-gray-800">
-      <h2 className="text-2xl font-bold mb-4">Tủ truyện của bạn</h2>
-      <p>Nội dung Tủ truyện sẽ hiển thị ở đây.</p>
-    </div>
+    <main className="flex flex-col items-start gap-5 p-2.5 relative flex-1 self-stretch w-full grow bg-[#292929]">
+      <div className="flex flex-col h-full items-start gap-5 px-[30px] py-5 relative self-stretch w-full">
+        {loading ? (
+          <div className="text-white text-center w-full">Đang tải tủ truyện...</div>
+        ) : books.length === 0 ? (
+          <div className="text-white text-center w-full">Tủ truyện của bạn đang trống.</div>
+        ) : (
+          books.map((book) => (
+            <BookCabinetItem key={book.id} novel={book} onDelete={handleDelete} />
+          ))
+        )}
+      </div>
+    </main>
   );
-};
+}
