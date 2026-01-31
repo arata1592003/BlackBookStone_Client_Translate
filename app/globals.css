@@ -1,33 +1,74 @@
 @import "tailwindcss";
 
-:root {
-  --bg-main: #0b0b0b;
-  --bg-box: #141414;
-  --border: #222;
-  --text-main: #eaeaea;
-  --accent-red: #b30000;
-  --bg-primary: #7c3aed;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Surfaces */
+  --color-surface-base: #0b0b0b;
+  --color-surface-raised: #141414;
+  --color-surface-section: #292929;
+  --color-surface-card: #1f1f1f;
+  --color-surface-overlay: #0d0d0d;
+  --color-surface-overlay-alpha: #0d0d0d1a;
+  --color-surface-hover: #3a3a3a;
+
+  /* Primary */
+  --color-primary: #3600c0;
+  --color-primary-hover: #4a00ff;
+  --color-primary-foreground: #ffffff;
+
+  /* Accent */
+  --color-accent-red: #e63946;
+  --color-accent-red-bg: #3a1f1c;
+  --color-accent-red-text: #f5b7b1;
+
+  /* Text */
+  --color-text-primary: #eaeaea;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-text-faint: #aba6a6;
+
+  /* Borders */
+  --color-border-default: #222222;
+  --color-border-subtle: #868686;
+  --color-border-strong: #cecece;
+  --color-border-white-alpha: #ffffff33;
+
+  /* Shadow */
+  --color-shadow-white: #ffffff40;
+
+  /* Auth (light pages) */
+  --color-auth-bg: #000000;
+  --color-auth-card: #ffffff;
+  --color-auth-text: #111827;
+  --color-auth-text-muted: #4b5563;
+  --color-auth-border: #d1d5db;
+  --color-auth-primary: #4f46e5;
+  --color-auth-primary-hover: #4338ca;
+  --color-auth-focus-ring: #6366f1;
+
+  /* shadcn/ui compatibility (used by Button.tsx, Card.tsx, Input.tsx) */
+  --color-card: #141414;
+  --color-card-foreground: #eaeaea;
+  --color-muted-foreground: #9ca3af;
+  --color-background: #0b0b0b;
+  --color-foreground: #eaeaea;
+  --color-ring: #4a00ff;
+
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-roboto: var(--font-roboto);
+  --font-inter: var(--font-inter);
+
+  /* Radius (overrides Tailwind defaults) */
+  --radius-sm: 5px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html, body { /* Added html selector */
+html, body {
   height: 100%;
-  min-height: 100vh; /* Ensures it covers full viewport height */
+  min-height: 100vh;
   margin: 0;
-  background: var(--bg-main);
-  color: var(--text-main);
-  font-family: system-ui, sans-serif;
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
 }

@@ -10,7 +10,7 @@ interface StatCardData {
 
 const StatCard = ({ title, value }: StatCardData) => (
   <article
-    className="flex flex-col justify-between flex-1 grow rounded-[20px] overflow-hidden border border-solid border-[#868686] shadow-[0px_4px_12px_#000000] bg-cover bg-center relative self-stretch"
+    className="flex flex-col justify-between flex-1 grow rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000] bg-cover bg-center relative self-stretch"
     style={{ backgroundImage: "url('/dark-rock-wall-seamless-texture-free-105.png')" }}
   >
     <div className="flex flex-col justify-between px-5 py-[10px] flex-1 w-full">
@@ -62,11 +62,10 @@ export const UserStats = () => {
   }, []);
 
   if (!stats) {
-    // Optional: render a loading skeleton
     return (
         <section className="h-[150px] items-center gap-20 px-[50px] py-2.5 w-full flex relative self-stretch" aria-label="Statistics loading">
             {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex-1 self-stretch bg-gray-700 animate-pulse rounded-[20px]"></div>
+                <div key={index} className="flex-1 self-stretch bg-gray-700 animate-pulse rounded-lg"></div>
             ))}
         </section>
     );

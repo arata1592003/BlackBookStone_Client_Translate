@@ -1,17 +1,16 @@
 'use client';
 
-import { UserBookCard } from "@/components/features/user/UserBookCard"; // Updated import path
-import { UserStats } from "@/components/features/user/UserStats"; // Updated import path
+import { UserBookCard } from "@/components/features/user/UserBookCard";
+import { UserStats } from "@/components/features/user/UserStats";
 import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
 import { UserBookItem } from "@/modules/book/book.types";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-// Image references directly from the public directory
 const loupe1Path = "/icons8-search-50.png";
 
-export default function BanLamViecPage() { // Changed to default export function
+export default function BanLamViecPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [books, setBooks] = useState<UserBookItem[] | null>(null);
 
@@ -64,24 +63,24 @@ export default function BanLamViecPage() { // Changed to default export function
   };
 
   return (
-    <div className="flex flex-col items-start gap-2.5 relative flex-1 self-stretch w-full grow bg-[#292929]">
+    <div className="flex flex-col items-start gap-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
       <UserStats />
 
       <div className="flex flex-col items-start justify-center gap-2.5 relative flex-1 self-stretch w-full grow">
         <div className="items-center justify-end gap-[50px] px-[50px] py-2.5 w-full flex-[0_0_auto] flex relative self-stretch">
           <button
             onClick={handleAddClick}
-            className="inline-flex border-white bg-blue-500 items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-[10px] border border-solid shadow-[0px_4px_4px_#ffffff40] bg-cover bg-[50%_50%] cursor-pointer hover:opacity-90 transition-opacity"
+            className="inline-flex border-white bg-blue-500 items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-md border border-solid shadow-[0px_4px_4px_var(--color-shadow-white)] bg-cover bg-[50%_50%] cursor-pointer hover:opacity-90 transition-opacity"
             aria-label="Thêm mới"
           >
             <BookPlus size={20} className="text-white" />
 
-            <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Inter-Bold',Helvetica] font-bold text-white text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+            <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-inter font-bold text-white text-xl tracking-[0] leading-[normal] whitespace-nowrap">
               Thêm
             </span>
           </button>
 
-          <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-white rounded-[10px] overflow-hidden">
+          <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-white rounded-md overflow-hidden">
             <label htmlFor="search-input" className="sr-only">
               Tìm kiếm
             </label>
@@ -91,7 +90,7 @@ export default function BanLamViecPage() { // Changed to default export function
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Tìm kiếm..."
-              className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto] w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-black text-xl tracking-[0] leading-[normal] whitespace-nowrap bg-transparent border-none outline-none"
+              className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto] w-fit mt-[-1.00px] font-roboto font-normal text-black text-xl tracking-[0] leading-[normal] whitespace-nowrap bg-transparent border-none outline-none"
               aria-label="Tìm kiếm tiểu thuyết"
             />
 

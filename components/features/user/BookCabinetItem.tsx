@@ -14,7 +14,7 @@ interface BookCabinetItemProps {
 export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
   return (
     <article
-      className="flex items-start relative self-stretch w-full flex-[0_0_auto] rounded-[10px] overflow-hidden border border-solid border-[#868686] shadow-lg"
+      className="flex items-start relative self-stretch w-full flex-[0_0_auto] rounded-md overflow-hidden border border-solid border-border-subtle shadow-lg"
       style={{ backgroundImage: `url(${'/dark-rock-wall-seamless-texture-free-105.png'})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       <Link
@@ -41,13 +41,13 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
 
           <div className="flex-col items-start gap-[5px] px-5 py-[5px] flex-1 grow flex relative self-stretch">
             <div className="flex items-center gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-              <h2 className="relative flex items-center justify-center w-fit [font-family:'Roboto-Bold',Helvetica] font-bold text-white text-2xl tracking-[0.10px] leading-6 whitespace-nowrap">
+              <h2 className="relative flex items-center justify-center w-fit font-roboto font-bold text-white text-2xl tracking-[0.10px] leading-6 whitespace-nowrap">
                 {novel.title}
               </h2>
 
               {novel.status && (
-                <span className="inline-flex items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] bg-[#3a1f1c] rounded-[10px] overflow-hidden">
-                  <span className="relative w-fit mt-[-1.00px] [font-family:'Inter-Regular',Helvetica] font-normal text-[#f5b7b1] text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+                <span className="inline-flex items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] bg-accent-red-bg rounded-md overflow-hidden">
+                  <span className="relative w-fit mt-[-1.00px] font-inter font-normal text-accent-red-text text-xl tracking-[0] leading-[normal] whitespace-nowrap">
                     {novel.status}
                   </span>
                 </span>
@@ -55,10 +55,10 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
             </div>
 
             <div className="flex items-center gap-5 relative self-stretch w-full flex-[0_0_auto]">
-              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
+              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
                 Chương: {novel.totalChapters}
               </span>
-              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
+              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
                 Cập nhật: {timeAgo(novel.updatedAt)}
               </span>
             </div>
@@ -67,9 +67,9 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
               {novel.genres.map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#ffffff33] rounded-[10px] overflow-hidden"
+                  className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-border-white-alpha rounded-md overflow-hidden"
                 >
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-base text-center tracking-[0.10px] leading-[normal] whitespace-nowrap">
+                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-base text-center tracking-[0.10px] leading-[normal] whitespace-nowrap">
                     {tag}
                   </span>
                 </span>
@@ -78,13 +78,13 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
           </div>
         </div>
       </Link>
-      
+
 
       <div
         className="
           flex items-center justify-center
-          self-stretch              /* cao bằng container cha */
-          w-[60px]                  /* tăng bề ngang nút */
+          self-stretch
+          w-[60px]
           cursor-pointer
           transition-colors
           hover:bg-red-900/70
@@ -93,7 +93,7 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
         onClick={() => onDelete(novel.id)}
       >
         <Trash
-          size={26}            
+          size={26}
           className="text-white/70 group-hover:text-white transition-colors"
         />
       </div>

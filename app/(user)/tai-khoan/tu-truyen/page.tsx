@@ -13,10 +13,10 @@ export default function TuTruyenPage() {
     const fetchBooks = async () => {
       setLoading(true);
       try {
-        const followedBooks = await getFollowedBooksForCurrentUser(); // Changed function call
+        const followedBooks = await getFollowedBooksForCurrentUser();
         setBooks(followedBooks);
       } catch (error) {
-        console.error("Failed to fetch followed books:", error); // Updated error message
+        console.error("Failed to fetch followed books:", error);
       } finally {
         setLoading(false);
       }
@@ -26,14 +26,12 @@ export default function TuTruyenPage() {
   }, []);
 
   const handleDelete = (id: string) => {
-    // In a real app, you would call a service to delete the book
-    // and then update the state.
     console.log(`Deleting book with id: ${id}`);
     setBooks(prevBooks => prevBooks.filter(book => book.id !== id));
   };
 
   return (
-    <main className="flex flex-col items-start gap-5 p-2.5 relative flex-1 self-stretch w-full grow bg-[#292929]">
+    <main className="flex flex-col items-start gap-5 p-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
       <div className="flex flex-col h-full items-start gap-5 px-[30px] py-5 relative self-stretch w-full">
         {loading ? (
           <div className="text-white text-center w-full">Đang tải tủ truyện...</div>

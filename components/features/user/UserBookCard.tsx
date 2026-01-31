@@ -3,8 +3,8 @@
 import { ActionButton } from "@/components/ui/ActionButton";
 import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
-import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react"; // Make sure Trash and SquarePen are imported
-import Image from "next/image"; // Added Image import
+import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react";
+import Image from "next/image";
 
 interface UserBookCardProps {
   novel: UserBookItem;
@@ -16,7 +16,6 @@ const handleNovelAction = (novelId: string, action: string) => {
   console.log(`Novel ${novelId}: ${action} action triggered`);
 };
 
-// A simple utility to get color based on status
 const getStatusStyles = (status: string | null) => {
   switch (status) {
     case "Đang ra":
@@ -36,7 +35,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
   return (
     <article
       key={novel.id}
-      className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-[20px] overflow-hidden border border-solid border-[#868686] shadow-[0px_4px_12px_#000000]"
+      className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000]"
     >
       <Image
         src={backgroundPath || '/placeholder.jpg'}
@@ -92,17 +91,17 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
           <div className="flex flex-col items-start justify-between px-5 py-[5px] relative flex-1 self-stretch grow">
             <div className="flex gap-2.5 self-stretch w-full items-center relative flex-[0_0_auto]">
-              <h3 className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Bold',Helvetica] font-bold text-white text-xl tracking-[0.10px] leading-9 whitespace-nowrap">
+              <h3 className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-bold text-white text-xl tracking-[0.10px] leading-9 whitespace-nowrap">
                 {novel.title}
               </h3>
 
               {novel.status && (
                 <span
-                  className="inline-flex items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-[10px] overflow-hidden"
+                  className="inline-flex items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-md overflow-hidden"
                   style={{ backgroundColor: statusStyles.backgroundColor }}
                 >
                   <span
-                    className="relative w-fit mt-[-1.00px] [font-family:'Inter-Regular',Helvetica] font-normal text-lg tracking-[0] leading-[normal] whitespace-nowrap"
+                    className="relative w-fit mt-[-1.00px] font-inter font-normal text-lg tracking-[0] leading-[normal] whitespace-nowrap"
                     style={{ color: statusStyles.color }}
                   >
                     {novel.status}
@@ -114,13 +113,13 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
                 <SquarePen size={20} className="text-white" />
                 </div>
               </div>
-                
+
             <div className="flex gap-5 self-stretch w-full items-center relative flex-[0_0_auto]">
-              <p className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-lg tracking-[0.10px] leading-8 whitespace-nowrap">
+              <p className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-lg tracking-[0.10px] leading-8 whitespace-nowrap">
                 Tình trạng: {novel.translatedChapters}/{novel.totalChapters}
               </p>
 
-              <p className="relative flex items-center justify-center w-fit [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-lg tracking-[0.10px] leading-6 whitespace-nowrap">
+              <p className="relative flex items-center justify-center w-fit font-roboto font-normal text-white text-lg tracking-[0.10px] leading-6 whitespace-nowrap">
                 Cập nhật: {timeAgo(novel.updatedAt)}
               </p>
             </div>
@@ -129,9 +128,9 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               {novel.genres.map((genre, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#ffffff33] rounded-[10px] overflow-hidden"
+                  className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-border-white-alpha rounded-md overflow-hidden"
                 >
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-white text-base text-center tracking-[0.10px] leading-[normal] whitespace-nowrap">
+                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-base text-center tracking-[0.10px] leading-[normal] whitespace-nowrap">
                     {genre}
                   </span>
                 </span>

@@ -25,13 +25,12 @@ export default async function ChapterReadPage({ params }: PageProps) {
   );
 
   if (!chapter) {
-    // Handle case where chapter is not found
     return <div>Chapter not found</div>;
   }
-  
+
   return (
     <div className="mx-auto flex flex-col relative bg-white min-h-screen">
-      <div className="flex flex-col items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-[#292929]">
+      <div className="flex flex-col items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
         <Breadcrumb
           slug={slug}
           bookTitle={chapter.book_name}

@@ -37,7 +37,7 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
             shrink-0
             rounded
             overflow-hidden
-            bg-neutral-800
+            bg-surface-raised
           "
         >
           {book.cover_image_url ? (
@@ -63,7 +63,7 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
             className="
               text-sm
               sm:text-base
-              text-gray-300
+              text-text-secondary
               font-medium
               line-clamp-1
               group-hover:text-red-400

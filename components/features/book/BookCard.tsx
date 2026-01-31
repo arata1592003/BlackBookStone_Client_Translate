@@ -18,7 +18,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
       <div className="
         relative w-full aspect-[2/3]
         overflow-hidden rounded-lg
-        bg-neutral-800
+        bg-surface-raised
       ">
         <Image
           src={book.cover_image_url}
@@ -31,7 +31,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
       <p className="
         mt-2
         text-xs sm:text-sm
-        text-gray-300
+        text-text-secondary
         line-clamp-1
         text-center
         group-hover:text-red-400

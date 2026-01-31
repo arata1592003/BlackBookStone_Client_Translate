@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation"; // Removed useSearchParams
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { getAllTags } from "@/modules/tag/tag.service";
@@ -9,15 +9,15 @@ import { Tag } from "@/modules/tag/tag.type";
 import { getCurrentUser } from "@/modules/user/user.service";
 import { User } from "@/modules/user/user.type";
 
-interface MenuItem { // Moved MenuItem interface here to match new structure
+interface MenuItem {
   id: string;
   label: string;
-  href: string; // Added href
+  href: string;
 }
 
 export const UserNavigationMenu = () => {
   const router = useRouter();
-  const pathname = usePathname(); // Hook to get current path
+  const pathname = usePathname();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -25,7 +25,6 @@ export const UserNavigationMenu = () => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      // Fetch tags
       try {
         const fetchedTags = await getAllTags();
         setTags(fetchedTags);
@@ -33,7 +32,6 @@ export const UserNavigationMenu = () => {
         console.error("Failed to fetch tags:", error);
       }
 
-      // Fetch current user
       try {
         const user = await getCurrentUser();
         setCurrentUser(user);
@@ -58,16 +56,14 @@ export const UserNavigationMenu = () => {
     { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
     { id: "lich-su-giao-dich", label: "Lịch sử giao dịch", href: "/tai-khoan/lich-su-giao-dich" },
     { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
-    { id: "dang-xuat", label: "Đăng xuất", href: "#" }, // '#' for logout action
+    { id: "dang-xuat", label: "Đăng xuất", href: "#" },
   ];
 
   const handleMenuItemClick = (item: MenuItem) => {
     if (item.id === "dang-xuat") {
-      // Handle logout logic if needed, or pass it as a prop
       console.log("Logout clicked from navigation menu");
-      // router.push("/"); // Example redirect after logout
     } else {
-      router.push(item.href); // Navigate to new path
+      router.push(item.href);
     }
     console.log(`Navigating to: ${item.href}`);
   };
@@ -78,7 +74,7 @@ export const UserNavigationMenu = () => {
   ) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      handleMenuItemClick(item); // Use existing click handler
+      handleMenuItemClick(item);
       console.log(`Navigating to (keyboard): ${item.href}`);
     }
   };
@@ -106,7 +102,7 @@ export const UserNavigationMenu = () => {
           role="menu"
         >
           {menuItems.map((item) => {
-            const isActive = pathname === item.href || (item.id === "ban-lam-viec" && pathname === "/user"); // Handle default /user path
+            const isActive = pathname === item.href || (item.id === "ban-lam-viec" && pathname === "/user");
 
             return (
               <li
@@ -117,8 +113,8 @@ export const UserNavigationMenu = () => {
                 <button
                   className={`items-center gap-1 px-3 py-2 flex-1 grow flex relative w-full text-left: ${
                     isActive
-                      ? "bg-[#0d0d0d1a] border-r-[6px] [border-right-style:solid] border-[#e63946]"
-                      : "bg-[#0d0d0d1a] hover:bg-white/10"
+                      ? "bg-surface-overlay-alpha border-r-[6px] [border-right-style:solid] border-accent-red"
+                      : "bg-surface-overlay-alpha hover:bg-white/10"
                   }`}
                   onClick={() => handleMenuItemClick(item)}
                   onKeyDown={(e) => handleMenuItemKeyDown(e, item)}
@@ -128,9 +124,9 @@ export const UserNavigationMenu = () => {
                   <span
                     className={`${
                       isActive
-                        ? "w-fit mt-[-6.00px] text-[#e63946]"
+                        ? "w-fit mt-[-6.00px] text-accent-red"
                         : "relative self-stretch mt-[-1.00px] text-white"
-                    } [font-family:'Inter-Regular',Helvetica] font-normal text-2xl tracking-[0] leading-[normal]`}
+                    } font-inter font-normal text-2xl tracking-[0] leading-[normal]`}
                   >
                     {item.label}
                   </span>

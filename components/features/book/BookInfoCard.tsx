@@ -1,7 +1,7 @@
 "use client";
 
 import { BookInfo } from "@/modules/book/book.types";
-import { Bookmark, List, Play } from 'lucide-react'; // Import Lucide icons
+import { Bookmark, List, Play } from 'lucide-react';
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,17 +16,17 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
   const actionButtons = [
     {
       id: 1,
-      IconComponent: Play, // Using Play icon from Lucide
+      IconComponent: Play,
       label: "Đọc từ đầu",
       href: `/truyen/${bookInfo.slug}/chuong/1`,
     },
-    { id: 2, IconComponent: Bookmark, label: "Lưu truyện" }, // Using Bookmark icon from Lucide
-    { id: 3, IconComponent: List, label: "D.S Chương" }, // Using List icon from Lucide
+    { id: 2, IconComponent: Bookmark, label: "Lưu truyện" },
+    { id: 3, IconComponent: List, label: "D.S Chương" },
   ];
 
   return (
     <section
-      className="flex w-[900px] items-start gap-2.5 py-2.5 relative flex-[0_0_auto] rounded-[10px] overflow-hidden bg-[url(/frame-67.png)] bg-cover bg-[50%_50%]"
+      className="flex w-[900px] items-start gap-2.5 py-2.5 relative flex-[0_0_auto] rounded-md overflow-hidden bg-[url(/frame-67.png)] bg-cover bg-[50%_50%]"
       aria-label="Book information section"
     >
       <Image
@@ -34,33 +34,33 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
         alt={`Cover image for ${bookInfo.book_name_translated}`}
         width={219}
         height={330}
-        className="relative w-[219px] h-[330px] rounded-[10px] shadow-[0px_4px_4px_#ffffff40] aspect-[0.66] object-cover"
+        className="relative w-[219px] h-[330px] rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] aspect-[0.66] object-cover"
       />
 
       <div className="flex flex-col items-start gap-2.5 p-2.5 relative flex-1 self-stretch grow">
-        <h1 className="relative w-fit mt-[-1.00px] [font-family:'Inter-Bold',Helvetica] font-bold text-gray-300 text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+        <h1 className="relative w-fit mt-[-1.00px] font-inter font-bold text-text-secondary text-xl tracking-[0] leading-[normal] whitespace-nowrap">
           {bookInfo.book_name_translated}
         </h1>
 
         <div className="flex items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-          <p className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-normal text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <p className="relative w-fit mt-[-1.00px] font-inter font-normal text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
             <span className="font-medium">Dịch</span>
-            <span className="[font-family:'Inter-Bold',Helvetica] font-bold">
+            <span className="font-inter font-bold">
               :
             </span>
           </p>
 
-          <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Regular',Helvetica] font-normal text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <div className="relative w-fit mt-[-1.00px] font-inter font-normal text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
             {bookInfo.user_name}
           </div>
         </div>
 
         <div className="inline-flex items-start gap-2.5 relative flex-[0_0_auto]">
-          <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Medium',Helvetica] font-medium text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
             Tình trạng:
           </div>
 
-          <div className="relative w-fit mt-[-1.00px] [font-family:'Inter-Regular',Helvetica] font-normal text-gray-300 text-base tracking-[0] leading-[normal] whitespace-nowrap">
+          <div className="relative w-fit mt-[-1.00px] font-inter font-normal text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
             {bookInfo.publication_status}
           </div>
         </div>
@@ -74,10 +74,10 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
             {bookInfo.genres.map((genre) => (
               <div
                 key={genre.id}
-                className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-[#ffffff33] rounded-[10px] overflow-hidden"
+                className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-border-white-alpha rounded-md overflow-hidden"
                 role="listitem"
               >
-                <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Regular',Helvetica] font-normal text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+                <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
                   {genre.name}
                 </span>
               </div>
@@ -86,17 +86,17 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
         )}
 
         <div className="flex items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
             {bookInfo.count_word} chữ
           </div>
 
-          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
             {bookInfo.count_chapter} chương
           </div>
         </div>
 
         <div className="flex items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+          <div className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
             {bookInfo.view} lượt đọc
           </div>
         </div>
@@ -107,22 +107,22 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
           aria-label="Book actions"
         >
           {actionButtons.map((button) => {
-            const Icon = button.IconComponent; // Destructure the IconComponent
+            const Icon = button.IconComponent;
 
             if (button.href) {
               return (
                 <Link
                   key={button.id}
                   href={button.href}
-                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-[#3600c0] rounded-[20px] overflow-hidden cursor-pointer border-0 hover:bg-[#4a00ff] transition-colors"
+                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-lg overflow-hidden cursor-pointer border-0 hover:bg-primary-hover transition-colors"
                   aria-label={button.label}
                 >
                   <Icon
                     className="relative w-4 h-4 aspect-[1]"
                     aria-hidden="true"
-                    size={16} // Set size for Lucide icon
+                    size={16}
                   />
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
                     {button.label}
                   </span>
                 </Link>
@@ -133,15 +133,15 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
                   key={button.id}
                   onClick={onGoChapterList}
                   type="button"
-                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-[#3600c0] rounded-[20px] overflow-hidden cursor-pointer border-0 hover:bg-[#4a00ff] transition-colors"
+                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-lg overflow-hidden cursor-pointer border-0 hover:bg-primary-hover transition-colors"
                   aria-label={button.label}
                 >
                   <Icon
                     className="relative w-4 h-4 aspect-[1]"
                     aria-hidden="true"
-                    size={16} // Set size for Lucide icon
+                    size={16}
                   />
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] [font-family:'Roboto-Medium',Helvetica] font-medium text-gray-300 text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
                     {button.label}
                   </span>
                 </button>
