@@ -6,6 +6,7 @@ import {
 } from "@/modules/chapter/chapter.service";
 import type { ChapterRow } from "@/modules/chapter/chapter.type";
 import { timeAgo } from "@/utils/date";
+import { Button } from "@/components/ui/Button";
 import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -158,14 +159,15 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
         className="flex items-center justify-center gap-2.5 p-2.5 relative self-stretch w-full flex-[0_0_auto]"
         aria-label="Pagination"
       >
-        <button
+        <Button
+          size="icon-sm"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="inline-flex items-center justify-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-primary rounded-sm disabled:opacity-50"
+          className="p-[5px] bg-primary rounded-sm"
           aria-label="Previous page"
         >
           <ChevronLeft size={20} className="text-text-secondary" />
-        </button>
+        </Button>
 
         {pageNumbers.map((pageNum, index) =>
           pageNum === "..." ? (
@@ -173,13 +175,15 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
               ...
             </span>
           ) : (
-            <button
+            <Button
               key={index}
+              variant="ghost"
+              size="icon-sm"
               onClick={() =>
                 typeof pageNum === "number" && setCurrentPage(pageNum)
               }
               disabled={typeof pageNum === "string"}
-              className={`inline-flex flex-col items-center justify-center gap-2.5 p-[5px] relative flex-[0_0_auto] rounded-sm overflow-hidden ${
+              className={`p-[5px] rounded-sm overflow-hidden ${
                 pageNum === currentPage ? "bg-primary" : "bg-white"
               }`}
               aria-label={
@@ -188,24 +192,25 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
               aria-current={pageNum === currentPage ? "page" : undefined}
             >
               <div
-                className={`relative flex items-center justify-center w-[19px] h-[19px] mt-[-1.00px] aspect-[1] font-inter font-medium text-base text-center tracking-[0] leading-[normal] whitespace-nowrap ${
+                className={`flex items-center justify-center w-[19px] h-[19px] font-inter font-medium text-base text-center tracking-[0] leading-[normal] whitespace-nowrap ${
                   pageNum === currentPage ? "text-text-secondary" : "text-black"
                 }`}
               >
                 {pageNum}
               </div>
-            </button>
+            </Button>
           )
         )}
 
-        <button
+        <Button
+          size="icon-sm"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="inline-flex items-center justify-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-primary rounded-sm disabled:opacity-50"
+          className="p-[5px] bg-primary rounded-sm"
           aria-label="Next page"
         >
           <ChevronRight size={20} className="text-text-secondary" />
-        </button>
+        </Button>
       </nav>
     </div>
   );

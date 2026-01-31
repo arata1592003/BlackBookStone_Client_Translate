@@ -4,6 +4,7 @@ import { UserBookCard } from "@/components/features/user/UserBookCard";
 import { UserStats } from "@/components/features/user/UserStats";
 import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
 import { UserBookItem } from "@/modules/book/book.types";
+import { Button } from "@/components/ui/Button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -68,17 +69,16 @@ export default function BanLamViecPage() {
 
       <div className="flex flex-col items-start justify-center gap-2.5 relative flex-1 self-stretch w-full grow">
         <div className="items-center justify-end gap-[50px] px-[50px] py-2.5 w-full flex-[0_0_auto] flex relative self-stretch">
-          <button
+          <Button
             onClick={handleAddClick}
-            className="inline-flex border-white bg-blue-500 items-center justify-center gap-2.5 px-2.5 py-[5px] relative flex-[0_0_auto] rounded-md border border-solid shadow-[0px_4px_4px_var(--color-shadow-white)] bg-cover bg-[50%_50%] cursor-pointer hover:opacity-90 transition-opacity"
+            className="bg-blue-500 border border-white px-2.5 py-[5px] rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] hover:opacity-90 transition-opacity"
             aria-label="Thêm mới"
           >
             <BookPlus size={20} className="text-white" />
-
-            <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-inter font-bold text-white text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+            <span className="font-inter font-bold text-white text-xl tracking-[0] leading-[normal] whitespace-nowrap">
               Thêm
             </span>
-          </button>
+          </Button>
 
           <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-white rounded-md overflow-hidden">
             <label htmlFor="search-input" className="sr-only">

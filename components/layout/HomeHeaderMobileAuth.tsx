@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { RefObject } from "react";
 import { User } from "@/modules/user/user.type";
+import { Button } from "@/components/ui/Button";
 
 interface HomeHeaderMobileAuthProps {
   currentUser: User | null;
@@ -29,12 +30,14 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
     <div className="flex gap-2 lg:hidden">
       {currentUser ? (
         <div className="relative" ref={userDropdownRef}>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             className="px-3 py-1.5 rounded bg-white/20 text-sm font-medium"
             onClick={() => setIsUserDropdownOpen((prev) => !prev)}
           >
             {currentUser.fullName}
-          </button>
+          </Button>
           {isUserDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
               <ul className="py-1 text-gray-700">
@@ -46,12 +49,13 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
                   </li>
                 ))}
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-none justify-start h-auto"
                   >
                     Đăng xuất
-                  </button>
+                  </Button>
                 </li>
               </ul>
             </div>
@@ -59,18 +63,22 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
         </div>
       ) : (
         <>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             className="px-3 py-1.5 rounded bg-white/20 text-sm"
             onClick={handleLoginClick}
           >
             Đăng nhập
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             className="px-3 py-1.5 rounded bg-white/20 text-sm"
             onClick={handleRegisterClick}
           >
             Đăng ký
-          </button>
+          </Button>
         </>
       )}
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
 import { BookCardWithAuthor } from "@/modules/book/book.types";
 import { useEffect, useRef, useState } from "react";
 import { BookCard } from "./BookCard";
@@ -52,17 +53,14 @@ export const HorizontalBookScroller = ({ books }: Props) => {
   return (
     <div className="relative w-full">
       {/* Prev */}
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIndex(i => Math.max(i - 1, 0))}
         disabled={!canGoPrev}
-        className="
-          absolute left-0 top-1/2 z-10 -translate-y-1/2
-          rounded-full bg-black/60 px-2 py-1 text-white
-          disabled:opacity-30
-        "
+        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-2 py-1 text-white disabled:opacity-30 h-auto"
       >
         ‹
-      </button>
+      </Button>
 
       {/* Viewport */}
       <div ref={containerRef} className="overflow-hidden w-full">
@@ -89,19 +87,16 @@ export const HorizontalBookScroller = ({ books }: Props) => {
       </div>
 
       {/* Next */}
-      <button
+      <Button
+        variant="ghost"
         onClick={() =>
           setIndex(i => Math.min(i + 1, maxIndex))
         }
         disabled={!canGoNext}
-        className="
-          absolute right-0 top-1/2 z-10 -translate-y-1/2
-          rounded-full bg-black/60 px-2 py-1 text-white
-          disabled:opacity-30
-        "
+        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-2 py-1 text-white disabled:opacity-30 h-auto"
       >
         ›
-      </button>
+      </Button>
     </div>
   );
 };

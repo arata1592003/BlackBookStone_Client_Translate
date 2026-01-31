@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionButton } from "@/components/ui/ActionButton";
+import { Button } from "@/components/ui/Button";
 import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
 import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react";
@@ -144,22 +144,25 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
           aria-label={`Actions for ${novel.title}`}
         >
           <div className="flex-col items-start gap-2.5 flex-1 grow flex relative self-stretch">
-            <ActionButton
-              label="Cào"
+            <Button
               onClick={() => handleNovelAction(novel.id, "crawl")}
-              icon={<AppWindowMac size={20} className="text-white" />}
-              variant="success"
-            />
-            <ActionButton
-              label="Dịch"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
+            >
+              <AppWindowMac size={20} className="text-white" />
+              Cào
+            </Button>
+            <Button
               onClick={() => handleNovelAction(novel.id, "translate")}
-              variant="accent"
-            />
-            <ActionButton
-              label="Tải"
+              className="w-full bg-violet-600 hover:bg-violet-500 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
+            >
+              Dịch
+            </Button>
+            <Button
               onClick={() => handleNovelAction(novel.id, "download")}
-              variant="info"
-            />
+              className="w-full bg-teal-500 hover:bg-teal-400 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
+            >
+              Tải
+            </Button>
           </div>
         </nav>
       </div>

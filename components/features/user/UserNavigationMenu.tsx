@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -110,8 +111,9 @@ export const UserNavigationMenu = () => {
                 className="items-start gap-1 self-stretch w-full flex-[0_0_auto] flex relative"
                 role="none"
               >
-                <button
-                  className={`items-center gap-1 px-3 py-2 flex-1 grow flex relative w-full text-left: ${
+                <Button
+                  variant="ghost"
+                  className={`items-center gap-1 px-3 py-2 flex-1 grow flex w-full justify-start rounded-none h-auto ${
                     isActive
                       ? "bg-surface-overlay-alpha border-r-[6px] [border-right-style:solid] border-accent-red"
                       : "bg-surface-overlay-alpha hover:bg-white/10"
@@ -130,7 +132,7 @@ export const UserNavigationMenu = () => {
                   >
                     {item.label}
                   </span>
-                </button>
+                </Button>
               </li>
             );
           })}

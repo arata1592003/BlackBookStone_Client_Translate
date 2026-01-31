@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/Button";
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -115,13 +116,13 @@ export const RegisterPage = () => {
             )}
 
             <div>
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-auth-primary hover:bg-auth-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-auth-focus-ring"
+                className="w-full bg-auth-primary hover:bg-auth-primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-auth-focus-ring"
               >
                 {loading ? "Đang xử lý..." : "Đăng ký"}
-              </button>
+              </Button>
             </div>
           </form>
         )}

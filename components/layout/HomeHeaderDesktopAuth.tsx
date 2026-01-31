@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { RefObject } from "react";
 import { User } from "@/modules/user/user.type";
+import { Button } from "@/components/ui/Button";
 
 interface HomeHeaderDesktopAuthProps {
   currentUser: User | null;
@@ -29,12 +30,13 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
     <div className="hidden lg:flex gap-3">
       {currentUser ? (
         <div className="relative" ref={userDropdownRef}>
-          <button
+          <Button
+            variant="ghost"
             className="px-4 py-2 rounded bg-white/20 text-base font-medium"
             onClick={() => setIsUserDropdownOpen((prev) => !prev)}
           >
             {currentUser.fullName}
-          </button>
+          </Button>
           {isUserDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
               <ul className="py-1 text-gray-700">
@@ -46,12 +48,13 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
                   </li>
                 ))}
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-none justify-start h-auto"
                   >
                     Đăng xuất
-                  </button>
+                  </Button>
                 </li>
               </ul>
             </div>
@@ -59,18 +62,20 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
         </div>
       ) : (
         <>
-          <button
+          <Button
+            variant="ghost"
             className="px-4 py-2 rounded bg-white/20"
             onClick={handleLoginClick}
           >
             Đăng nhập
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             className="px-4 py-2 rounded bg-white/20"
             onClick={handleRegisterClick}
           >
             Đăng ký
-          </button>
+          </Button>
         </>
       )}
     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
 import { ChevronLeft, ChevronRight, List } from 'lucide-react';
 import Link from "next/link";
 
@@ -39,13 +40,13 @@ export const ChapterNavigation = ({
         </span>
       )}
 
-      <button
-        type="button"
-        className="inline-flex items-center justify-center w-[50px] h-[50px] relative bg-primary rounded-sm overflow-hidden border-0 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
+      <Button
+        size="icon-lg"
+        className="w-[50px] h-[50px] bg-primary rounded-sm hover:opacity-90 transition-opacity focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
         aria-label="Menu"
       >
         <List size={24} aria-hidden="true" className="text-text-secondary" />
-      </button>
+      </Button>
 
       {nextChapterNumber ? (
         <Link

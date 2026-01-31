@@ -1,6 +1,7 @@
 "use client";
 
 import { ChapterList } from "@/components/features/chapter/ChapterList";
+import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
 type Props = {
@@ -31,12 +32,13 @@ export const BookDetailTabs = ({
         role="tablist"
       >
         {TABS.map((tabItem, index) => (
-          <button
+          <Button
             key={tabItem.id}
+            variant="ghost"
             role="tab"
             aria-selected={tab === tabItem.id}
             onClick={() => setTab(tabItem.id)}
-            className={`inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] ${
+            className={`rounded-none p-2.5 h-auto ${
               index < TABS.length - 1
                 ? "border-r [border-right-style:solid] border-white"
                 : ""
@@ -46,10 +48,10 @@ export const BookDetailTabs = ({
                 : "hover:bg-surface-hover"
             }`}
           >
-            <span className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
+            <span className="font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
               {tabItem.label}
             </span>
-          </button>
+          </Button>
         ))}
       </nav>
 

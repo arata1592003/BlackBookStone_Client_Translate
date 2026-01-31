@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button";
 import { ChevronLeft, ChevronRight, List } from 'lucide-react';
 import Link from "next/link";
 
@@ -35,12 +36,12 @@ export const Pagination = ({
       )}
 
       {/* Center button */}
-      <button
+      <Button
         className={`${commonButtonClasses}`}
         disabled
       >
         <List size={20} className="text-white" />
-      </button>
+      </Button>
 
       {/* Next */}
       {nextChapter ? (

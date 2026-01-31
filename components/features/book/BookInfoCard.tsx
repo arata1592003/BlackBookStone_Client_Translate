@@ -4,6 +4,7 @@ import { BookInfo } from "@/modules/book/book.types";
 import { Bookmark, List, Play } from 'lucide-react';
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   bookInfo: BookInfo & {
@@ -111,29 +112,29 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
 
             if (button.href) {
               return (
-                <Link
+                <Button
                   key={button.id}
-                  href={button.href}
-                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-lg overflow-hidden cursor-pointer border-0 hover:bg-primary-hover transition-colors"
-                  aria-label={button.label}
+                  asChild
+                  className="p-2.5 bg-primary rounded-lg hover:bg-primary-hover transition-colors"
                 >
-                  <Icon
-                    className="relative w-4 h-4 aspect-[1]"
-                    aria-hidden="true"
-                    size={16}
-                  />
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
-                    {button.label}
-                  </span>
-                </Link>
+                  <Link href={button.href} aria-label={button.label}>
+                    <Icon
+                      className="relative w-4 h-4 aspect-[1]"
+                      aria-hidden="true"
+                      size={16}
+                    />
+                    <span className="font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+                      {button.label}
+                    </span>
+                  </Link>
+                </Button>
               );
             } else {
               return (
-                <button
+                <Button
                   key={button.id}
                   onClick={onGoChapterList}
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-lg overflow-hidden cursor-pointer border-0 hover:bg-primary-hover transition-colors"
+                  className="p-2.5 bg-primary rounded-lg hover:bg-primary-hover transition-colors"
                   aria-label={button.label}
                 >
                   <Icon
@@ -141,10 +142,10 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
                     aria-hidden="true"
                     size={16}
                   />
-                  <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
+                  <span className="font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
                     {button.label}
                   </span>
-                </button>
+                </Button>
               );
             }
           })}
