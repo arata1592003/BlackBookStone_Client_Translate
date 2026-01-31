@@ -19,6 +19,8 @@ export type BookEntity = {
   is_published: boolean | null;
   draft_expires_at: string | null;
 
+  description: string | null;
+
   created_at: string;
   updated_at: string;
 };

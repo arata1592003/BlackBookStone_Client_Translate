@@ -17,13 +17,16 @@ export const mapToChapterDetail = (
   prev: number | null,
   next: number | null
 ): ChapterDetail => {
-    const content = row.chapter_content;
+    const content = Array.isArray(row.chapter_content)
+    ? row.chapter_content[0]?.content_translated
+    : row.chapter_content?.content_translated ?? "";
+
     return {
         slug,
         book_name: bookName,
         chapter_number: row.chapter_number,
         title: row.chapter_title_translated,
-        content: content?.content_translated ?? "",
+        content: content,
         views: row.view_count ?? 0,
         total_words: row.total_words_translate ?? 0,
         created_at: new Date(row.created_at).toLocaleDateString("vi-VN"),

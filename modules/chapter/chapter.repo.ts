@@ -17,9 +17,10 @@ export type ChapterContentRow = {
   total_words_translate: number | null;
   view_count: number | null;
   created_at: string;
-  chapter_content: {
-    content_translated: string | null;
-  }[] | null;
+  chapter_content:
+    | { content_translated: string | null }
+    | { content_translated: string | null }[]
+    | null;
 };
 
 export async function fetchNewestChaptersByBookSlug(

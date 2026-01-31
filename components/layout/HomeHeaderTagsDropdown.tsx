@@ -1,13 +1,13 @@
 "use client";
 
+import { Tag } from "@/modules/tag/tag.type";
 import Link from "next/link";
 import React from "react";
-import { Tag } from "@/modules/tag/tag.type";
 
 interface HomeHeaderTagsDropdownProps {
   tags: Tag[];
   isTagsDropdownOpen: boolean;
-  setIsTagsDropdownOpen: (isOpen: boolean) => void;
+  setIsTagsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const HomeHeaderTagsDropdown: React.FC<HomeHeaderTagsDropdownProps> = ({

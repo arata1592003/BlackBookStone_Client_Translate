@@ -57,7 +57,7 @@ export const mapToUserBookItem = (
 ): UserBookItem => {
   const genres =
     row.book_tags
-      ?.map(bt => bt.tags?.name)
+      ?.map(bt => bt.tags[0]?.name)
       .filter((name): name is string => Boolean(name)) ?? [];
 
   const stats = row.book_chapter_stats?.[0];

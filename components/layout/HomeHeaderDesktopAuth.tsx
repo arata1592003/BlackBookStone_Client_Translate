@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
+import { User } from "@/modules/user/user.type";
 import Link from "next/link";
 import React, { RefObject } from "react";
-import { User } from "@/modules/user/user.type";
-import { Button } from "@/components/ui/Button";
 
 interface HomeHeaderDesktopAuthProps {
   currentUser: User | null;
@@ -11,7 +11,7 @@ interface HomeHeaderDesktopAuthProps {
   handleRegisterClick: () => void;
   handleLogout: () => Promise<void>;
   isUserDropdownOpen: boolean;
-  setIsUserDropdownOpen: (isOpen: boolean) => void;
+  setIsUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userDropdownRef: RefObject<HTMLDivElement>;
   userMenuItems: { id: string; label: string; href: string }[];
 }

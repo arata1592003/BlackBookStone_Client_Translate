@@ -10,6 +10,7 @@ export type BookInfoRow = {
   id: string;
   slug: string;
   book_name_translated: string | null;
+  description: string;
   author_name_translated: string | null;
   publication_status: string | null;
   cover_image_url: string | null;
@@ -82,6 +83,7 @@ export async function fetchBookInfoBySlug(
       slug,
       book_name_translated,
       author_name_translated,
+      description,
       publication_status,
       cover_image_url,
       users:owner_user_id (
@@ -215,5 +217,9 @@ export async function fetchFollowedBooksByUserId(
 
   // The query returns an array of { books: { ... } }, so we map to get the book object.
   // We also need to filter out any null book entries that might occur.
-  return data?.map(item => item.books).filter(Boolean) as UserBookItemRow[] ?? [];
+  return (
+    data
+      ?.flatMap(item => item.books ?? [])
+      .filter(Boolean) ?? []
+  );
 }
