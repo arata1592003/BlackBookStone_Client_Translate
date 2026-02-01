@@ -11,26 +11,30 @@ This document outlines the architecture, conventions, and workflow for the Black
 - **Framework**: Next.js 16 (App Router)
 - **UI**: React 19, Tailwind CSS 4
 - **Backend**: Supabase (PostgreSQL Database + Auth)
+- **Iconography**: Lucide React
 - **Primary Language**: Vietnamese
 
-| Layer     | Technology         |
-|-----------|--------------------|
-| Framework | Next.js 16         |
-| Language  | TypeScript         |
-| UI        | React 19           |
-| Styling   | Tailwind CSS 4     |
-| Backend   | Supabase           |
-| Linting   | ESLint             |
+| Layer        | Technology         |
+|--------------|--------------------|
+| Framework    | Next.js 16         |
+| Language     | TypeScript         |
+| UI           | React 19           |
+| Styling      | Tailwind CSS 4     |
+| Iconography  | Lucide React       |
+| Backend      | Supabase           |
+| Linting      | ESLint             |
 
 ---
 
 ## 2. Core Architecture & Principles
 
-This project uses a strict layered architecture. I will always respect these boundaries.
+This project uses a strict layered architecture and a well-defined routing strategy. I will always respect these boundaries.
+
+### 2.1 Data & Business Logic
 
 ```
 ┌─────────────────────────────────┐
-│   Presentation (components/)    │  - React components, pages.
+│   Presentation (app/, components/) │  - React components, pages, layouts.
 ├─────────────────────────────────┤
 │   Service (modules/*/service)   │  - Business logic, orchestration.
 ├─────────────────────────────────┤
@@ -40,23 +44,31 @@ This project uses a strict layered architecture. I will always respect these bou
 └─────────────────────────────────┘
 ```
 
-- **Modules (`modules/`)**: Business logic is separated by domain (e.g., `book`, `user`). Any new logic must follow the existing 4-file pattern:
-    - `{domain}.types.ts`: Defines `Entity` (DB), `Row` (query), and `Domain` (UI) models.
-    - `{domain}.repo.ts`: For all database queries using Supabase client.
-    - `{domain}.mapper.ts`: For transforming data between layers (e.g., `BookEntity` to `BookInfo`).
-    - `{domain}.service.ts`: For orchestrating calls to the repository and mappers.
+- **Modules (`modules/`)**: Business logic is separated by domain. Any new logic must follow the established pattern:
+    - **`book`**: Manages book data, including fetching details and handling user's followed books.
+    - **`chapter`**: Manages chapter data.
+    - **`user`**: Manages user profiles and stats.
+    - **`tag`**: Manages book genres/tags.
+    - **`wallet`**: Manages user wallet balance and transaction history.
+    - **`plan`**: Manages top-up plans for the wallet system.
 
-- **Components (`components/`)**:
-    - `ui/`: Generic, reusable primitives (e.g., `Button`, `Card`). Must use `twMerge` and `forwardRef`.
-    - `features/`: Domain-specific components that interact with module services.
-    - `layout/`: Major page structure and navigation components.
+### 2.2 Routing Architecture (App Router)
 
-- **Styling**:
-    - **Utility-First**: Use Tailwind CSS classes directly.
-    - **Responsiveness**: Mobile-first design.
-    - **Theming**: Use CSS variables defined in `styles/variables.css` and `globals.css`.
+The project utilizes **Route Groups** to manage distinct application layouts and sections.
 
-- **State Management**: No central store. I will use component-local state (`useState`), Supabase for auth state, and Server Components for data fetching.
+- **`app/(main)`**: For main public-facing pages that share a common layout, including the `HomeHeader`.
+    - Contains: `/trang-chu`
+- **`app/(user)`**: For the user dashboard area. This group has its own distinct layout, featuring a `UserNavigationMenu` and `UserHeader`, and does **not** include the public `HomeHeader`.
+    - Contains nested routes like `/tai-khoan/ban-lam-viec`, `/tai-khoan/tu-truyen`, etc.
+- **`app/(auth)`**: For authentication pages (login, register). This group uses a minimal layout with no headers or navigation.
+    - Contains: `/dang-nhap`, `/dang-ky`
+- **`app/truyen`**: A public route for displaying book and chapter details.
+
+### 2.3 Component Structure
+
+- **`components/ui/`**: Generic, reusable primitives (e.g., `Button`, `Card`, `ActionButton`).
+- **`components/features/`**: Domain-specific components that are used across different pages (e.g., `user/UserStats`).
+- **`components/layout/`**: Major page structure and navigation components (e.g., `HomeHeader`, `UserNavigationMenu`).
 
 ---
 
@@ -65,30 +77,23 @@ This project uses a strict layered architecture. I will always respect these bou
 - **Installation**: `npm install`
 - **Development**: `npm run dev`
 - **Verification**: `npm run lint` (I will run this after making changes to ensure code quality).
-- **Routing**: All routes are defined in the `app/` directory and use Vietnamese names (e.g., `/trang-chu`, `/dang-nhap`).
-- **Naming**:
-    - Components: `PascalCase` (`BookCard.tsx`)
-    - Functions/Variables: `camelCase` (`getBookInfo`)
-    - DB Columns: `snake_case` (`book_name`)
-    - Props Interfaces: `PascalCaseProps` (`BookCardProps`)
-- **Commit Messages**: I will follow the Conventional Commits specification outlined in `COMMIT_CONVENTION.md`.
-
-    - **Format**: `<type>(<scope>): <subject>`
-    - **Common Types**:
-        - `feat`: A new feature.
-        - `fix`: A bug fix.
-        - `refactor`: Code change that neither fixes a bug nor adds a feature.
-        - `style`: Changes that do not affect the meaning of the code (formatting).
-        - `docs`: Documentation only changes.
-        - `chore`: Other changes that don't modify source or test files.
+- **Routing**: All routes are defined in the `app/` directory and use Vietnamese names. The structure is based on Route Groups as described in the architecture section.
+- **Styling**:
+    - **Utility-First**: Use Tailwind CSS classes directly.
+    - **Theming**: Use CSS variables defined in `globals.css` for consistent colors, surfaces, and borders (e.g., `bg-surface-card`, `text-text-primary`).
+- **Iconography & Images**:
+    - **Icons**: Always use `lucide-react` for all icons to maintain consistency.
+    - **Images**: Always use the `next/image` component for image rendering to ensure performance optimization (lazy loading, responsive sizes).
+- **Commit Messages**: All commits must follow the Conventional Commits specification outlined in `COMMIT_CONVENTION.md`.
 
 ---
 
 ## 4. My Mandate
 
-1.  **Strictly Adhere to Architecture**: I will not bypass the service or repository layers. All business logic and data access must go through the appropriate module files.
-2.  **Follow Conventions**: All new code will conform to the project's established naming, typing, and styling conventions.
-3.  **Place Files Correctly**: New components, modules, and utilities will be created in the correct directories.
-4.  **Verify My Work**: I will use `npm run lint` to check for issues before considering a task complete.
-5.  **Commit Correctly**: All commits will be formatted according to the project's commit convention.
-6.  **Vietnamese First**: All user-facing UI text and routes must be in Vietnamese.
+1.  **Strictly Adhere to Architecture**: I will not bypass the service or repository layers. All new features will respect the established Route Group structure (`(main)`, `(user)`, `(auth)`).
+2.  **Follow Conventions**: All new code will conform to the project's established naming, typing, styling, and iconography (`lucide-react`) conventions.
+3.  **Place Files Correctly**: New pages and layouts will be placed in the correct route group. New reusable components will be placed in the appropriate `components` subdirectory.
+4.  **Utilize Existing Modules**: I will use the `wallet` and `plan` modules for any features involving user currency. I will use the `book` module for fetching both owned and followed books.
+5.  **Verify My Work**: I will use `npm run lint` to check for issues before considering a task complete.
+6.  **Commit Correctly**: All commits will be formatted according to `COMMIT_CONVENTION.md`.
+7.  **Vietnamese First**: All user-facing UI text and routes must be in Vietnamese.
