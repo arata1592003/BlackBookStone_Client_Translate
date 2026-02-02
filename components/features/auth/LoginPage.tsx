@@ -118,7 +118,7 @@ export const LoginPage = () => {
         </form>
         <div className="text-center text-sm text-auth-text-muted">
           Chưa có tài khoản?{" "}
-          <Link href="/register" className="font-medium text-auth-primary hover:text-auth-focus-ring">
+          <Link href="/dang-ky" className="font-medium text-auth-primary hover:text-auth-focus-ring">
             Đăng ký ngay
           </Link>
         </div>

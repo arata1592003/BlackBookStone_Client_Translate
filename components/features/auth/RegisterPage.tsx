@@ -128,7 +128,7 @@ export const RegisterPage = () => {
         )}
         <div className="text-center text-sm text-auth-text-muted">
           Đã có tài khoản?{" "}
-          <Link href="/login" className="font-medium text-auth-primary hover:text-auth-focus-ring">
+          <Link href="/dang-nhap" className="font-medium text-auth-primary hover:text-auth-focus-ring">
             Đăng nhập
           </Link>
         </div>
