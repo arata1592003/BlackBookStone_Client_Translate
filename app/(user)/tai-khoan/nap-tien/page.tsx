@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { getActivePlans } from "@/modules/plan/plan.service";
 import { TopupPlan } from "@/modules/plan/plan.types";
@@ -41,9 +41,13 @@ export default function NapTienPage() {
       </div>
 
       {loading ? (
-        <div className="text-white text-center w-full p-10">Đang tải các gói nạp...</div>
+        <div className="text-white text-center w-full p-10">
+          Đang tải các gói nạp...
+        </div>
       ) : plans.length === 0 ? (
-        <div className="text-white text-center w-full p-10">Hiện không có gói nạp nào khả dụng.</div>
+        <div className="text-white text-center w-full p-10">
+          Hiện không có gói nạp nào khả dụng.
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full mt-5">
           {plans.map((plan) => (
@@ -56,19 +60,23 @@ export default function NapTienPage() {
               onClick={() => handlePlanClick(plan.id)}
               tabIndex={0}
               role="button"
-              aria-label={`Gói nạp ${plan.priceAmount.toLocaleString('vi-VN')} VNĐ được ${plan.gems.toLocaleString('vi-VN')} Gem`}
+              aria-label={`Gói nạp ${plan.priceAmount.toLocaleString("vi-VN")} VNĐ được ${plan.gems.toLocaleString("vi-VN")} Gem`}
             >
               <div className="flex flex-col items-center gap-3 w-full">
                 <h3 className="text-2xl font-bold text-text-primary">
-                  {plan.priceAmount.toLocaleString('vi-VN')} VNĐ
+                  {plan.priceAmount.toLocaleString("vi-VN")} VNĐ
                 </h3>
                 <div className="flex items-center gap-2 text-3xl font-extrabold text-primary">
-                  <span>{plan.gems.toLocaleString('vi-VN')}</span>
+                  <span>{plan.gems.toLocaleString("vi-VN")}</span>
                   <Gem size={32} className="text-primary" />
                 </div>
                 {plan.bonusGems > 0 && (
                   <p className="text-sm text-text-secondary flex items-center gap-1">
-                    Thưởng thêm <span className="text-green-400 font-bold">{plan.bonusGems.toLocaleString('vi-VN')}</span> <Gem size={16} className="text-green-400" />
+                    Thưởng thêm{" "}
+                    <span className="text-green-400 font-bold">
+                      {plan.bonusGems.toLocaleString("vi-VN")}
+                    </span>{" "}
+                    <Gem size={16} className="text-green-400" />
                   </p>
                 )}
               </div>

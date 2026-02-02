@@ -41,7 +41,10 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
               <ul className="py-1 text-gray-700">
                 {userMenuItems.map((item) => (
                   <li key={item.id}>
-                    <Link href={item.href} className="block px-4 py-2 text-sm hover:bg-gray-100">
+                    <Link
+                      href={item.href}
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    >
                       {item.label}
                     </Link>
                   </li>

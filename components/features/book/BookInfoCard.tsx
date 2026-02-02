@@ -1,7 +1,7 @@
 "use client";
 
 import { BookInfo } from "@/modules/book/book.types";
-import { Bookmark, List, Play } from 'lucide-react';
+import { Bookmark, List, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -46,9 +46,7 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
         <div className="flex items-start gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
           <p className="relative w-fit mt-[-1.00px] font-inter font-normal text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
             <span className="font-medium">Dịch</span>
-            <span className="font-inter font-bold">
-              :
-            </span>
+            <span className="font-inter font-bold">:</span>
           </p>
 
           <div className="relative w-fit mt-[-1.00px] font-inter font-normal text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">

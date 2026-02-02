@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
-import { Trash } from 'lucide-react';
+import { Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,7 +15,11 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
   return (
     <article
       className="flex items-start relative self-stretch w-full flex-[0_0_auto] rounded-md overflow-hidden border border-solid border-border-subtle shadow-lg"
-      style={{ backgroundImage: `url(${'/dark-rock-wall-seamless-texture-free-105.png'})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      style={{
+        backgroundImage: `url(${"/dark-rock-wall-seamless-texture-free-105.png"})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       <Link
         href={`/truyen/${novel.slug}`}
@@ -33,7 +37,7 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
             <Image
               className="relative flex-1 grow aspect-[0.7] object-cover rounded"
               alt={`${novel.title} cover`}
-              src={novel.coverImageUrl || '/placeholder.jpg'}
+              src={novel.coverImageUrl || "/placeholder.jpg"}
               width={100}
               height={150}
             />
@@ -78,7 +82,6 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
           </div>
         </div>
       </Link>
-
 
       <div
         className="

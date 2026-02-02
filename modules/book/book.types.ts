@@ -35,7 +35,6 @@ export type BookCardSimple = {
   cover_image_url: string | null;
 };
 
-
 export type BookCardWithAuthor = {
   id: string;
 
@@ -47,7 +46,6 @@ export type BookCardWithAuthor = {
 
   cover_image_url: string | null;
 };
-
 
 export type BookInfo = {
   id: string;
@@ -84,7 +82,7 @@ export type UserBookItem = {
   coverImageUrl: string | null;
 
   totalChapters: number;
-  translatedChapters: number;  
+  translatedChapters: number;
 
   updatedAt: string;
 

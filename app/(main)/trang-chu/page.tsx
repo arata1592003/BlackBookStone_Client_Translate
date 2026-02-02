@@ -17,7 +17,8 @@ export default function Home() {
       className="
         max-w-screen-2xl
         mx-auto
-      ">
+      "
+    >
       <HomeOverviewSection books={books} />
     </main>
   );

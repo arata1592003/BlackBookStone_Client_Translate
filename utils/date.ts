@@ -2,9 +2,7 @@ export function timeAgo(dateInput: string | Date): string {
   const date = new Date(dateInput);
   const now = new Date();
 
-  const seconds = Math.floor(
-    (now.getTime() - date.getTime()) / 1000
-  );
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (seconds < 60) return "Vừa xong";
 

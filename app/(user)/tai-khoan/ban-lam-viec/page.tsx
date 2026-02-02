@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { UserBookCard } from "@/components/features/user/UserBookCard";
 import { UserStats } from "@/components/features/user/UserStats";
@@ -30,8 +30,8 @@ export default function BanLamViecPage() {
     if (!books) {
       return [];
     }
-    return books.filter(book =>
-      book.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    return books.filter((book) =>
+      book.title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [books, searchQuery]);
 
@@ -117,4 +117,4 @@ export default function BanLamViecPage() {
       </div>
     </div>
   );
-};
+}

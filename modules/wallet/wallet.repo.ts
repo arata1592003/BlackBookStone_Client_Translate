@@ -3,7 +3,7 @@ import { WalletTransactionEntity } from "./wallet.types";
 
 export async function fetchTransactionsByUserId(
   userId: string,
-  limit = 50
+  limit = 50,
 ): Promise<WalletTransactionEntity[]> {
   const { data, error } = await supabaseClient
     .from("wallet_transactions")

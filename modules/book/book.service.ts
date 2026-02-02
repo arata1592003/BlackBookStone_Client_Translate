@@ -1,5 +1,9 @@
 // modules/book/book.service.ts
-import { BookCardWithAuthor, BookInfo, UserBookItem } from "@/modules/book/book.types";
+import {
+  BookCardWithAuthor,
+  BookInfo,
+  UserBookItem,
+} from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
   mapToBookInfo,
@@ -10,7 +14,7 @@ import {
   fetchBooksByOwner,
   fetchChapterStatsByBookId,
   fetchNewestBooks,
-  fetchFollowedBooksByUserId
+  fetchFollowedBooksByUserId,
 } from "./book.repo";
 
 import { User } from "@supabase/supabase-js";
@@ -20,9 +24,7 @@ export async function getNewestBookList(): Promise<BookCardWithAuthor[]> {
   return rows.map(mapToBookCardWithAuthor);
 }
 
-export async function getBookInfo(
-  slug: string
-): Promise<BookInfo | null> {
+export async function getBookInfo(slug: string): Promise<BookInfo | null> {
   const book = await fetchBookInfoBySlug(slug);
   if (!book) return null;
 
@@ -30,7 +32,9 @@ export async function getBookInfo(
   return mapToBookInfo(book, chapters);
 }
 
-export async function getOwnedBooksForCurrentUser(user: User): Promise<UserBookItem[]> {
+export async function getOwnedBooksForCurrentUser(
+  user: User,
+): Promise<UserBookItem[]> {
   if (!user) {
     console.warn("No current user found to fetch owned books.");
     return [];
@@ -40,7 +44,9 @@ export async function getOwnedBooksForCurrentUser(user: User): Promise<UserBookI
   return rows.map(mapToUserBookItem);
 }
 
-export async function getFollowedBooksForCurrentUser(user: User): Promise<UserBookItem[]> {
+export async function getFollowedBooksForCurrentUser(
+  user: User,
+): Promise<UserBookItem[]> {
   if (!user) {
     console.warn("No current user found to fetch followed books.");
     return [];

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter, Roboto } from "next/font/google";
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { createServerSupabaseClient } from '@/lib/supabase/user/server';
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
 import { fetchUserProfileById } from "@/modules/user/user.repo";
 import { getUserProfileById } from "@/modules/user/user.service";
@@ -45,7 +45,7 @@ export default async function RootLayout({
   let userProfile = null;
 
   if (user) {
-    userProfile = await getUserProfileById(user.id)
+    userProfile = await getUserProfileById(user.id);
   }
 
   return (

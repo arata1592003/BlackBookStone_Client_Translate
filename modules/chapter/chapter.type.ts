@@ -9,7 +9,7 @@ export type ChapterDetail = {
   created_at: string;
   prev_chapter: number | null;
   next_chapter: number | null;
-}
+};
 
 export type ChapterRow = {
   id: string;

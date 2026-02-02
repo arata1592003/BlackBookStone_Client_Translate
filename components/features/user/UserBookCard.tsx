@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/Button";
 import { UserBookItem } from "@/modules/book/book.types";
@@ -10,7 +10,7 @@ interface UserBookCardProps {
   novel: UserBookItem;
 }
 
-const backgroundPath = "/dark-rock-wall-seamless-texture-free-105.png"
+const backgroundPath = "/dark-rock-wall-seamless-texture-free-105.png";
 
 const handleNovelAction = (novelId: string, action: string) => {
   console.log(`Novel ${novelId}: ${action} action triggered`);
@@ -36,18 +36,18 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
       className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000]"
     >
       <Image
-        src={backgroundPath || '/placeholder.jpg'}
+        src={backgroundPath || "/placeholder.jpg"}
         alt={novel.title || "Book Cover"}
         fill
-        style={{ objectFit: 'cover' }}
+        style={{ objectFit: "cover" }}
         className="z-0"
       />
       <div className="relative h-full z-10 flex items-start gap-5 self-stretch w-full">
         <div className="items-center h-full flex-1 grow flex gap-2.5  relative bg-opacity-50 rounded-lg">
           <div className="self-stretch flex flex-col border-r border-white/30">
-          {/* VIEW */}
-          <div
-            className="
+            {/* VIEW */}
+            <div
+              className="
               flex-1
               flex items-center justify-center
               cursor-pointer
@@ -56,20 +56,17 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               group
               px-4
             "
-            onClick={() => handleNovelAction(novel.id, "view")}
-          >
-            <Eye
-              size={20}
-              className="text-white/70 group-hover:text-white"
-            />
-          </div>
+              onClick={() => handleNovelAction(novel.id, "view")}
+            >
+              <Eye size={20} className="text-white/70 group-hover:text-white" />
+            </div>
 
-          {/* Divider */}
-          <div className="h-px w-full bg-white/20" />
+            {/* Divider */}
+            <div className="h-px w-full bg-white/20" />
 
-          {/* DELETE */}
-          <div
-            className="
+            {/* DELETE */}
+            <div
+              className="
               flex-1
               flex items-center justify-center
               cursor-pointer
@@ -77,15 +74,14 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               hover:bg-red-900/70
               group
             "
-            onClick={() => handleNovelAction(novel.id, "delete")}
-          >
-            <Trash
-              size={20}
-              className="text-white/70 group-hover:text-white"
-            />
+              onClick={() => handleNovelAction(novel.id, "delete")}
+            >
+              <Trash
+                size={20}
+                className="text-white/70 group-hover:text-white"
+              />
+            </div>
           </div>
-
-        </div>
 
           <div className="flex flex-col items-start justify-between px-5 py-[5px] relative flex-1 self-stretch grow">
             <div className="flex gap-2.5 self-stretch w-full items-center relative flex-[0_0_auto]">
@@ -106,11 +102,13 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
                   </span>
                 </span>
               )}
-              <div className="self-stretch flex items-center justify-center px-1 hover:bg-blue-900/20 transition-colors cursor-pointer"
-                onClick={() => handleNovelAction(novel.id, "edit")}>
+              <div
+                className="self-stretch flex items-center justify-center px-1 hover:bg-blue-900/20 transition-colors cursor-pointer"
+                onClick={() => handleNovelAction(novel.id, "edit")}
+              >
                 <SquarePen size={20} className="text-white" />
-                </div>
               </div>
+            </div>
 
             <div className="flex gap-5 self-stretch w-full items-center relative flex-[0_0_auto]">
               <p className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-white text-lg tracking-[0.10px] leading-8 whitespace-nowrap">

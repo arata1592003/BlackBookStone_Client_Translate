@@ -14,10 +14,12 @@ export type BookInfoRow = {
   author_name_translated: string | null;
   publication_status: string | null;
   cover_image_url: string | null;
-  users: {
-    first_name: string | null;
-    last_name: string | null;
-  }[] | null;
+  users:
+    | {
+        first_name: string | null;
+        last_name: string | null;
+      }[]
+    | null;
 };
 
 export type ChapterStatRow = {
@@ -48,13 +50,13 @@ export type UserBookItemRow = {
     }[];
   }[];
 
-  book_chapter_stats: {
-    total_chapters: number;
-    translated_chapters: number;
-  }[] | null;
+  book_chapter_stats:
+    | {
+        total_chapters: number;
+        translated_chapters: number;
+      }[]
+    | null;
 };
-
-
 
 import { supabaseClient } from "@/lib/supabase/client";
 
@@ -62,7 +64,7 @@ export async function fetchNewestBooks(): Promise<BookCardWithAuthorRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
     .select(
-      "id, slug, book_name_translated, author_name_translated, cover_image_url"
+      "id, slug, book_name_translated, author_name_translated, cover_image_url",
     )
     .eq("is_published", true)
     .order("created_at", { ascending: false })
@@ -73,7 +75,7 @@ export async function fetchNewestBooks(): Promise<BookCardWithAuthorRow[]> {
 }
 
 export async function fetchBookInfoBySlug(
-  slug: string
+  slug: string,
 ): Promise<BookInfoRow | null> {
   const { data, error } = await supabaseClient
     .from("books")
@@ -90,7 +92,7 @@ export async function fetchBookInfoBySlug(
         first_name,
         last_name
       )
-    `
+    `,
     )
     .eq("slug", slug)
     .eq("is_published", true)
@@ -101,7 +103,7 @@ export async function fetchBookInfoBySlug(
 }
 
 export async function fetchChapterStatsByBookId(
-  bookId: string
+  bookId: string,
 ): Promise<ChapterStatRow[]> {
   const { data, error } = await supabaseClient
     .from("chapters")
@@ -115,22 +117,22 @@ export async function fetchChapterStatsByBookId(
 
 export async function fetchUserBookStats(userId: string) {
   const { count: crawledCount, error: crawlError } = await supabaseClient
-    .from('jobs')
-    .select('*', { count: 'exact', head: true })
-    .eq('owner_user_id', userId)
-    .eq('type', 'crawl')
-    .eq('status', 'DONE');
+    .from("jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("owner_user_id", userId)
+    .eq("type", "crawl")
+    .eq("status", "DONE");
 
   if (crawlError) {
     console.error("Error fetching crawled stats:", crawlError.message);
   }
 
   const { count: translatedCount, error: translateError } = await supabaseClient
-    .from('jobs')
-    .select('*', { count: 'exact', head: true })
-    .eq('owner_user_id', userId)
-    .eq('type', 'translate')
-    .eq('status', 'DONE');
+    .from("jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("owner_user_id", userId)
+    .eq("type", "translate")
+    .eq("status", "DONE");
 
   if (translateError) {
     console.error("Error fetching translated stats:", translateError.message);
@@ -143,7 +145,7 @@ export async function fetchUserBookStats(userId: string) {
 }
 
 export async function fetchBooksByOwner(
-  userId: string
+  userId: string,
 ): Promise<UserBookItemRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
@@ -167,7 +169,7 @@ export async function fetchBooksByOwner(
         total_chapters,
         translated_chapters
       )
-      `
+      `,
     )
     .eq("owner_user_id", userId)
     .order("created_at", { ascending: false });
@@ -181,7 +183,7 @@ export async function fetchBooksByOwner(
 }
 
 export async function fetchFollowedBooksByUserId(
-  userId: string
+  userId: string,
 ): Promise<UserBookItemRow[]> {
   const { data, error } = await supabaseClient
     .from("book_follows")
@@ -205,7 +207,7 @@ export async function fetchFollowedBooksByUserId(
           translated_chapters
         )
       )
-      `
+      `,
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -217,9 +219,5 @@ export async function fetchFollowedBooksByUserId(
 
   // The query returns an array of { books: { ... } }, so we map to get the book object.
   // We also need to filter out any null book entries that might occur.
-  return (
-    data
-      ?.flatMap(item => item.books ?? [])
-      .filter(Boolean) ?? []
-  );
+  return data?.flatMap((item) => item.books ?? []).filter(Boolean) ?? [];
 }

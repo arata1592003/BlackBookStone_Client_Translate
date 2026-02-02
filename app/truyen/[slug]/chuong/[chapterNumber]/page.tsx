@@ -19,10 +19,7 @@ export default async function ChapterReadPage({ params }: PageProps) {
     throw new Error("Invalid chapter number");
   }
 
-  const chapter = await getChapterDetailBySlugAndNumber(
-    slug,
-    chapterNumberic
-  );
+  const chapter = await getChapterDetailBySlugAndNumber(slug, chapterNumberic);
 
   if (!chapter) {
     return <div>Chapter not found</div>;

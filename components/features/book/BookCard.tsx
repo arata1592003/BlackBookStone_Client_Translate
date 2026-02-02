@@ -15,11 +15,13 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
         group
       "
     >
-      <div className="
+      <div
+        className="
         relative w-full aspect-[2/3]
         overflow-hidden rounded-lg
         bg-surface-raised
-      ">
+      "
+      >
         <Image
           src={book.cover_image_url}
           alt={book.book_name_translated}
@@ -28,14 +30,16 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
         />
       </div>
 
-      <p className="
+      <p
+        className="
         mt-2
         text-xs sm:text-sm
         text-text-secondary
         line-clamp-1
         text-center
         group-hover:text-red-400
-      ">
+      "
+      >
         {book.book_name_translated}
       </p>
     </Link>

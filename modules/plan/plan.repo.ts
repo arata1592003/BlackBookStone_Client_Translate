@@ -13,7 +13,7 @@ export async function fetchActivePlans(): Promise<TopupPlanEntity[]> {
     throw error;
   }
 
-  console.log(data)
+  console.log(data);
 
   return data || [];
 }

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { HomeHeader } from "@/components/layout/HomeHeader";
 import React from "react";

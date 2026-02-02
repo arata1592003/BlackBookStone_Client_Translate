@@ -25,9 +25,7 @@ export const HorizontalBookScroller = ({ books }: Props) => {
     if (!firstCardRef.current) return;
 
     const update = () => {
-      setCardWidth(
-        firstCardRef.current!.getBoundingClientRect().width
-      );
+      setCardWidth(firstCardRef.current!.getBoundingClientRect().width);
     };
 
     update();
@@ -55,7 +53,7 @@ export const HorizontalBookScroller = ({ books }: Props) => {
       {/* Prev */}
       <Button
         variant="ghost"
-        onClick={() => setIndex(i => Math.max(i - 1, 0))}
+        onClick={() => setIndex((i) => Math.max(i - 1, 0))}
         disabled={!canGoPrev}
         className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-2 py-1 text-white disabled:opacity-30 h-auto"
       >
@@ -76,10 +74,7 @@ export const HorizontalBookScroller = ({ books }: Props) => {
           }}
         >
           {books.map((book, i) => (
-            <div
-              key={book.id}
-              ref={i === 0 ? firstCardRef : null}
-            >
+            <div key={book.id} ref={i === 0 ? firstCardRef : null}>
               <BookCard book={book} />
             </div>
           ))}
@@ -89,9 +84,7 @@ export const HorizontalBookScroller = ({ books }: Props) => {
       {/* Next */}
       <Button
         variant="ghost"
-        onClick={() =>
-          setIndex(i => Math.min(i + 1, maxIndex))
-        }
+        onClick={() => setIndex((i) => Math.min(i + 1, maxIndex))}
         disabled={!canGoNext}
         className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 px-2 py-1 text-white disabled:opacity-30 h-auto"
       >

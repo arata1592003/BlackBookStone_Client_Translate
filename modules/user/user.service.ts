@@ -4,7 +4,9 @@ import { fetchUserBookStats } from "../book/book.repo";
 import { User } from "@supabase/supabase-js";
 import { mapToUserProfile } from "./user.mapper";
 
-export async function getUserProfileById(userId: string): Promise<UserProfile | null> {
+export async function getUserProfileById(
+  userId: string,
+): Promise<UserProfile | null> {
   const entity = await fetchUserProfileById(userId);
 
   if (!entity) {
@@ -21,13 +23,13 @@ export async function getUserStats(user: User) {
 
   const [transactionStats, bookStats] = await Promise.all([
     fetchUserTransactionStats(user.id),
-    fetchUserBookStats(user.id)
+    fetchUserBookStats(user.id),
   ]);
 
-  console.log(transactionStats)
+  console.log(transactionStats);
 
   return {
     ...transactionStats,
-    ...bookStats
+    ...bookStats,
   };
 }

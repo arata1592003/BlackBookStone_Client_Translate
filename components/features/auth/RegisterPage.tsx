@@ -35,7 +35,7 @@ export const RegisterPage = () => {
         setError(error.message);
       } else {
         setSuccessMessage(
-          "Đăng ký thành công! Vui lòng kiểm tra email của bạn để xác thực tài khoản."
+          "Đăng ký thành công! Vui lòng kiểm tra email của bạn để xác thực tài khoản.",
         );
         setEmail("");
         setPassword("");
@@ -128,7 +128,10 @@ export const RegisterPage = () => {
         )}
         <div className="text-center text-sm text-auth-text-muted">
           Đã có tài khoản?{" "}
-          <Link href="/dang-nhap" className="font-medium text-auth-primary hover:text-auth-focus-ring">
+          <Link
+            href="/dang-nhap"
+            className="font-medium text-auth-primary hover:text-auth-focus-ring"
+          >
             Đăng nhập
           </Link>
         </div>

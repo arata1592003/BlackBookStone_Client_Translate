@@ -8,11 +8,14 @@ function mapTransaction(entity: WalletTransactionEntity): WalletTransaction {
     content: entity.reason,
     change: entity.change_gem,
     balanceAfter: entity.balance_after,
-    createdAt: new Date(entity.created_at).toLocaleString('vi-VN'),
+    createdAt: new Date(entity.created_at).toLocaleString("vi-VN"),
   };
 }
 
-export async function getTransactionsForCurrentUser(user: User, limit = 50): Promise<WalletTransaction[]> {
+export async function getTransactionsForCurrentUser(
+  user: User,
+  limit = 50,
+): Promise<WalletTransaction[]> {
   if (!user) {
     console.warn("No current user found to fetch transactions.");
     return [];

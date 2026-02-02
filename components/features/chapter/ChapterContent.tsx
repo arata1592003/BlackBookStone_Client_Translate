@@ -13,7 +13,7 @@ export const ChapterContent = ({
   createdAt,
   content,
 }: Props) => {
-  console.log(content)
+  console.log(content);
   const paragraphs = content.split("\n");
 
   return (

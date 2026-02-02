@@ -7,12 +7,12 @@ import {
   fetchChapterListByBookSlug,
   fetchNewestChaptersByBookSlug,
   fetchNextChapterNumber,
-  fetchPrevChapterNumber
+  fetchPrevChapterNumber,
 } from "./chapter.repo";
 
 export async function getNewestChapterListByBookSlug(
   slug: string,
-  limit = 10
+  limit = 10,
 ): Promise<ChapterRow[]> {
   const rows = await fetchNewestChaptersByBookSlug(slug, limit);
   return rows.map(mapToChapterRow);
@@ -22,13 +22,13 @@ export async function getChapterListByBookSlug(
   slug: string,
   offset = 0,
   limit = 20,
-  newestFirst = false
+  newestFirst = false,
 ): Promise<ChapterRow[]> {
   const rows = await fetchChapterListByBookSlug(
     slug,
     offset,
     offset + limit - 1,
-    newestFirst
+    newestFirst,
   );
 
   return rows.map(mapToChapterRow);
@@ -41,7 +41,7 @@ export async function getChapterCountByBookSlug(slug: string): Promise<number> {
 
 export async function getChapterDetailBySlugAndNumber(
   slug: string,
-  chapterNumber: number
+  chapterNumber: number,
 ): Promise<ChapterDetail> {
   const book = await fetchBookInfoBySlug(slug);
   if (!book) throw new Error("Book not found");
@@ -59,6 +59,6 @@ export async function getChapterDetailBySlugAndNumber(
     book.book_name_translated ?? "",
     chapter,
     prev,
-    next
+    next,
   );
 }

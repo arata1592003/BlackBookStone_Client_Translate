@@ -5,10 +5,14 @@ import {
   ChapterStatRow,
   UserBookItemRow,
 } from "@/modules/book/book.repo";
-import { BookCardWithAuthor, BookInfo, UserBookItem } from "@/modules/book/book.types";
+import {
+  BookCardWithAuthor,
+  BookInfo,
+  UserBookItem,
+} from "@/modules/book/book.types";
 
 export const mapToBookCardWithAuthor = (
-  row: BookCardWithAuthorRow
+  row: BookCardWithAuthorRow,
 ): BookCardWithAuthor => ({
   id: row.id,
   slug: row.slug,
@@ -19,17 +23,14 @@ export const mapToBookCardWithAuthor = (
 
 export const mapToBookInfo = (
   book: BookInfoRow,
-  chapters: ChapterStatRow[]
+  chapters: ChapterStatRow[],
 ): BookInfo => {
   const count_chapter = chapters.length;
   const count_word = chapters.reduce(
     (s, c) => s + (c.total_words_translate ?? 0),
-    0
+    0,
   );
-  const view = chapters.reduce(
-    (s, c) => s + (c.view_count ?? 0),
-    0
-  );
+  const view = chapters.reduce((s, c) => s + (c.view_count ?? 0), 0);
 
   const user = book.users?.[0];
 
@@ -52,12 +53,10 @@ export const mapToBookInfo = (
   };
 };
 
-export const mapToUserBookItem = (
-  row: UserBookItemRow
-): UserBookItem => {
+export const mapToUserBookItem = (row: UserBookItemRow): UserBookItem => {
   const genres =
     row.book_tags
-      ?.map(bt => bt.tags[0]?.name)
+      ?.map((bt) => bt.tags[0]?.name)
       .filter((name): name is string => Boolean(name)) ?? [];
 
   const stats = row.book_chapter_stats?.[0];

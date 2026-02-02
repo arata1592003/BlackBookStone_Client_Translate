@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
-import type { User } from '@supabase/supabase-js';
+import type { User } from "@supabase/supabase-js";
 
 import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth"; // New import
 import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth"; // New import
@@ -38,7 +38,10 @@ export const HomeHeader = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target as Node)) {
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsUserDropdownOpen(false);
       }
     };
@@ -72,10 +75,18 @@ export const HomeHeader = () => {
   };
 
   const userMenuItems = [
-    { id: "ban-lam-viec", label: "Bàn làm việc", href: "/tai-khoan/ban-lam-viec" },
+    {
+      id: "ban-lam-viec",
+      label: "Bàn làm việc",
+      href: "/tai-khoan/ban-lam-viec",
+    },
     { id: "tu-truyen", label: "Tủ truyện", href: "/tai-khoan/tu-truyen" },
     { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
-    { id: "lich-su-giao-dich", label: "Lịch sử giao dịch", href: "/tai-khoan/lich-su-giao-dich" },
+    {
+      id: "lich-su-giao-dich",
+      label: "Lịch sử giao dịch",
+      href: "/tai-khoan/lich-su-giao-dich",
+    },
     { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
   ];
 

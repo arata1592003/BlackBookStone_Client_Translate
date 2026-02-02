@@ -28,10 +28,7 @@ export function BookDetailSection({
     <div className="flex items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
       <div className="inline-flex flex-col items-start gap-[30px] relative flex-[0_0_auto]">
         <BookInfoCard bookInfo={bookInfo} onGoChapterList={goToChapterList} />
-        <ChapterNewestList
-          slug={slug}
-          newestChapterList={newestChapterList}
-        />
+        <ChapterNewestList slug={slug} newestChapterList={newestChapterList} />
         <div ref={chapterTabRef}>
           <BookDetailTabs slug={slug} description={null} />
         </div>

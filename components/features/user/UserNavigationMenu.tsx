@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
@@ -44,10 +44,18 @@ export const UserNavigationMenu = () => {
   };
 
   const menuItems: MenuItem[] = [
-    { id: "ban-lam-viec", label: "Bàn làm việc", href: "/tai-khoan/ban-lam-viec" },
+    {
+      id: "ban-lam-viec",
+      label: "Bàn làm việc",
+      href: "/tai-khoan/ban-lam-viec",
+    },
     { id: "tu-truyen", label: "Tủ truyện", href: "/tai-khoan/tu-truyen" },
     { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
-    { id: "lich-su-giao-dich", label: "Lịch sử giao dịch", href: "/tai-khoan/lich-su-giao-dich" },
+    {
+      id: "lich-su-giao-dich",
+      label: "Lịch sử giao dịch",
+      href: "/tai-khoan/lich-su-giao-dich",
+    },
     { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
     { id: "dang-xuat", label: "Đăng xuất", href: "#" },
   ];
@@ -95,7 +103,9 @@ export const UserNavigationMenu = () => {
           role="menu"
         >
           {menuItems.map((item) => {
-            const isActive = pathname === item.href || (item.id === "ban-lam-viec" && pathname === "/user");
+            const isActive =
+              pathname === item.href ||
+              (item.id === "ban-lam-viec" && pathname === "/user");
 
             return (
               <li

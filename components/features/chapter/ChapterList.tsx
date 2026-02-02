@@ -7,7 +7,7 @@ import {
 import type { ChapterRow } from "@/modules/chapter/chapter.type";
 import { timeAgo } from "@/utils/date";
 import { Button } from "@/components/ui/Button";
-import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -19,7 +19,7 @@ interface Props {
 function getVisiblePages(
   current: number,
   total: number,
-  delta = 2
+  delta = 2,
 ): (number | "...")[] {
   const pages: (number | "...")[] = [];
   const start = Math.max(1, current - delta);
@@ -58,12 +58,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
       const offset = (currentPage - 1) * chaptersPerPage;
 
       const [list, total] = await Promise.all([
-        getChapterListByBookSlug(
-          slug,
-          offset,
-          chaptersPerPage,
-          newestFirst
-        ),
+        getChapterListByBookSlug(slug, offset, chaptersPerPage, newestFirst),
         getChapterCountByBookSlug(slug),
       ]);
 
@@ -123,7 +118,9 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
         </div>
 
         {loading ? (
-          <div className="text-text-secondary text-center py-6 w-full">Đang tải...</div>
+          <div className="text-text-secondary text-center py-6 w-full">
+            Đang tải...
+          </div>
         ) : chapters.length === 0 ? (
           <div className="text-text-secondary text-center py-6 w-full opacity-70">
             Không có chương nào
@@ -171,7 +168,10 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
 
         {pageNumbers.map((pageNum, index) =>
           pageNum === "..." ? (
-            <span key={`ellipsis-${index}`} className="px-2 text-text-secondary opacity-60">
+            <span
+              key={`ellipsis-${index}`}
+              className="px-2 text-text-secondary opacity-60"
+            >
               ...
             </span>
           ) : (
@@ -199,7 +199,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
                 {pageNum}
               </div>
             </Button>
-          )
+          ),
         )}
 
         <Button

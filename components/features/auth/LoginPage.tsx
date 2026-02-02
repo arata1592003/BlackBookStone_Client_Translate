@@ -3,8 +3,8 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { useFormStatus } from 'react-dom'; 
-import { login } from '@/app/actions/auth'; 
+import { useFormStatus } from "react-dom";
+import { login } from "@/app/actions/auth";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
@@ -20,14 +20,14 @@ const SubmitButton = () => {
 };
 
 export const LoginPage = () => {
-  const [error, setError] = useState<string | null>(null); 
+  const [error, setError] = useState<string | null>(null);
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const errorMessage = params.get('error');
+    const errorMessage = params.get("error");
     if (errorMessage) {
       setError(decodeURIComponent(errorMessage));
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
 
@@ -48,7 +48,7 @@ export const LoginPage = () => {
               </label>
               <input
                 id="email-address"
-                name="email" 
+                name="email"
                 type="email"
                 autoComplete="email"
                 required
@@ -62,7 +62,7 @@ export const LoginPage = () => {
               </label>
               <input
                 id="password"
-                name="password" 
+                name="password"
                 type="password"
                 autoComplete="current-password"
                 required
@@ -71,7 +71,6 @@ export const LoginPage = () => {
               />
             </div>
           </div>
-
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -80,27 +79,34 @@ export const LoginPage = () => {
                 type="checkbox"
                 className="h-4 w-4 text-auth-primary focus:ring-auth-focus-ring border-auth-border rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-auth-text">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-auth-text"
+              >
                 Ghi nhớ tôi
               </label>
             </div>
 
             <div className="text-sm">
-              <Link href="#" className="font-medium text-auth-primary hover:text-auth-focus-ring">
+              <Link
+                href="#"
+                className="font-medium text-auth-primary hover:text-auth-focus-ring"
+              >
                 Quên mật khẩu?
               </Link>
             </div>
           </div>
-
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
-
           <SubmitButton /> {/* Sử dụng component nút gửi mới */}
         </form>
         <div className="text-center text-sm text-auth-text-muted">
           Chưa có tài khoản?{" "}
-          <Link href="/dang-ky" className="font-medium text-auth-primary hover:text-auth-focus-ring">
+          <Link
+            href="/dang-ky"
+            className="font-medium text-auth-primary hover:text-auth-focus-ring"
+          >
             Đăng ký ngay
           </Link>
         </div>

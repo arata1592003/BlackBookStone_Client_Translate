@@ -1,12 +1,12 @@
 // app/actions/auth.ts
-'use server';
+"use server";
 
-import { createServerSupabaseClient } from '@/lib/supabase/user/server';
-import { redirect } from 'next/navigation';
+import { createServerSupabaseClient } from "@/lib/supabase/user/server";
+import { redirect } from "next/navigation";
 
 export async function login(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   const supabase = await createServerSupabaseClient();
 
@@ -23,12 +23,12 @@ export async function login(formData: FormData) {
 
   // Nếu thành công, Supabase Auth Helpers đã tự động thiết lập cookies.
   // Chuyển hướng đến trang chính hoặc trang người dùng.
-  redirect('/');
+  redirect("/");
 }
 
 // Bạn có thể thêm hàm logout tại đây
 export async function logout() {
   const supabase = await createServerSupabaseClient();
   await supabase.auth.signOut();
-  redirect('/dang-nhap'); // Chuyển hướng về trang đăng nhập sau khi đăng xuất
+  redirect("/dang-nhap"); // Chuyển hướng về trang đăng nhập sau khi đăng xuất
 }

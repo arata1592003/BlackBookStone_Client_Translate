@@ -6,9 +6,11 @@ export type ChapterWithBookSlugRow = {
   chapter_title_translated: string | null;
   created_at: string;
   view_count: number | null;
-  books: {
-    slug: string;
-  }[] | null;
+  books:
+    | {
+        slug: string;
+      }[]
+    | null;
 };
 
 export type ChapterContentRow = {
@@ -25,7 +27,7 @@ export type ChapterContentRow = {
 
 export async function fetchNewestChaptersByBookSlug(
   slug: string,
-  limit: number
+  limit: number,
 ): Promise<ChapterWithBookSlugRow[]> {
   const { data, error } = await supabaseClient
     .from("chapters")
@@ -37,7 +39,7 @@ export async function fetchNewestChaptersByBookSlug(
       created_at,
       view_count,
       books!inner ( slug )
-    `
+    `,
     )
     .eq("books.slug", slug)
     .eq("chapter_status", true)
@@ -52,7 +54,7 @@ export async function fetchChapterListByBookSlug(
   slug: string,
   from: number,
   to: number,
-  newestFirst: boolean
+  newestFirst: boolean,
 ): Promise<ChapterWithBookSlugRow[]> {
   const { data, error } = await supabaseClient
     .from("chapters")
@@ -64,7 +66,7 @@ export async function fetchChapterListByBookSlug(
       created_at,
       view_count,
       books!inner ( slug )
-    `
+    `,
     )
     .eq("books.slug", slug)
     .eq("chapter_status", true)
@@ -76,7 +78,7 @@ export async function fetchChapterListByBookSlug(
 }
 
 export async function fetchChapterCountByBookId(
-  bookId: string
+  bookId: string,
 ): Promise<number> {
   const { count, error } = await supabaseClient
     .from("chapters")
@@ -89,7 +91,7 @@ export async function fetchChapterCountByBookId(
 }
 
 export async function fetchChapterCountByBookSlug(
-  slug: string
+  slug: string,
 ): Promise<number> {
   const { data: book, error: bookError } = await supabaseClient
     .from("books")
@@ -111,7 +113,7 @@ export async function fetchChapterCountByBookSlug(
 
 export async function fetchChapterDetail(
   bookId: string,
-  chapterNumber: number
+  chapterNumber: number,
 ): Promise<ChapterContentRow | null> {
   const { data, error } = await supabaseClient
     .from("chapters")
@@ -123,7 +125,7 @@ export async function fetchChapterDetail(
       view_count,
       created_at,
       chapter_content ( content_translated )
-    `
+    `,
     )
     .eq("book_id", bookId)
     .eq("chapter_number", chapterNumber)
@@ -136,7 +138,7 @@ export async function fetchChapterDetail(
 
 export async function fetchPrevChapterNumber(
   bookId: string,
-  chapterNumber: number
+  chapterNumber: number,
 ): Promise<number | null> {
   const { data } = await supabaseClient
     .from("chapters")
@@ -152,7 +154,7 @@ export async function fetchPrevChapterNumber(
 
 export async function fetchNextChapterNumber(
   bookId: string,
-  chapterNumber: number
+  chapterNumber: number,
 ): Promise<number | null> {
   const { data } = await supabaseClient
     .from("chapters")
