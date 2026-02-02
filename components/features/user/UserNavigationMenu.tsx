@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
-import { getCurrentUser } from "@/modules/user/user.service";
-import { User } from "@/modules/user/user.type";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 interface MenuItem {
   id: string;
@@ -22,25 +21,18 @@ export const UserNavigationMenu = () => {
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { user, userProfile, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchData = async () => {
       try {
         const fetchedTags = await getAllTags();
         setTags(fetchedTags);
       } catch (error) {
         console.error("Failed to fetch tags:", error);
       }
-
-      try {
-        const user = await getCurrentUser();
-        setCurrentUser(user);
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
-      }
     };
-    fetchInitialData();
+    fetchData();
   }, []);
 
   const handleLoginClick = () => {

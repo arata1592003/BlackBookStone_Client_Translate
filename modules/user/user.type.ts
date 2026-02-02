@@ -7,8 +7,9 @@ export type UserEntity = {
   is_admin: boolean | null;
 };
 
-export type User = {
-  id: string;
-  fullName: string;
-  isAdmin: boolean;
+export type UserProfile = {
+  first_name: string | null;
+  last_name: string | null;
+  created_at: string;
+  is_admin: boolean | null;
 };

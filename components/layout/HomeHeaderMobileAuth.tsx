@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { User } from "@/modules/user/user.type";
 import Link from "next/link";
 import React, { RefObject } from "react";
+import { useAuth } from "../providers/AuthProvider";
 
 interface HomeHeaderMobileAuthProps {
-  currentUser: User | null;
   handleLoginClick: () => void;
   handleRegisterClick: () => void;
   handleLogout: () => Promise<void>;
@@ -17,7 +16,6 @@ interface HomeHeaderMobileAuthProps {
 }
 
 export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
-  currentUser,
   handleLoginClick,
   handleRegisterClick,
   handleLogout,
@@ -26,9 +24,10 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
   userDropdownRef,
   userMenuItems,
 }) => {
+  const { user, userProfile, isAuthenticated } = useAuth();
   return (
     <div className="flex gap-2 lg:hidden">
-      {currentUser ? (
+      {user ? (
         <div className="relative" ref={userDropdownRef}>
           <Button
             variant="ghost"
@@ -36,7 +35,7 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
             className="px-3 py-1.5 rounded bg-white/20 text-sm font-medium"
             onClick={() => setIsUserDropdownOpen((prev) => !prev)}
           >
-            {currentUser.fullName}
+            {userProfile.first_name + userProfile.last_name}
           </Button>
           {isUserDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">

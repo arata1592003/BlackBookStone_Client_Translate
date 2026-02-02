@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { User } from "@/modules/user/user.type";
 import Link from "next/link";
 import React, { RefObject } from "react";
+import { useAuth } from "../providers/AuthProvider";
 
 interface HomeHeaderDesktopAuthProps {
-  currentUser: User | null;
   handleLoginClick: () => void;
   handleRegisterClick: () => void;
   handleLogout: () => Promise<void>;
@@ -17,7 +16,6 @@ interface HomeHeaderDesktopAuthProps {
 }
 
 export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
-  currentUser,
   handleLoginClick,
   handleRegisterClick,
   handleLogout,
@@ -26,16 +24,17 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
   userDropdownRef,
   userMenuItems,
 }) => {
+  const { user, userProfile, isAuthenticated } = useAuth();
   return (
     <div className="hidden lg:flex gap-3">
-      {currentUser ? (
+      {user ? (
         <div className="relative" ref={userDropdownRef}>
           <Button
             variant="ghost"
             className="px-4 py-2 rounded bg-white/20 text-base font-medium"
             onClick={() => setIsUserDropdownOpen((prev) => !prev)}
           >
-            {currentUser.fullName}
+            {userProfile.first_name + userProfile.last_name}
           </Button>
           {isUserDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">

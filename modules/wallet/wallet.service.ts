@@ -1,4 +1,4 @@
-import { getCurrentUser } from "../user/user.service";
+import { User } from "@supabase/supabase-js";
 import { fetchTransactionsByUserId } from "./wallet.repo";
 import { WalletTransaction, WalletTransactionEntity } from "./wallet.types";
 
@@ -12,8 +12,7 @@ function mapTransaction(entity: WalletTransactionEntity): WalletTransaction {
   };
 }
 
-export async function getTransactionsForCurrentUser(limit = 50): Promise<WalletTransaction[]> {
-  const user = await getCurrentUser();
+export async function getTransactionsForCurrentUser(user: User, limit = 50): Promise<WalletTransaction[]> {
   if (!user) {
     console.warn("No current user found to fetch transactions.");
     return [];

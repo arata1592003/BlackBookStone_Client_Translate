@@ -2,41 +2,34 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
+import { useFormStatus } from 'react-dom'; 
+import { login } from '@/app/actions/auth'; 
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="submit"
+      aria-disabled={pending}
+      className="w-full bg-auth-primary hover:bg-auth-primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-auth-focus-ring"
+    >
+      {pending ? "Đang xử lý..." : "Đăng nhập"}
+    </Button>
+  );
+};
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
 
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setError(error.message);
-      } else {
-        router.push("/");
-        router.refresh();
-      }
-    } catch (err) {
-      setError("Đã có lỗi xảy ra. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const errorMessage = params.get('error');
+    if (errorMessage) {
+      setError(decodeURIComponent(errorMessage));
+      window.history.replaceState(null, '', window.location.pathname);
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-auth-bg py-12 px-4 sm:px-6 lg:px-8">
@@ -46,7 +39,8 @@ export const LoginPage = () => {
             Đăng nhập vào tài khoản của bạn
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Form được liên kết trực tiếp với Server Action */}
+        <form className="mt-8 space-y-6" action={login}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
@@ -54,14 +48,12 @@ export const LoginPage = () => {
               </label>
               <input
                 id="email-address"
-                name="email"
+                name="email" 
                 type="email"
                 autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-gray-500 text-auth-text rounded-t-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
                 placeholder="Địa chỉ email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -70,14 +62,12 @@ export const LoginPage = () => {
               </label>
               <input
                 id="password"
-                name="password"
+                name="password" 
                 type="password"
                 autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-gray-500 text-auth-text rounded-b-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
                 placeholder="Mật khẩu"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -106,15 +96,7 @@ export const LoginPage = () => {
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
 
-          <div>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-auth-primary hover:bg-auth-primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-auth-focus-ring"
-            >
-              {loading ? "Đang xử lý..." : "Đăng nhập"}
-            </Button>
-          </div>
+          <SubmitButton /> {/* Sử dụng component nút gửi mới */}
         </form>
         <div className="text-center text-sm text-auth-text-muted">
           Chưa có tài khoản?{" "}

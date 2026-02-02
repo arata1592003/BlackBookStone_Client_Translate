@@ -1,10 +1,12 @@
 'use client';
 
+import { useAuth } from "@/components/providers/AuthProvider";
 import { getTransactionsForCurrentUser } from "@/modules/wallet/wallet.service";
 import { WalletTransaction } from "@/modules/wallet/wallet.types";
 import { useEffect, useState } from "react";
 
 export default function LichSuGiaoDichPage() {
+  const { user, userProfile, isAuthenticated } = useAuth();
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -12,7 +14,7 @@ export default function LichSuGiaoDichPage() {
     const fetchTransactions = async () => {
       setLoading(true);
       try {
-        const data = await getTransactionsForCurrentUser(100); // Fetch last 100 transactions
+        const data = await getTransactionsForCurrentUser(user, 100); // Fetch last 100 transactions
         setTransactions(data);
       } catch (error) {
         console.error("Failed to fetch transactions:", error);

@@ -1,11 +1,13 @@
 'use client';
 
 import { BookCabinetItem } from "@/components/features/user/BookCabinetItem";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { getFollowedBooksForCurrentUser } from "@/modules/book/book.service";
 import { UserBookItem } from "@/modules/book/book.types";
 import { useEffect, useState } from "react";
 
 export default function TuTruyenPage() {
+  const { user, userProfile, isAuthenticated } = useAuth();
   const [books, setBooks] = useState<UserBookItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,7 +15,7 @@ export default function TuTruyenPage() {
     const fetchBooks = async () => {
       setLoading(true);
       try {
-        const followedBooks = await getFollowedBooksForCurrentUser();
+        const followedBooks = await getFollowedBooksForCurrentUser(user);
         setBooks(followedBooks);
       } catch (error) {
         console.error("Failed to fetch followed books:", error);

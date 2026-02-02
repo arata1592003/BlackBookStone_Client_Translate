@@ -8,16 +8,18 @@ import { Button } from "@/components/ui/Button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const loupe1Path = "/icons8-search-50.png";
 
 export default function BanLamViecPage() {
+  const { user, userProfile, isAuthenticated } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [books, setBooks] = useState<UserBookItem[] | null>(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const ownedBooks = await getOwnedBooksForCurrentUser();
+      const ownedBooks = await getOwnedBooksForCurrentUser(user);
       setBooks(ownedBooks);
     };
 

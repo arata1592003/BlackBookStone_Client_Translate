@@ -8,39 +8,32 @@ import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
-import { getCurrentUser } from "@/modules/user/user.service";
-import { User } from "@/modules/user/user.type";
+import type { User } from '@supabase/supabase-js';
 
 import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth"; // New import
 import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth"; // New import
 import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown"; // New import
+import { useAuth } from "../providers/AuthProvider";
 
 export const HomeHeader = () => {
   const router = useRouter();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const currentUser = useAuth();
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchData = async () => {
       try {
         const fetchedTags = await getAllTags();
         setTags(fetchedTags);
       } catch (error) {
         console.error("Failed to fetch tags:", error);
       }
-
-      try {
-        const user = await getCurrentUser();
-        setCurrentUser(user);
-      } catch (error) {
-        console.error("Failed to fetch current user:", error);
-      }
     };
-    fetchInitialData();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -70,7 +63,7 @@ export const HomeHeader = () => {
       if (error) {
         throw error;
       }
-      setCurrentUser(null);
+      // setCurrentUser(null);
       router.push("/");
     } catch (error) {
       console.error("Failed to log out:", error);
@@ -110,7 +103,6 @@ export const HomeHeader = () => {
             />
           </Link>
           <HomeHeaderMobileAuth
-            currentUser={currentUser}
             handleLoginClick={handleLoginClick}
             handleRegisterClick={handleRegisterClick}
             handleLogout={handleLogout}
@@ -131,7 +123,6 @@ export const HomeHeader = () => {
 
         {/* Desktop auth */}
         <HomeHeaderDesktopAuth
-          currentUser={currentUser}
           handleLoginClick={handleLoginClick}
           handleRegisterClick={handleRegisterClick}
           handleLogout={handleLogout}

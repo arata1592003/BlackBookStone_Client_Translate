@@ -30,8 +30,6 @@ const getStatusStyles = (status: string | null) => {
 export const UserBookCard = ({ novel }: UserBookCardProps) => {
   const statusStyles = getStatusStyles(novel.status);
 
-  console.log(novel)
-
   return (
     <article
       key={novel.id}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/components/providers/AuthProvider';
 import { getUserStats } from '@/modules/user/user.service';
 import { useEffect, useState } from 'react';
 
@@ -30,11 +31,12 @@ const StatCard = ({ title, value }: StatCardData) => (
 
 
 export const UserStats = () => {
+  const { user, userProfile, isAuthenticated } = useAuth();
   const [stats, setStats] = useState<StatCardData[] | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
-      const data = await getUserStats();
+      const data = await getUserStats(user);
       if (data) {
         const formattedStats: StatCardData[] = [
           {
