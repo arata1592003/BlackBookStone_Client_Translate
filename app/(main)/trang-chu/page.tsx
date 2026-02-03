@@ -2,15 +2,20 @@
 
 import { HomeOverviewSection } from "@/components/features/home/HomeOverviewSection";
 import { getNewestBookList } from "@/modules/book/book.service";
-import { BookCardWithAuthor } from "@/modules/book/book.types";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const [books, setBooks] = useState<BookCardWithAuthor[]>([]);
+  const { data: books, isLoading } = useQuery({
+    // Dữ liệu này không phụ thuộc vào user, nên key có thể là một chuỗi đơn giản
+    queryKey: ["newestBooks"],
+    queryFn: getNewestBookList,
+    // Dữ liệu sách mới có thể thay đổi, nên staleTime có thể ngắn hơn
+    staleTime: 1 * 60 * 1000, // 1 phút
+  });
 
-  useEffect(() => {
-    getNewestBookList().then(setBooks);
-  }, []);
+  // HomeOverviewSection cần một mảng, nên ta sẽ truyền một mảng rỗng
+  // nếu books chưa có dữ liệu hoặc đang loading.
+  const bookListData = books || [];
 
   return (
     <main
@@ -19,7 +24,9 @@ export default function Home() {
         mx-auto
       "
     >
-      <HomeOverviewSection books={books} />
+      {/* Có thể thêm một chỉ báo loading ở đây nếu muốn */}
+      {/* {isLoading && <div>Đang tải...</div>} */}
+      <HomeOverviewSection books={bookListData} />
     </main>
   );
 }

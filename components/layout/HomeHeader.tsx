@@ -5,35 +5,28 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { supabaseClient } from "@/lib/supabase/client";
+import { logout } from "@/app/actions/auth"; // Dùng Server Action để logout
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
-import type { User } from "@supabase/supabase-js";
 
-import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth"; // New import
-import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth"; // New import
-import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown"; // New import
 import { useAuth } from "../providers/AuthProvider";
+import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth";
+import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth";
+import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown";
 
 export const HomeHeader = () => {
   const router = useRouter();
+  // Lấy tất cả thông tin cần thiết từ AuthProvider
+  const { user, userProfile, isProfileLoading, isAuthenticated } = useAuth();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
-  const currentUser = useAuth();
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
+  // Chỉ fetch dữ liệu không phụ thuộc vào user
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedTags = await getAllTags();
-        setTags(fetchedTags);
-      } catch (error) {
-        console.error("Failed to fetch tags:", error);
-      }
-    };
-    fetchData();
+    getAllTags().then(setTags).catch(error => console.error("Failed to fetch tags:", error));
   }, []);
 
   useEffect(() => {
@@ -61,17 +54,7 @@ export const HomeHeader = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      const { error } = await supabaseClient.auth.signOut();
-      if (error) {
-        throw error;
-      }
-      // setCurrentUser(null);
-      router.push("/");
-    } catch (error) {
-      console.error("Failed to log out:", error);
-      alert("Đăng xuất thất bại. Vui lòng thử lại.");
-    }
+    await logout(); // Gọi server action
   };
 
   const userMenuItems = [
@@ -103,7 +86,7 @@ export const HomeHeader = () => {
         "
       >
         {/* Logo */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between self-stretch">
           <Link href="/trang-chu">
             <Image
               src="/logo.png"
@@ -114,6 +97,9 @@ export const HomeHeader = () => {
             />
           </Link>
           <HomeHeaderMobileAuth
+            isAuthenticated={isAuthenticated}
+            userProfile={userProfile}
+            isProfileLoading={isProfileLoading}
             handleLoginClick={handleLoginClick}
             handleRegisterClick={handleRegisterClick}
             handleLogout={handleLogout}
@@ -134,6 +120,9 @@ export const HomeHeader = () => {
 
         {/* Desktop auth */}
         <HomeHeaderDesktopAuth
+          isAuthenticated={isAuthenticated}
+          userProfile={userProfile}
+          isProfileLoading={isProfileLoading}
           handleLoginClick={handleLoginClick}
           handleRegisterClick={handleRegisterClick}
           handleLogout={handleLogout}
@@ -145,9 +134,7 @@ export const HomeHeader = () => {
       </div>
 
       {/* ================= NAV ================= */}
-      {/* Quan trọng: nav này KHÔNG overflow */}
       <nav className="relative border-t border-b border-white/20">
-        {/* Thanh menu có overflow riêng */}
         <div
           className="
             flex gap-6
@@ -159,7 +146,6 @@ export const HomeHeader = () => {
             text-sm sm:text-base
           "
         >
-          {/* Thể loại */}
           <HomeHeaderTagsDropdown
             tags={tags}
             isTagsDropdownOpen={isTagsDropdownOpen}

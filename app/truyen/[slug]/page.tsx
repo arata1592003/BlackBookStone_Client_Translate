@@ -2,6 +2,9 @@ import { BookDetailSection } from "@/components/features/book/BookDetailSection"
 import { getBookInfo } from "@/modules/book/book.service";
 import { getNewestChapterListByBookSlug } from "@/modules/chapter/chapter.service";
 
+// Tái xác thực trang này sau mỗi 300 giây (5 phút)
+export const revalidate = 300;
+
 type Props = {
   params: {
     slug: string;

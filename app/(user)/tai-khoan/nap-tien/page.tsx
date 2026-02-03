@@ -1,29 +1,18 @@
 "use client";
 
 import { getActivePlans } from "@/modules/plan/plan.service";
-import { TopupPlan } from "@/modules/plan/plan.types";
 import { Gem } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function NapTienPage() {
-  const [plans, setPlans] = useState<TopupPlan[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      setLoading(true);
-      try {
-        const activePlans = await getActivePlans();
-        setPlans(activePlans);
-      } catch (error) {
-        console.error("Failed to fetch topup plans:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPlans();
-  }, []);
+  const { data: plans, isLoading } = useQuery({
+    queryKey: ["activePlans"],
+    queryFn: getActivePlans,
+    staleTime: 15 * 60 * 1000, // 15 phút
+  });
 
   const handlePlanClick = (planId: string) => {
     setSelectedPlanId(planId);
@@ -40,11 +29,11 @@ export default function NapTienPage() {
         </p>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="text-white text-center w-full p-10">
           Đang tải các gói nạp...
         </div>
-      ) : plans.length === 0 ? (
+      ) : !plans || plans.length === 0 ? (
         <div className="text-white text-center w-full p-10">
           Hiện không có gói nạp nào khả dụng.
         </div>

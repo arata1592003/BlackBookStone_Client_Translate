@@ -70,6 +70,26 @@ The project utilizes **Route Groups** to manage distinct application layouts and
 - **`components/features/`**: Domain-specific components that are used across different pages (e.g., `user/UserStats`).
 - **`components/layout/`**: Major page structure and navigation components (e.g., `HomeHeader`, `UserNavigationMenu`).
 
+### 2.4 Data Fetching & Caching Strategy
+
+Để tối ưu hóa việc tải dữ liệu và giảm thiểu các lệnh gọi API không cần thiết, dự án sử dụng chiến lược caching kết hợp giữa Next.js và React Query:
+
+-   **Server Components (`app/*` không phải `'use client'`):**
+    *   Sử dụng biến `export const revalidate = <seconds>;` trong các tệp `page.tsx` hoặc `layout.tsx`.
+    *   Cơ chế này sẽ cache toàn bộ kết quả HTML được render của trang hoặc layout trong một khoảng thời gian nhất định (`seconds`).
+    *   Áp dụng cho các trang công khai (public pages) có dữ liệu tương đối tĩnh, giúp tăng tốc độ tải trang ban đầu và giảm tải cho server.
+    *   Ví dụ: Trang chi tiết truyện (`app/truyen/[slug]/page.tsx`) sử dụng `revalidate` để cache thông tin sách.
+
+-   **Client Components (`'use client'`):**
+    *   Sử dụng thư viện **React Query (TanStack Query)** để quản lý trạng thái từ server (server state) và caching.
+    *   Các hook như `useQuery` được dùng để fetch dữ liệu. React Query sẽ tự động cache kết quả, thực hiện chiến lược "stale-while-revalidate" (trả về dữ liệu cũ trong khi làm mới dưới nền), và quản lý các trạng thái loading/error.
+    *   Cấu hình `queryKey` theo cấu trúc `['tên_dữ_liệu', id_người_dùng_nếu_có]` để đảm bảo cache độc đáo cho từng loại dữ liệu và từng người dùng.
+    *   `staleTime`: Thời gian dữ liệu được coi là "tươi" (fresh). Trong thời gian này, React Query sẽ trả về dữ liệu từ cache mà không cần kiểm tra lại server.
+    *   `enabled`: Kiểm soát điều kiện để query được kích hoạt, thường dùng để chờ các dữ liệu phụ thuộc (ví dụ: `enabled: !!user` để chờ có thông tin user).
+    *   Ví dụ: Các trang dashboard người dùng (`app/(user)/tai-khoan/*`) sử dụng `useQuery` để lấy dữ liệu profile, danh sách truyện, lịch sử giao dịch.
+
+Chiến lược này giúp cân bằng giữa hiệu suất phía server và trải nghiệm người dùng phía client, đồng thời giảm đáng kể số lượng lệnh gọi API đến Supabase.
+
 ---
 
 ## 3. Workflow & Conventions

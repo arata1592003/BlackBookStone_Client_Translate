@@ -2,28 +2,21 @@
 
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getTransactionsForCurrentUser } from "@/modules/wallet/wallet.service";
-import { WalletTransaction } from "@/modules/wallet/wallet.types";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function LichSuGiaoDichPage() {
-  const { user, userProfile, isAuthenticated } = useAuth();
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      setLoading(true);
-      try {
-        const data = await getTransactionsForCurrentUser(user, 100); // Fetch last 100 transactions
-        setTransactions(data);
-      } catch (error) {
-        console.error("Failed to fetch transactions:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTransactions();
-  }, []);
+  // Sử dụng useQuery để lấy và cache dữ liệu
+  const { data: transactions, isLoading } = useQuery({
+    // queryKey: khóa duy nhất để định danh và cache query này.
+    // Khi user.id thay đổi, React Query sẽ tự động fetch lại.
+    queryKey: ["transactions", user?.id],
+    // queryFn: hàm sẽ được gọi để fetch dữ liệu.
+    queryFn: () => getTransactionsForCurrentUser(user, 100),
+    // enabled: chỉ chạy query này khi `user` không phải là null.
+    enabled: !!user,
+  });
 
   const formatGemChange = (change: number) => {
     const isPositive = change > 0;
@@ -60,11 +53,11 @@ export default function LichSuGiaoDichPage() {
 
         {/* Table Body */}
         <div className="flex flex-col">
-          {loading ? (
+          {isLoading ? ( // Sử dụng isLoading từ useQuery
             <div className="p-10 text-center text-text-muted">
               Đang tải lịch sử giao dịch...
             </div>
-          ) : transactions.length === 0 ? (
+          ) : transactions?.length === 0 || !transactions ? ( // Kiểm tra cả trường hợp !transactions
             <div className="p-10 text-center text-text-muted">
               Không có giao dịch nào.
             </div>

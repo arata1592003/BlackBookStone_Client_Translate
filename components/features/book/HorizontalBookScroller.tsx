@@ -5,7 +5,7 @@ import { BookCardWithAuthor } from "@/modules/book/book.types";
 import { useEffect, useRef, useState } from "react";
 import { BookCard } from "./BookCard";
 
-const GAP = 128; // gap-6
+const GAP = 24; // gap-6 (tương đương 24px nếu 1 unit là 4px)
 
 type Props = {
   books: BookCardWithAuthor[];
@@ -22,18 +22,30 @@ export const HorizontalBookScroller = ({ books }: Props) => {
      1. Đo width card (responsive)
   -------------------------------- */
   useEffect(() => {
-    if (!firstCardRef.current) return;
-
-    const update = () => {
-      setCardWidth(firstCardRef.current!.getBoundingClientRect().width);
+    // Đảm bảo ref.current tồn tại trước khi làm việc với nó
+    if (!firstCardRef.current) {
+      // Nếu không có sách hoặc sách chưa render, không cần đo
+      if (books.length === 0) {
+        setCardWidth(0); // Đặt lại cardWidth nếu không có sách
+      }
+      return;
     };
 
-    update();
+    const update = () => {
+      // Kiểm tra lại firstCardRef.current trong hàm update (quan trọng cho ResizeObserver)
+      if (firstCardRef.current) {
+        setCardWidth(firstCardRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    update(); // Chạy lần đầu tiên
     const ro = new ResizeObserver(update);
     ro.observe(firstCardRef.current);
 
-    return () => ro.disconnect();
-  }, []);
+    return () => {
+      ro.disconnect();
+    };
+  }, [books]); // Thêm `books` vào dependency array
 
   /* -------------------------------
      2. Tính max index
@@ -46,6 +58,7 @@ export const HorizontalBookScroller = ({ books }: Props) => {
   /* -------------------------------
      3. Dịch đúng 1 card
   -------------------------------- */
+  // Chuyển GAP từ đơn vị Tailwind sang pixel
   const translateX = index * (cardWidth + GAP);
 
   return (

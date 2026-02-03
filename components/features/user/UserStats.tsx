@@ -2,7 +2,8 @@
 
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getUserStats } from "@/modules/user/user.service";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 interface StatCardData {
   title: string;
@@ -30,39 +31,38 @@ const StatCard = ({ title, value }: StatCardData) => (
 );
 
 export const UserStats = () => {
-  const { user, userProfile, isAuthenticated } = useAuth();
-  const [stats, setStats] = useState<StatCardData[] | null>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const data = await getUserStats(user);
-      if (data) {
-        const formattedStats: StatCardData[] = [
-          {
-            title: "Đã cào",
-            value: `${data.crawledCount} bộ`,
-          },
-          {
-            title: "Đã dịch",
-            value: `${data.translatedCount} bộ`,
-          },
-          {
-            title: "Tổng chi phí",
-            value: `${data.totalCost.toLocaleString()} đ`,
-          },
-          {
-            title: "Số lượng giao dịch",
-            value: `${data.transactionCount} lần`,
-          },
-        ];
-        setStats(formattedStats);
-      }
-    };
+  const { data: rawStats, isLoading } = useQuery({
+    queryKey: ['userStats', user?.id],
+    queryFn: () => getUserStats(user),
+    enabled: !!user,
+  });
 
-    fetchStats();
-  }, []);
+  // Sử dụng useMemo để chỉ tính toán lại stats khi rawStats thay đổi
+  const stats = useMemo(() => {
+    if (!rawStats) return null;
+    return [
+      {
+        title: "Đã cào",
+        value: `${rawStats.crawledCount} bộ`,
+      },
+      {
+        title: "Đã dịch",
+        value: `${rawStats.translatedCount} bộ`,
+      },
+      {
+        title: "Tổng chi phí",
+        value: `${rawStats.totalCost.toLocaleString()} đ`,
+      },
+      {
+        title: "Số lượng giao dịch",
+        value: `${rawStats.transactionCount} lần`,
+      },
+    ];
+  }, [rawStats]);
 
-  if (!stats) {
+  if (isLoading || !stats) {
     return (
       <section
         className="h-[150px] items-center gap-20 px-[50px] py-2.5 w-full flex relative self-stretch"

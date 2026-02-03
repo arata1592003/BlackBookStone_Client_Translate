@@ -3,28 +3,24 @@
 import { UserBookCard } from "@/components/features/user/UserBookCard";
 import { UserStats } from "@/components/features/user/UserStats";
 import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
-import { UserBookItem } from "@/modules/book/book.types";
 import { Button } from "@/components/ui/Button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
 
 const loupe1Path = "/icons8-search-50.png";
 
 export default function BanLamViecPage() {
-  const { user, userProfile, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [books, setBooks] = useState<UserBookItem[] | null>(null);
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      const ownedBooks = await getOwnedBooksForCurrentUser(user);
-      setBooks(ownedBooks);
-    };
-
-    fetchBooks();
-  }, []);
+  const { data: books, isLoading } = useQuery({
+    queryKey: ['ownedBooks', user?.id],
+    queryFn: () => getOwnedBooksForCurrentUser(user),
+    enabled: !!user,
+  });
 
   const filteredBooks = useMemo(() => {
     if (!books) {
@@ -44,7 +40,7 @@ export default function BanLamViecPage() {
   };
 
   const renderBookList = () => {
-    if (books === null) {
+    if (isLoading) {
       return (
         <div className="flex flex-col items-center justify-center flex-1 w-full text-white">
           <p>Đang tải danh sách truyện...</p>
@@ -52,7 +48,7 @@ export default function BanLamViecPage() {
       );
     }
 
-    if (filteredBooks.length === 0) {
+    if (!filteredBooks || filteredBooks.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center flex-1 w-full text-white">
           <p>Không tìm thấy truyện nào.</p>

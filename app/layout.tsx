@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter, Roboto } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
-import { fetchUserProfileById } from "@/modules/user/user.repo";
-import { getUserProfileById } from "@/modules/user/user.service";
+// Không cần import getUserProfileById ở đây nữa
+// import { getUserProfileById } from "@/modules/user/user.service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,20 +43,23 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  let userProfile = null;
-
-  if (user) {
-    userProfile = await getUserProfileById(user.id);
-  }
+  // Không fetch userProfile ở đây nữa.
+  // let userProfile = null;
+  // if (user) {
+  //   userProfile = await getUserProfileById(user.id);
+  // }
 
   return (
     <html lang="vi">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${roboto.variable} antialiased`}
       >
-        <AuthProvider user={user} userProfile={userProfile}>
-          {children}
-        </AuthProvider>
+        <QueryProvider>
+          {/* Chỉ cần truyền user, AuthProvider sẽ tự lo phần profile */}
+          <AuthProvider user={user}>
+            {children}
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

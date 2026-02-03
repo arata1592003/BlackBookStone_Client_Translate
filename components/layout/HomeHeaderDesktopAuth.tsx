@@ -1,11 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { UserProfile } from "@/modules/user/user.type";
 import Link from "next/link";
 import React, { RefObject } from "react";
-import { useAuth } from "../providers/AuthProvider";
 
 interface HomeHeaderDesktopAuthProps {
+  isAuthenticated: boolean;
+  userProfile: UserProfile | null;
+  isProfileLoading: boolean;
   handleLoginClick: () => void;
   handleRegisterClick: () => void;
   handleLogout: () => Promise<void>;
@@ -16,6 +19,9 @@ interface HomeHeaderDesktopAuthProps {
 }
 
 export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
+  isAuthenticated,
+  userProfile,
+  isProfileLoading,
   handleLoginClick,
   handleRegisterClick,
   handleLogout,
@@ -24,17 +30,27 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
   userDropdownRef,
   userMenuItems,
 }) => {
-  const { user, userProfile, isAuthenticated } = useAuth();
+  const renderUserButtonContent = () => {
+    if (isProfileLoading) {
+      return <span className="w-24 h-6 bg-white/30 animate-pulse rounded-md" />;
+    }
+    if (userProfile) {
+      return `${userProfile.first_name || ""} ${userProfile.last_name || ""}`.trim();
+    }
+    return "Tài khoản";
+  };
+
   return (
-    <div className="hidden lg:flex gap-3">
-      {user ? (
+    <div className="hidden lg:flex items-center gap-3">
+      {isAuthenticated ? (
         <div className="relative" ref={userDropdownRef}>
           <Button
             variant="ghost"
             className="px-4 py-2 rounded bg-white/20 text-base font-medium"
             onClick={() => setIsUserDropdownOpen((prev) => !prev)}
+            disabled={isProfileLoading}
           >
-            {userProfile.first_name + userProfile.last_name}
+            {renderUserButtonContent()}
           </Button>
           {isUserDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
