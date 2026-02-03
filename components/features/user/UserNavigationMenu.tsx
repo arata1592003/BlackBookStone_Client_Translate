@@ -56,6 +56,7 @@ export const UserNavigationMenu = () => {
       label: "Lịch sử giao dịch",
       href: "/tai-khoan/lich-su-giao-dich",
     },
+    { id: "thong-tin", label: "Thông tin cá nhân", href: "/tai-khoan/thong-tin" }, // Thêm mục mới
     { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
     { id: "dang-xuat", label: "Đăng xuất", href: "#" },
   ];

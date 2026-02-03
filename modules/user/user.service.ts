@@ -1,4 +1,4 @@
-import { fetchUserProfileById, fetchUserTransactionStats } from "./user.repo";
+import { fetchUserProfileById, fetchUserTransactionStats, updateUserProfileInDB } from "./user.repo";
 import { UserProfile } from "./user.type";
 import { fetchUserBookStats } from "../book/book.repo";
 import { User } from "@supabase/supabase-js";
@@ -14,6 +14,17 @@ export async function getUserProfileById(
   }
 
   return mapToUserProfile(entity);
+}
+
+export async function updateUserProfile(
+  userId: string,
+  updates: Partial<UserProfile>
+): Promise<UserProfile | null> {
+  const updatedEntity = await updateUserProfileInDB(userId, updates);
+  if (!updatedEntity) {
+    return null;
+  }
+  return mapToUserProfile(updatedEntity);
 }
 
 export async function getUserStats(user: User) {

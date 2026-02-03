@@ -1,18 +1,43 @@
 import { supabaseClient } from "@/lib/supabase/client";
-import { UserEntity } from "./user.type";
+import { UserEntity, UserProfile } from "./user.type";
 
 export async function fetchUserProfileById(
   userId: string,
 ): Promise<UserEntity | null> {
   const { data, error } = await supabaseClient
     .from("users")
-    .select("*")
+    .select("*, phone, date_of_birth") // Chọn thêm phone và date_of_birth
     .eq("id", userId)
     .single();
 
   if (error) {
     console.error("Error fetching user:", error.message);
     return null;
+  }
+
+  return data;
+}
+
+export async function updateUserProfileInDB(
+  userId: string,
+  updates: Partial<UserProfile>
+): Promise<UserEntity | null> {
+  const { data, error } = await supabaseClient
+    .from("users")
+    .update({
+      first_name: updates.first_name,
+      last_name: updates.last_name,
+      phone: updates.phone,
+      date_of_birth: updates.date_of_birth,
+      // updated_at sẽ tự động cập nhật nếu được cấu hình trong DB
+    })
+    .eq("id", userId)
+    .select() // Trả về bản ghi đã cập nhật
+    .single();
+
+  if (error) {
+    console.error("Error updating user profile:", error.message);
+    throw error; // Ném lỗi để Server Action có thể bắt
   }
 
   return data;
