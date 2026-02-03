@@ -14,7 +14,7 @@ export const UserProfileForm = () => {
   const { user, userProfile, isProfileLoading } = useAuth();
   const queryClient = useQueryClient();
 
-  const [state, setState] = useState<{ success: string | null; error: string | null }>({
+  const [state, setState] = useState<{ success?: string | null; error?: string | null }>({
     success: null,
     error: null,
   });
