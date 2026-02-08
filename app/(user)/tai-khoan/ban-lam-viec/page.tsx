@@ -6,11 +6,11 @@ import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
 import { Button } from "@/components/ui/Button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState, useEffect } from "react"; // Import useEffect
+import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
-import { CheckCircle2 } from "lucide-react"; // Import CheckCircle2
+import { useRouter, useSearchParams } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 
 const loupe1Path = "/icons8-search-50.png";
 
@@ -24,12 +24,12 @@ export default function BanLamViecPage() {
 
   // Kiểm tra query param khi component mount
   useEffect(() => {
-    if (searchParams.get('addBookSuccess')) {
+    if (searchParams.get("addBookSuccess")) {
       setShowSuccessMessage(true);
       // Xóa query param khỏi URL để thông báo không xuất hiện lại khi refresh
       const newSearchParams = new URLSearchParams(searchParams.toString());
-      newSearchParams.delete('addBookSuccess');
-      router.replace(`?${newSearchParams.toString()}`, { shallow: true });
+      newSearchParams.delete("addBookSuccess");
+      router.replace(`?${newSearchParams.toString()}`, { scroll: false });
 
       // Tự động ẩn thông báo sau vài giây
       const timer = setTimeout(() => {
@@ -40,9 +40,8 @@ export default function BanLamViecPage() {
     }
   }, [searchParams, router]);
 
-  // Khối useQuery và filteredBooks đã bị mất
   const { data: books, isLoading } = useQuery({
-    queryKey: ['ownedBooks', user?.id],
+    queryKey: ["ownedBooks", user?.id],
     queryFn: () => getOwnedBooksForCurrentUser(user),
     enabled: !!user,
   });
@@ -57,7 +56,7 @@ export default function BanLamViecPage() {
   }, [books, searchQuery]);
 
   const handleAddClick = () => {
-    router.push('/tai-khoan/them-truyen'); // Chuyển hướng đến trang thêm truyện
+    router.push("/tai-khoan/them-truyen");
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

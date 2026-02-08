@@ -4,7 +4,7 @@ import {
   BookInfoRow,
   ChapterStatRow,
   UserBookItemRow,
-} from "@/modules/book/book.repo";
+} from "@/modules/book/book.repo.type";
 import {
   BookCardWithAuthor,
   BookInfo,
