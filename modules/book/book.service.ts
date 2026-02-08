@@ -1,4 +1,3 @@
-// modules/book/book.service.ts
 import {
   BookCardWithAuthor,
   BookInfo,
@@ -15,9 +14,17 @@ import {
   fetchChapterStatsByBookId,
   fetchNewestBooks,
   fetchFollowedBooksByUserId,
+  insertBookTags,
+  insertBook,
+  deleteBook,
 } from "./book.repo";
 
-import { User } from "@supabase/supabase-js";
+import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
+
+import { SupabaseClient, User } from "@supabase/supabase-js";
+import { CreateBookInput } from "./book.service.type";
+import { getSourceIdByUrlRaw } from "../source/source.repo";
+import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 
 export async function getNewestBookList(): Promise<BookCardWithAuthor[]> {
   const rows = await fetchNewestBooks();
@@ -54,4 +61,71 @@ export async function getFollowedBooksForCurrentUser(
 
   const rows = await fetchFollowedBooksByUserId(user.id);
   return rows.map(mapToUserBookItem);
+}
+
+export async function createBook(
+  supabase: SupabaseClient,
+  input: CreateBookInput,
+  user: User,
+): Promise<string> {
+  let sourceId = null;
+  if (input.url_raw) {
+    sourceId = await getSourceIdByUrlRaw(input.url_raw);
+  }
+
+  const bookPayload: BookInsertPayload = {
+    source_id: sourceId,
+    owner_user_id: user.id,
+    book_name_raw: input.book_name_raw ?? null,
+    book_name_translated: input.book_name_translated,
+    author_name_raw: input.author_name_raw ?? null,
+    author_name_translated: input.author_name_translated,
+    publication_status: "ongoing",
+    url_raw: input.url_raw ?? null,
+    cover_image_url: input.cover_image_url ?? null,
+    description: input.description ?? null,
+    source_book_code: input.source_book_code ?? null,
+    slug: null,
+  };
+
+  let newBookId: string;
+
+  try {
+    newBookId = await insertBook(supabase, bookPayload);
+  } catch (error: any) {
+    console.error("Error inserting book:", error);
+    throw new Error(`Lỗi khi tạo sách: ${error.message || "Không xác định"}`);
+  }
+
+  if (!input.genres || input.genres.length === 0) {
+    return newBookId;
+  }
+
+  try {
+    const bookTags: BookTagInsertPayload[] = input.genres.map((tagId) => ({
+      book_id: newBookId,
+      tag_id: tagId,
+    }));
+
+    await insertBookTags(supabase, bookTags);
+    return newBookId;
+  } catch (error: any) {
+    console.error("Error inserting book tags, attempting rollback:", error);
+
+    try {
+      await deleteBook(supabase, newBookId);
+      console.log(`Rollback successful for book ID: ${newBookId}`);
+    } catch (rollbackError) {
+      console.error(
+        `CRITICAL: Rollback failed for book ID ${newBookId}`,
+        rollbackError,
+      );
+    }
+
+    throw new Error(
+      `Đã tạo sách nhưng lỗi khi gán thể loại. Đã hủy tạo sách. Lỗi: ${
+        error.message || "Không xác định"
+      }`,
+    );
+  }
 }

@@ -23,9 +23,6 @@
 #example
 /figma-example
 
-#database
-/database
-
 # misc
 .DS_Store
 *.pem

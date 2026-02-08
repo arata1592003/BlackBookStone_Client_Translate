@@ -6,16 +6,41 @@ import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
 import { Button } from "@/components/ui/Button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react"; // Import useEffect
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
+import { CheckCircle2 } from "lucide-react"; // Import CheckCircle2
 
 const loupe1Path = "/icons8-search-50.png";
 
 export default function BanLamViecPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams(); // Khởi tạo useSearchParams
 
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  // Kiểm tra query param khi component mount
+  useEffect(() => {
+    if (searchParams.get('addBookSuccess')) {
+      setShowSuccessMessage(true);
+      // Xóa query param khỏi URL để thông báo không xuất hiện lại khi refresh
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.delete('addBookSuccess');
+      router.replace(`?${newSearchParams.toString()}`, { shallow: true });
+
+      // Tự động ẩn thông báo sau vài giây
+      const timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 5000); // Hiển thị 5 giây
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, router]);
+
+  // Khối useQuery và filteredBooks đã bị mất
   const { data: books, isLoading } = useQuery({
     queryKey: ['ownedBooks', user?.id],
     queryFn: () => getOwnedBooksForCurrentUser(user),
@@ -32,7 +57,7 @@ export default function BanLamViecPage() {
   }, [books, searchQuery]);
 
   const handleAddClick = () => {
-    console.log("Add button clicked");
+    router.push('/tai-khoan/them-truyen'); // Chuyển hướng đến trang thêm truyện
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +89,13 @@ export default function BanLamViecPage() {
   return (
     <div className="flex flex-col items-start gap-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
       <UserStats />
+
+      {showSuccessMessage && (
+        <div className="bg-emerald-500/20 text-emerald-500 p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0 mt-4">
+          <CheckCircle2 size={20} />
+          <span>Thêm truyện thành công! Yêu cầu crawl đang được xử lý.</span>
+        </div>
+      )}
 
       <div className="flex flex-col items-start justify-center gap-2.5 relative flex-1 self-stretch w-full grow">
         <div className="items-center justify-end gap-[50px] px-[50px] py-2.5 w-full flex-[0_0_auto] flex relative self-stretch">

@@ -1,65 +1,13 @@
-export type BookCardWithAuthorRow = {
-  id: string;
-  slug: string;
-  book_name_translated: string | null;
-  author_name_translated: string | null;
-  cover_image_url: string | null;
-};
-
-export type BookInfoRow = {
-  id: string;
-  slug: string;
-  book_name_translated: string | null;
-  description: string;
-  author_name_translated: string | null;
-  publication_status: string | null;
-  cover_image_url: string | null;
-  users:
-    | {
-        first_name: string | null;
-        last_name: string | null;
-      }[]
-    | null;
-};
-
-export type ChapterStatRow = {
-  total_words_translate: number | null;
-  view_count: number | null;
-};
-
-export type BookChapterStatsRow = {
-  total_chapters: number;
-  translated_chapters: number;
-};
-
-export type UserBookItemRow = {
-  id: string;
-  slug: string;
-  book_name_translated: string | null;
-  author_name_translated: string | null;
-  publication_status: string | null;
-  cover_image_url: string | null;
-
-  is_published: boolean;
-  draft_expires_at: string;
-  updated_at: string;
-
-  book_tags: {
-    tags: {
-      name: string;
-    }[];
-  }[];
-
-  book_chapter_stats:
-    | {
-        total_chapters: number;
-        translated_chapters: number;
-      }[]
-    | null;
-};
-
 import { supabaseClient } from "@/lib/supabase/client";
-
+import {
+  BookCardWithAuthorRow,
+  BookInfoRow,
+  ChapterStatRow,
+  UserBookItemRow,
+  BookInsertPayload,
+  BookTagInsertPayload,
+} from "@/modules/book/book.repo.type";
+import { SupabaseClient } from "@supabase/supabase-js";
 export async function fetchNewestBooks(): Promise<BookCardWithAuthorRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
@@ -217,7 +165,82 @@ export async function fetchFollowedBooksByUserId(
     return [];
   }
 
-  // The query returns an array of { books: { ... } }, so we map to get the book object.
-  // We also need to filter out any null book entries that might occur.
   return data?.flatMap((item) => item.books ?? []).filter(Boolean) ?? [];
+}
+
+/**
+ * Lấy ID của nguồn từ tên nguồn.
+ * @param sourceName Tên của nguồn (ví dụ: "manual").
+ * @returns ID của nguồn hoặc null nếu không tìm thấy.
+ */
+export async function getSourceIdByName(
+  sourceName: string,
+): Promise<string | null> {
+  const { data, error } = await supabaseClient
+    .from("sources")
+    .select("id")
+    .eq("name", sourceName)
+    .single();
+
+  if (error) {
+    console.error("Error in getSourceIdByName:", error.message);
+    return null;
+  }
+  return data?.id || null;
+}
+
+/**
+ * Chèn một cuốn sách mới vào cơ sở dữ liệu.
+ * @param bookPayload Dữ liệu của cuốn sách để chèn.
+ * @returns ID của cuốn sách mới được tạo.
+ */
+export async function insertBook(
+  supabase: SupabaseClient,
+  bookPayload: BookInsertPayload,
+): Promise<string> {
+  console.log(bookPayload);
+  const { data, error } = await supabase
+    .from("books")
+    .insert(bookPayload)
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("Error inserting book:", error.message);
+    throw new Error(`Lỗi khi chèn sách: ${error.message}`);
+  }
+  if (!data) {
+    throw new Error("Không nhận được ID sách sau khi chèn.");
+  }
+  return data.id;
+}
+
+export async function insertBookTags(
+  supabase: SupabaseClient,
+  bookTagsPayloads: BookTagInsertPayload[],
+): Promise<void> {
+  const { error } = await supabase.from("book_tags").insert(bookTagsPayloads);
+
+  if (error) {
+    console.error("Error inserting book tags:", error.message);
+    throw new Error(`Lỗi khi chèn thẻ sách: ${error.message}`);
+  }
+}
+
+/**
+ * Xóa một cuốn sách khỏi cơ sở dữ liệu.
+ * Dùng để rollback nếu việc chèn các thẻ sách thất bại.
+ *
+ * @param bookId ID của cuốn sách cần xóa
+ */
+export async function deleteBook(
+  supabase: SupabaseClient,
+  bookId: string,
+): Promise<void> {
+  const { error } = await supabase.from("books").delete().eq("id", bookId);
+
+  if (error) {
+    console.error("Error deleting book:", error.message);
+    throw new Error(`Lỗi khi xóa sách (rollback): ${error.message}`);
+  }
 }

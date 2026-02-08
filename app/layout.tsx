@@ -5,8 +5,6 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
-// Không cần import getUserProfileById ở đây nữa
-// import { getUserProfileById } from "@/modules/user/user.service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,11 +41,9 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Không fetch userProfile ở đây nữa.
-  // let userProfile = null;
-  // if (user) {
-  //   userProfile = await getUserProfileById(user.id);
-  // }
+  const { data } = await supabase.auth.getSession();
+
+  console.log(data);
 
   return (
     <html lang="vi">
@@ -56,9 +52,7 @@ export default async function RootLayout({
       >
         <QueryProvider>
           {/* Chỉ cần truyền user, AuthProvider sẽ tự lo phần profile */}
-          <AuthProvider user={user}>
-            {children}
-          </AuthProvider>
+          <AuthProvider user={user}>{children}</AuthProvider>
         </QueryProvider>
       </body>
     </html>

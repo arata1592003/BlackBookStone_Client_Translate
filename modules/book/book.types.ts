@@ -88,3 +88,33 @@ export type UserBookItem = {
 
   genres: string[];
 };
+
+// Kiểu dữ liệu cho phản hồi từ API lấy book-info
+export type BookInfoFromSourceResponse = {
+  source: string;
+  book_id: string;
+  book_name_raw: string;
+  author_name_raw: string;
+  url_raw: string;
+  cover_image_url: string | null;
+};
+
+// Kiểu dữ liệu cho request body API tạo book mới
+export type BookCreateRequest = {
+  source: string;
+  book_id: string; // ID của truyện từ nguồn
+  book_name_raw: string;
+  author_name_raw: string;
+  book_name_translated: string;
+  author_name_translated: string;
+  publication_status: string; // Ví dụ: "ongoing", "completed"
+  url_raw: string; // URL gốc chính thức
+  cover_image_url: string | null;
+  description: string | null;
+  list_tag: string[]; // Mảng các tag_id
+};
+
+// Kiểu dữ liệu cho phản hồi API tạo book mới
+export type BookCreateResponse = {
+  book_id: string; // ID của sách đã được tạo trong hệ thống
+};
