@@ -24,6 +24,7 @@ BlackStoneBook Client is a **Next.js 16** web application for online book readin
 
 ```
 ├── app/                          # Next.js App Router (pages & layouts)
+│   ├── actions/                  # Next.js Server Actions (data mutations)
 │   ├── (auth)/                   # Auth route group (no header)
 │   │   ├── dang-ky/              # Register page
 │   │   ├── dang-nhap/            # Login page

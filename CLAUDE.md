@@ -17,6 +17,10 @@ No test framework is configured.
 
 Next.js 16 App Router project (TypeScript, React 19, Tailwind CSS 4, Supabase). Vietnamese-language book reading and translation platform.
 
+### Next.js Server Actions (`app/actions/`)
+
+Used for server-side data mutations, form handling, and revalidation. Marked by `"use server";`. Interact with Supabase via `createServerSupabaseClient` and call `modules/*/service` for business logic.
+
 ### Layered module system (`modules/`)
 
 Each domain module (`book`, `chapter`, `tag`, `user`) has four files:
