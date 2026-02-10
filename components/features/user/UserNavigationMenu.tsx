@@ -20,8 +20,6 @@ export const UserNavigationMenu = () => {
   const pathname = usePathname();
 
   const [tags, setTags] = useState<Tag[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { user, userProfile, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,14 +32,6 @@ export const UserNavigationMenu = () => {
     };
     fetchData();
   }, []);
-
-  const handleLoginClick = () => {
-    router.push("/login");
-  };
-
-  const handleRegisterClick = () => {
-    router.push("/register");
-  };
 
   const menuItems: MenuItem[] = [
     {

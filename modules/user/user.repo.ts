@@ -6,7 +6,7 @@ export async function fetchUserProfileById(
 ): Promise<UserEntity | null> {
   const { data, error } = await supabaseClient
     .from("users")
-    .select("*, phone, date_of_birth") // Chọn thêm phone và date_of_birth
+    .select("*, phone, date_of_birth")
     .eq("id", userId)
     .single();
 
@@ -20,7 +20,7 @@ export async function fetchUserProfileById(
 
 export async function updateUserProfileInDB(
   userId: string,
-  updates: Partial<UserProfile>
+  updates: Partial<UserProfile>,
 ): Promise<UserEntity | null> {
   const { data, error } = await supabaseClient
     .from("users")
@@ -44,7 +44,7 @@ export async function updateUserProfileInDB(
 }
 
 export async function fetchUserTransactionStats(userId: string) {
-  const { data, error, count } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("wallet_transactions")
     .select("change_gem")
     .eq("user_id", userId);

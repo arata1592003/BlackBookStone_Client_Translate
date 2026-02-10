@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { logout } from "@/app/actions/auth"; // Dùng Server Action để logout
+import { logout } from "@/app/actions/auth";
 import { getAllTags } from "@/modules/tag/tag.service";
 import { Tag } from "@/modules/tag/tag.type";
 
@@ -16,17 +16,17 @@ import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown";
 
 export const HomeHeader = () => {
   const router = useRouter();
-  // Lấy tất cả thông tin cần thiết từ AuthProvider
-  const { user, userProfile, isProfileLoading, isAuthenticated } = useAuth();
+  const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Chỉ fetch dữ liệu không phụ thuộc vào user
   useEffect(() => {
-    getAllTags().then(setTags).catch(error => console.error("Failed to fetch tags:", error));
+    getAllTags()
+      .then(setTags)
+      .catch((error) => console.error("Failed to fetch tags:", error));
   }, []);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const HomeHeader = () => {
   };
 
   const handleLogout = async () => {
-    await logout(); // Gọi server action
+    await logout();
   };
 
   const userMenuItems = [

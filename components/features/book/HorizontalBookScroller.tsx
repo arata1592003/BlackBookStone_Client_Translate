@@ -22,30 +22,27 @@ export const HorizontalBookScroller = ({ books }: Props) => {
      1. Đo width card (responsive)
   -------------------------------- */
   useEffect(() => {
-    // Đảm bảo ref.current tồn tại trước khi làm việc với nó
     if (!firstCardRef.current) {
-      // Nếu không có sách hoặc sách chưa render, không cần đo
       if (books.length === 0) {
-        setCardWidth(0); // Đặt lại cardWidth nếu không có sách
+        setCardWidth(0);
       }
       return;
-    };
+    }
 
     const update = () => {
-      // Kiểm tra lại firstCardRef.current trong hàm update (quan trọng cho ResizeObserver)
       if (firstCardRef.current) {
         setCardWidth(firstCardRef.current.getBoundingClientRect().width);
       }
     };
 
-    update(); // Chạy lần đầu tiên
+    update();
     const ro = new ResizeObserver(update);
     ro.observe(firstCardRef.current);
 
     return () => {
       ro.disconnect();
     };
-  }, [books]); // Thêm `books` vào dependency array
+  }, [books]);
 
   /* -------------------------------
      2. Tính max index

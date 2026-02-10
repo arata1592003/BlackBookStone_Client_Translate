@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  BookText,
   FileEdit,
   Globe,
   Trash2,
@@ -26,14 +24,9 @@ import {
   differenceInMinutes,
 } from "date-fns";
 import { vi } from "date-fns/locale";
-import {
-  ManagedBookDetails,
-  ManagedChapter,
-  ChapterContent,
-} from "@/modules/book/book.types"; // Import types
-import { getChapterContentAction } from "@/app/actions/book"; // Import Server Action
+import { ManagedBookDetails, ChapterContent } from "@/modules/book/book.types";
+import { getChapterContentAction } from "@/app/actions/book";
 
-// Helper function to format time difference (can be moved to utils)
 const formatTimeAgo = (dateString: string) => {
   const date = parseISO(dateString);
   const now = new Date();

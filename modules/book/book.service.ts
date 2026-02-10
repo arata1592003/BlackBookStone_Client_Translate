@@ -3,7 +3,6 @@ import {
   BookInfo,
   UserBookItem,
   ManagedBookDetails,
-  ManagedChapter,
   ChapterContent,
 } from "@/modules/book/book.types";
 import {
@@ -32,7 +31,6 @@ import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { CreateBookInput } from "./book.service.type";
 import { getSourceIdByUrlRaw } from "../source/source.repo";
-import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 
 export async function getNewestBookList(): Promise<BookCardWithAuthor[]> {
   const rows = await fetchNewestBooks();
@@ -157,4 +155,3 @@ export async function getChapterContent(
 
   return mapToChapterContent(chapterContentRow);
 }
-
