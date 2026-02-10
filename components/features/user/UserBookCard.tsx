@@ -5,6 +5,7 @@ import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
 import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface UserBookCardProps {
   novel: UserBookItem;
@@ -28,11 +29,13 @@ const getStatusStyles = (status: string | null) => {
 };
 
 export const UserBookCard = ({ novel }: UserBookCardProps) => {
+  const router = useRouter();
   const statusStyles = getStatusStyles(novel.status);
 
   return (
     <article
       key={novel.id}
+      onClick={() => router.push(`/tai-khoan/truyen/${novel.id}`)}
       className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000]"
     >
       <Image

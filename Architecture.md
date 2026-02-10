@@ -131,8 +131,12 @@ All route names are in **Vietnamese**.
 
 ### Server vs Client components
 
-- **Server components** (default): used in `page.tsx` files for async data fetching.
-- **Client components** (`'use client'`): used for interactive UI — forms, dropdowns, navigation state.
+-   **Server components** (mặc định):
+    *   Sử dụng trong các tệp `page.tsx` để fetch dữ liệu không tương tác ban đầu, bao gồm cả việc gọi Server Actions để lấy dữ liệu từ Supabase.
+    *   Có thể truyền dữ liệu đã fetch dưới dạng `props` cho các Client Components.
+-   **Client components** (`'use client'`):
+    *   Sử dụng cho UI tương tác — biểu mẫu, dropdown, quản lý state cục bộ, điều hướng.
+    *   Có thể gọi các Server Actions để thực hiện fetch dữ liệu bổ sung hoặc các thao tác ghi dữ liệu từ phía client, đặc biệt cho các trường hợp lấy dữ liệu theo yêu cầu (on-demand fetching). Ví dụ, một Client Component có thể gọi một Server Action để lấy nội dung chi tiết của một chương khi người dùng nhấp vào nút "Đọc".
 
 ---
 

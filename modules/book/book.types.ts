@@ -118,3 +118,34 @@ export type BookCreateRequest = {
 export type BookCreateResponse = {
   book_id: string; // ID của sách đã được tạo trong hệ thống
 };
+
+export type ManagedBookDetails = {
+  id: string;
+  slug: string;
+  title: string; // book_name_translated
+  originalTitle: string | null; // book_name_raw
+  author: string; // author_name_translated
+  originalAuthor: string | null; // author_name_raw
+  description: string | null;
+  status: string | null; // publication_status
+  coverImageUrl: string | null;
+  source: string | null; // source_name
+  sourceUrl: string | null; // url_raw
+  createdAt: string;
+  updatedAt: string;
+  chapters: ManagedChapter[];
+};
+
+export type ManagedChapter = {
+  id: string;
+  chapterNumber: number;
+  title: string; // title_translated
+  originalTitle: string | null; // title_raw
+  status: boolean; // "DONE", "PENDING", "ERROR"
+  lastUpdated: string; // updated_at
+};
+
+export type ChapterContent = {
+  contentRaw: string | null;
+  contentTranslated: string | null;
+};

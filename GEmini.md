@@ -79,6 +79,9 @@ The project utilizes **Route Groups** to manage distinct application layouts and
     *   Cơ chế này sẽ cache toàn bộ kết quả HTML được render của trang hoặc layout trong một khoảng thời gian nhất định (`seconds`).
     *   Áp dụng cho các trang công khai (public pages) có dữ liệu tương đối tĩnh, giúp tăng tốc độ tải trang ban đầu và giảm tải cho server.
     *   Ví dụ: Trang chi tiết truyện (`app/truyen/[slug]/page.tsx`) sử dụng `revalidate` để cache thông tin sách.
+    *   **Kết hợp Server Components và Client Components cho trang quản lý:**
+        *   **Server Component (`app/(user)/tai-khoan/truyen/[id]/page.tsx`)**: Chịu trách nhiệm fetch dữ liệu ban đầu không tương tác (ví dụ: `ManagedBookDetails` không bao gồm nội dung chương) bằng cách gọi Server Action (`getManagedBookAction`). Dữ liệu này sau đó được truyền xuống Client Component dưới dạng `props`.
+        *   **Client Component (`components/features/book/ManagedBookContent.tsx`)**: Nhận dữ liệu `ManagedBookDetails` ban đầu và quản lý tất cả các tương tác UI.
 
 -   **Client Components (`'use client'`):**
     *   Sử dụng thư viện **React Query (TanStack Query)** để quản lý trạng thái từ server (server state) và caching.
@@ -87,6 +90,7 @@ The project utilizes **Route Groups** to manage distinct application layouts and
     *   `staleTime`: Thời gian dữ liệu được coi là "tươi" (fresh). Trong thời gian này, React Query sẽ trả về dữ liệu từ cache mà không cần kiểm tra lại server.
     *   `enabled`: Kiểm soát điều kiện để query được kích hoạt, thường dùng để chờ các dữ liệu phụ thuộc (ví dụ: `enabled: !!user` để chờ có thông tin user).
     *   Ví dụ: Các trang dashboard người dùng (`app/(user)/tai-khoan/*`) sử dụng `useQuery` để lấy dữ liệu profile, danh sách truyện, lịch sử giao dịch.
+    *   **On-Demand Fetching (Lấy dữ liệu theo yêu cầu)**: Trong Client Component, khi người dùng thực hiện một hành động (ví dụ: nhấp vào "Đọc chương"), một Server Action (`getChapterContentAction`) sẽ được gọi để chỉ fetch nội dung của chương cụ thể đó. Điều này giúp giảm payload ban đầu và cải thiện hiệu suất.
 
 Chiến lược này giúp cân bằng giữa hiệu suất phía server và trải nghiệm người dùng phía client, đồng thời giảm đáng kể số lượng lệnh gọi API đến Supabase.
 
@@ -128,7 +132,11 @@ Các điểm chính:
 
 **Ví dụ:**
 -   `app/actions/auth.ts`: Xử lý đăng nhập, đăng xuất người dùng.
--   `app/actions/book.ts`: Lấy metadata sách từ nguồn, tạo truyện mới.
+-   `app/actions/book.ts`:
+    *   `fetchBookMetadataAction`: Lấy metadata sách từ nguồn bên ngoài.
+    *   `createBookAction`: Tạo truyện mới trong hệ thống.
+    *   `getManagedBookAction`: Lấy chi tiết một truyện cụ thể (thuộc sở hữu người dùng hiện tại) để quản lý.
+    *   `getChapterContentAction`: Lấy nội dung chi tiết (raw và dịch) của một chương cụ thể.
 -   `app/actions/user.ts`: Cập nhật thông tin hồ sơ người dùng.
 
 Các Server Actions giúp đơn giản hóa việc quản lý dữ liệu và logic phía máy chủ, đồng thời cải thiện hiệu suất bằng cách giảm thiểu lượng JavaScript phía client.

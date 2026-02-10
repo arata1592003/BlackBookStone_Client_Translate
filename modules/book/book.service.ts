@@ -2,11 +2,16 @@ import {
   BookCardWithAuthor,
   BookInfo,
   UserBookItem,
+  ManagedBookDetails,
+  ManagedChapter,
+  ChapterContent,
 } from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
   mapToBookInfo,
   mapToUserBookItem,
+  mapToManagedBookDetails,
+  mapToChapterContent,
 } from "./book.mapper";
 import {
   fetchBookInfoBySlug,
@@ -17,6 +22,9 @@ import {
   insertBookTags,
   insertBook,
   deleteBook,
+  fetchManagedBookDetailsById,
+  fetchManagedChaptersByBookId,
+  fetchChapterContentById,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -129,3 +137,24 @@ export async function createBook(
     );
   }
 }
+
+export async function getManagedBookDetails(
+  bookId: string,
+): Promise<ManagedBookDetails | null> {
+  const bookRow = await fetchManagedBookDetailsById(bookId);
+  if (!bookRow) return null;
+
+  const chapterRows = await fetchManagedChaptersByBookId(bookId);
+
+  return mapToManagedBookDetails(bookRow, chapterRows);
+}
+
+export async function getChapterContent(
+  chapterId: string,
+): Promise<ChapterContent | null> {
+  const chapterContentRow = await fetchChapterContentById(chapterId);
+  if (!chapterContentRow) return null;
+
+  return mapToChapterContent(chapterContentRow);
+}
+

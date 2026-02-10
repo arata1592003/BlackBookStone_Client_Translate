@@ -4,11 +4,17 @@ import {
   BookInfoRow,
   ChapterStatRow,
   UserBookItemRow,
+  ManagedBookRow,
+  ManagedChapterRow,
+  ChapterContentRow,
 } from "@/modules/book/book.repo.type";
 import {
   BookCardWithAuthor,
   BookInfo,
   UserBookItem,
+  ManagedBookDetails,
+  ManagedChapter,
+  ChapterContent,
 } from "@/modules/book/book.types";
 
 export const mapToBookCardWithAuthor = (
@@ -79,3 +85,43 @@ export const mapToUserBookItem = (row: UserBookItemRow): UserBookItem => {
     genres,
   };
 };
+
+export const mapToManagedChapter = (
+  chapter: ManagedChapterRow,
+): ManagedChapter => ({
+  id: chapter.id,
+  chapterNumber: chapter.chapter_number,
+  title: chapter.chapter_title_translated || `Chương ${chapter.chapter_number}`,
+  originalTitle: chapter.chapter_title_raw,
+  status: chapter.chapter_status,
+  lastUpdated: chapter.updated_at,
+});
+
+export const mapToManagedBookDetails = (
+  bookRow: ManagedBookRow,
+  chapterRows: ManagedChapterRow[],
+): ManagedBookDetails => ({
+  id: bookRow.id,
+  slug: bookRow.slug,
+  title:
+    bookRow.book_name_translated || bookRow.book_name_raw || "Không có tiêu đề",
+  originalTitle: bookRow.book_name_raw,
+  author:
+    bookRow.author_name_translated || bookRow.author_name_raw || "Ẩn danh",
+  originalAuthor: bookRow.author_name_raw,
+  description: bookRow.description,
+  status: bookRow.publication_status,
+  coverImageUrl: bookRow.cover_image_url,
+  source: bookRow.sources?.source_name || null,
+  sourceUrl: bookRow.sources?.source_url || null,
+  createdAt: bookRow.created_at,
+  updatedAt: bookRow.updated_at,
+  chapters: chapterRows.map(mapToManagedChapter),
+});
+
+export const mapToChapterContent = (
+  chapterContentRow: ChapterContentRow,
+): ChapterContent => ({
+  contentRaw: chapterContentRow.content_raw,
+  contentTranslated: chapterContentRow.content_translated,
+});

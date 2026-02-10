@@ -6,8 +6,12 @@ import {
   UserBookItemRow,
   BookInsertPayload,
   BookTagInsertPayload,
+  ManagedBookRow,
+  ManagedChapterRow,
+  ChapterContentRow,
 } from "@/modules/book/book.repo.type";
 import { SupabaseClient } from "@supabase/supabase-js";
+
 export async function fetchNewestBooks(): Promise<BookCardWithAuthorRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
@@ -243,4 +247,93 @@ export async function deleteBook(
     console.error("Error deleting book:", error.message);
     throw new Error(`Lỗi khi xóa sách (rollback): ${error.message}`);
   }
+}
+
+export async function fetchManagedBookDetailsById(
+  bookId: string,
+): Promise<ManagedBookRow | null> {
+  const { data, error } = await supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      slug,
+      book_name_translated,
+      book_name_raw,
+      author_name_translated,
+      author_name_raw,
+      description,
+      publication_status,
+      cover_image_url,
+      url_raw,
+      created_at,
+      updated_at,
+      sources:source_id (
+        source_name:name,
+        source_url:base_url
+      )
+      `,
+    )
+    .eq("id", bookId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching managed book details by id:", error.message);
+    return null;
+  }
+
+  const bookData = data as any;
+  if (bookData && bookData.sources && Array.isArray(bookData.sources)) {
+    bookData.sources = bookData.sources[0] || null;
+  }
+
+  return bookData as ManagedBookRow | null;
+}
+
+export async function fetchManagedChaptersByBookId(
+  bookId: string,
+): Promise<ManagedChapterRow[]> {
+  const { data, error } = await supabaseClient
+    .from("chapters")
+    .select(
+      `
+      id,
+      chapter_number,
+      chapter_title_translated,
+      chapter_title_raw,
+      chapter_status,
+      updated_at
+      `,
+    )
+    .eq("book_id", bookId)
+    .order("chapter_number", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching managed chapters by book id:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function fetchChapterContentById(
+  chapterId: string,
+): Promise<ChapterContentRow | null> {
+  const { data, error } = await supabaseClient
+    .from("chapter_content")
+    .select(
+      `
+      content_raw,
+      content_translated
+      `,
+    )
+    .eq("chapter_id", chapterId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching chapter content by id:", error.message);
+    return null;
+  }
+
+  return data as ChapterContentRow | null;
 }

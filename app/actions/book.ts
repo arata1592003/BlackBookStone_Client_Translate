@@ -3,8 +3,16 @@
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import { revalidatePath } from "next/cache";
 import { bookApi } from "@/lib/api";
-import { BookInfoFromSourceResponse } from "@/modules/book/book.types";
-import { createBook } from "@/modules/book/book.service";
+import {
+  BookInfoFromSourceResponse,
+  ManagedBookDetails,
+  ChapterContent,
+} from "@/modules/book/book.types";
+import {
+  createBook,
+  getManagedBookDetails,
+  getChapterContent,
+} from "@/modules/book/book.service";
 import { CreateBookInput } from "@/modules/book/book.service.type";
 import { User } from "@supabase/supabase-js";
 
@@ -109,6 +117,72 @@ export async function createBookAction(
     return {
       success: false,
       error: error.message || "Có lỗi không mong muốn xảy ra khi thêm truyện.",
+    };
+  }
+}
+
+export async function getManagedBookAction(
+  bookId: string,
+): Promise<{ success: boolean; data?: ManagedBookDetails; error?: string }> {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return {
+      success: false,
+      error: "Bạn cần đăng nhập để xem thông tin truyện này.",
+    };
+  }
+
+  try {
+    const bookDetails = await getManagedBookDetails(bookId);
+    if (!bookDetails) {
+      return { success: false, error: "Không tìm thấy truyện." };
+    }
+    return { success: true, data: bookDetails };
+  } catch (error: any) {
+    console.error("Error in getManagedBookAction:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Có lỗi xảy ra khi lấy thông tin truyện.",
+    };
+  }
+}
+
+export async function getChapterContentAction(
+  chapterId: string,
+): Promise<{ success: boolean; data?: ChapterContent; error?: string }> {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return {
+      success: false,
+      error: "Bạn cần đăng nhập để xem nội dung chương này.",
+    };
+  }
+
+  try {
+    const chapterContent = await getChapterContent(chapterId);
+    if (!chapterContent) {
+      return { success: false, error: "Không tìm thấy nội dung chương." };
+    }
+    return { success: true, data: chapterContent };
+  } catch (error: any) {
+    console.error("Error in getChapterContentAction:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Có lỗi xảy ra khi lấy nội dung chương.",
     };
   }
 }

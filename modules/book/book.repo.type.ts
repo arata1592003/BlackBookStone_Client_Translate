@@ -77,3 +77,37 @@ export type BookTagInsertPayload = {
   book_id: string;
   tag_id: string;
 };
+
+export type ManagedBookRow = {
+  id: string;
+  slug: string;
+  book_name_translated: string | null;
+  book_name_raw: string | null;
+  author_name_translated: string | null;
+  author_name_raw: string | null;
+  description: string | null;
+  publication_status: string | null;
+  cover_image_url: string | null;
+  url_raw: string | null;
+  sources: {
+    source_name: string;
+    source_url: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ManagedChapterRow = {
+  id: string;
+  chapter_number: number;
+  chapter_title_translated: string | null;
+  chapter_title_raw: string | null;
+  chapter_status: boolean; // "DONE", "PENDING", "ERROR"
+  updated_at: string;
+};
+
+export type ChapterContentRow = {
+  id: string;
+  content_raw: string | null;
+  content_translated: string | null;
+};
