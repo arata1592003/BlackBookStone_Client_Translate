@@ -4,6 +4,8 @@ import {
   UserBookItem,
   ManagedBookDetails,
   ChapterContent,
+  BookNewChapterCard, // Import BookNewChapterCard
+  BookCompletedCard, // Import BookCompletedCard
 } from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
@@ -11,6 +13,8 @@ import {
   mapToUserBookItem,
   mapToManagedBookDetails,
   mapToChapterContent,
+  mapToBookNewChapterCard, // Import mapToBookNewChapterCard
+  mapToBookCompletedCard, // Import mapToBookCompletedCard
 } from "./book.mapper";
 import {
   fetchBookInfoBySlug,
@@ -24,6 +28,8 @@ import {
   fetchManagedBookDetailsById,
   fetchManagedChaptersByBookId,
   fetchChapterContentById,
+  fetchHotBooks, // Import the new function
+  fetchCompletedBooks, // Import the new function
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -32,9 +38,21 @@ import { SupabaseClient, User } from "@supabase/supabase-js";
 import { CreateBookInput } from "./book.service.type";
 import { getSourceIdByUrlRaw } from "../source/source.repo";
 
-export async function getNewestBookList(): Promise<BookCardWithAuthor[]> {
+export async function getNewestBookList(): Promise<BookNewChapterCard[]> {
   const rows = await fetchNewestBooks();
+  return rows.map(mapToBookNewChapterCard);
+}
+
+export async function getHotBookList(
+  limit: number = 15,
+): Promise<BookCardWithAuthor[]> {
+  const rows = await fetchHotBooks(limit);
   return rows.map(mapToBookCardWithAuthor);
+}
+
+export async function getCompletedBookList(limit?: number): Promise<BookCompletedCard[]> {
+  const rows = await fetchCompletedBooks(limit);
+  return rows.map(mapToBookCompletedCard);
 }
 
 export async function getBookInfo(slug: string): Promise<BookInfo | null> {

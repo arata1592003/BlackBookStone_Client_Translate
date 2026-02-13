@@ -43,7 +43,7 @@ export default async function RootLayout({
 
   const { data } = await supabase.auth.getSession();
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <html lang="vi">
@@ -51,7 +51,6 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${roboto.variable} antialiased`}
       >
         <QueryProvider>
-          {/* Chỉ cần truyền user, AuthProvider sẽ tự lo phần profile */}
           <AuthProvider user={user}>{children}</AuthProvider>
         </QueryProvider>
       </body>

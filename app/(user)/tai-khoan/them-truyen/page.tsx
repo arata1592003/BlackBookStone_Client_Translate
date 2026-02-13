@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { fetchBookMetadataAction, createBookAction } from "@/app/actions/book";
 import { useAuth } from "@/components/providers/AuthProvider";
 
+const TAG_LIMIT = 30;
+
 export default function AddBookPage() {
   const router = useRouter();
 
@@ -40,8 +42,8 @@ export default function AddBookPage() {
   const [addBookSuccess, setAddBookSuccess] = useState<string | null>(null);
 
   const { data: allGenres, isLoading: isLoadingGenres } = useQuery({
-    queryKey: ["allTags"],
-    queryFn: getAllTags,
+    queryKey: ["allTags", TAG_LIMIT],
+    queryFn: () => getAllTags(TAG_LIMIT),
     staleTime: Infinity,
   });
 

@@ -9,18 +9,110 @@ import {
   ManagedBookRow,
   ManagedChapterRow,
   ChapterContentRow,
+  BookNewChapterCardRow,
+  BookCompletedCardRow,
 } from "@/modules/book/book.repo.type";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function fetchNewestBooks(): Promise<BookCardWithAuthorRow[]> {
+export async function fetchNewestBooks(): Promise<BookNewChapterCardRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
     .select(
-      "id, slug, book_name_translated, author_name_translated, cover_image_url",
+      `
+      id,
+      slug,
+      book_name_translated,
+      author_name_translated,
+      cover_image_url,
+      book_tags (
+        tags ( name )
+      ),
+      chapters (
+        chapter_number,
+        updated_at
+      )
+      `,
     )
     .eq("is_published", true)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(20);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export type BookHotRow = BookCardWithAuthorRow & {
+  total_views: number;
+};
+
+export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
+  const { data, error } = await supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      slug,
+      book_name_translated,
+      author_name_translated,
+      cover_image_url,
+      chapters(view_count)
+      `,
+    )
+    .eq("is_published", true);
+
+  if (error) {
+    console.error(
+      "Error fetching hot books with chapter views:",
+      error.message,
+    );
+    throw error;
+  }
+
+  const booksWithAggregatedViews = data.map((book: any) => {
+    const total_views =
+      (book.chapters as { view_count: number }[] | null)?.reduce(
+        (sum, chapter) => sum + (chapter.view_count || 0),
+        0,
+      ) || 0;
+
+    const { chapters, ...restBook } = book;
+    return {
+      ...restBook,
+      total_views,
+    } as BookHotRow;
+  });
+
+  return booksWithAggregatedViews
+    .sort((a, b) => b.total_views - a.total_views)
+    .slice(0, limit);
+}
+
+export async function fetchCompletedBooks(
+  limit?: number,
+): Promise<BookCompletedCardRow[]> {
+  let query = supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      slug,
+      book_name_translated,
+      author_name_translated,
+      cover_image_url,
+      book_chapter_stats (
+        total_chapters,
+        translated_chapters
+      )
+      `,
+    )
+    .eq("is_published", true)
+    .eq("publication_status", "full")
+    .order("created_at", { ascending: false });
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
   return data ?? [];

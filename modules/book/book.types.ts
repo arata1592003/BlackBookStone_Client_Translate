@@ -45,6 +45,18 @@ export type BookCardWithAuthor = {
   author_name_translated: string | null;
 
   cover_image_url: string | null;
+
+  view: number;
+};
+
+export type BookNewChapterCard = BookCardWithAuthor & {
+  latestChapterNumber: number | null;
+  latestChapterUpdatedAt: string | null;
+  genres: string[];
+};
+
+export type BookCompletedCard = BookCardWithAuthor & {
+  totalChapters: number;
 };
 
 export type BookInfo = {

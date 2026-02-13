@@ -7,6 +7,8 @@ import {
   ManagedBookRow,
   ManagedChapterRow,
   ChapterContentRow,
+  BookNewChapterCardRow,
+  BookCompletedCardRow,
 } from "@/modules/book/book.repo.type";
 import {
   BookCardWithAuthor,
@@ -15,17 +17,61 @@ import {
   ManagedBookDetails,
   ManagedChapter,
   ChapterContent,
+  BookNewChapterCard,
+  BookCompletedCard,
 } from "@/modules/book/book.types";
 
 export const mapToBookCardWithAuthor = (
-  row: BookCardWithAuthorRow,
+  row: BookCardWithAuthorRow & { total_views?: number },
 ): BookCardWithAuthor => ({
   id: row.id,
   slug: row.slug,
   book_name_translated: row.book_name_translated,
   author_name_translated: row.author_name_translated,
   cover_image_url: row.cover_image_url,
+  view: row.total_views ?? 0,
 });
+
+export const mapToBookNewChapterCard = (
+  row: BookNewChapterCardRow,
+): BookNewChapterCard => {
+  const genres =
+    row.book_tags
+      ?.map((bt) => bt.tags?.[0]?.name)
+      .filter((name): name is string => Boolean(name)) ?? [];
+
+  const latestChapter = row.chapters?.sort(
+    (a, b) => b.chapter_number - a.chapter_number,
+  )[0];
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    book_name_translated: row.book_name_translated,
+    author_name_translated: row.author_name_translated,
+    cover_image_url: row.cover_image_url,
+    view: 0,
+    latestChapterNumber: latestChapter?.chapter_number ?? null,
+    latestChapterUpdatedAt: latestChapter?.updated_at ?? null,
+    genres: genres,
+  };
+};
+
+export const mapToBookCompletedCard = (
+  row: BookCompletedCardRow,
+): BookCompletedCard => {
+  const totalChapters = row.book_chapter_stats?.[0]?.total_chapters ?? 0;
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    book_name_translated: row.book_name_translated,
+    author_name_translated: row.author_name_translated,
+    cover_image_url: row.cover_image_url,
+    view: 0, // Default view to 0
+    totalChapters: totalChapters,
+  };
+};
 
 export const mapToBookInfo = (
   book: BookInfoRow,

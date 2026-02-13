@@ -11,7 +11,9 @@ const nextConfig: NextConfig = {
       "upload.wikimedia.org",
       "encrypted-tbn0.gstatic.com",
       "cdn.static.17k.com",
-      "img.22biqu.com"
+      "img.22biqu.com",
+      "image.uukanshu.cc",
+      "www.22biqu.com",
       // "xxxx.supabase.co",
     ],
   },

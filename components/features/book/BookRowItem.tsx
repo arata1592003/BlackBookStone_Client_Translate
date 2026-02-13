@@ -1,8 +1,21 @@
-import { BookCardWithAuthor } from "@/modules/book/book.types";
+import { BookNewChapterCard } from "@/modules/book/book.types";
 import Image from "next/image";
 import Link from "next/link";
+import { formatDistanceToNowStrict } from "date-fns";
+import { vi } from "date-fns/locale";
 
-export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
+export function BookRowItem({ book }: { book: BookNewChapterCard }) {
+  const genresText =
+    book.genres.length > 0 ? `[${book.genres.join(", ")}]` : "";
+
+  // Format time using date-fns
+  const timeAgo = book.latestChapterUpdatedAt
+    ? formatDistanceToNowStrict(new Date(book.latestChapterUpdatedAt), {
+        addSuffix: true,
+        locale: vi,
+      })
+    : "";
+
   return (
     <Link
       href={`/truyen/${book.slug}`}
@@ -15,10 +28,13 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
     >
       <div
         className="
-          flex items-center gap-3
-          min-h-[72px]
+          grid
+          grid-cols-[auto_1fr_170px_100px_100px]
+          items-center
+          gap-3
+          min-h-[60px]
           rounded-md
-          px-2 py-1
+          px-1
           transition-colors
           group-hover:bg-white/5
           focus-visible:outline-none
@@ -30,9 +46,9 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
         <div
           className="
             relative
-            w-[40px]
-            sm:w-[44px]
-            md:w-[52px]
+            w-[24px]
+            sm:w-[30px]
+            md:w-[36px]
             aspect-[2/3]
             shrink-0
             rounded
@@ -46,9 +62,9 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
               alt={book.book_name_translated ?? ""}
               fill
               sizes="
-                (max-width: 640px) 40px,
-                (max-width: 768px) 44px,
-                52px
+                (max-width: 640px) 24px,
+                (max-width: 768px) 30px,
+                36px
               "
               className="object-cover"
             />
@@ -57,8 +73,8 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
           )}
         </div>
 
-        {/* Text */}
-        <div className="flex flex-col justify-center min-w-0">
+        {/* Title */}
+        <div className="min-w-0 flex flex-col justify-center">
           <span
             className="
               text-sm
@@ -71,16 +87,36 @@ export function BookRowItem({ book }: { book: BookCardWithAuthor }) {
           >
             {book.book_name_translated}
           </span>
+          {book.author_name_translated && (
+            <span
+              className="
+                text-xs
+                text-neutral-400
+                line-clamp-1
+              "
+            >
+              {book.author_name_translated}
+            </span>
+          )}
+        </div>
 
-          <span
-            className="
-              text-xs
-              text-neutral-400
-              line-clamp-1
-            "
-          >
-            {book.author_name_translated ?? "Unknown"}
-          </span>
+        {/* Genres */}
+        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2 hidden sm:block">
+          {" "}
+          {/* Hidden on small screens */}
+          {genresText}
+        </div>
+
+        {/* Chapter Number */}
+        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis hidden sm:block">
+          {" "}
+          {/* Hidden on small screens */}
+          {book.latestChapterNumber && `Chương ${book.latestChapterNumber}`}
+        </div>
+
+        {/* Time Ago */}
+        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
+          {timeAgo}
         </div>
       </div>
     </Link>

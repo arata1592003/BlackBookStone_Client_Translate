@@ -6,6 +6,22 @@ export type BookCardWithAuthorRow = {
   cover_image_url: string | null;
 };
 
+export type BookNewChapterCardRow = BookCardWithAuthorRow & {
+  book_tags: {
+    tags: {
+      name: string;
+    }[];
+  }[];
+  chapters: {
+    chapter_number: number;
+    updated_at: string;
+  }[];
+};
+
+export type BookCompletedCardRow = BookCardWithAuthorRow & {
+  book_chapter_stats: BookChapterStatsRow[];
+};
+
 export type BookInfoRow = {
   id: string;
   slug: string;
