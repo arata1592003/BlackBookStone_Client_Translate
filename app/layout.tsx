@@ -6,6 +6,7 @@ import QueryProvider from "@/components/providers/QueryProvider";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
 import NextProgressBar from "@/components/layout/NextProgressBar";
+import GoogleAnalytics from "@/components/layout/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,6 +54,7 @@ export default async function RootLayout({
           <AuthProvider user={user}>{children}</AuthProvider>
         </QueryProvider>
         <NextProgressBar />
+        <GoogleAnalytics />
       </body>
     </html>
   );
