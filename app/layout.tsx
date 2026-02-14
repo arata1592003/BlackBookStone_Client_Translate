@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
+import NextProgressBar from "@/components/layout/NextProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,7 @@ export default async function RootLayout({
         <QueryProvider>
           <AuthProvider user={user}>{children}</AuthProvider>
         </QueryProvider>
+        <NextProgressBar />
       </body>
     </html>
   );
