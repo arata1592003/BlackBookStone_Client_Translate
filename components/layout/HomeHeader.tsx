@@ -134,11 +134,10 @@ export const HomeHeader = () => {
       </div>
 
       {/* ================= NAV ================= */}
-      <nav className="relative border-t border-b border-white/20">
+      <nav className="relative border-t border-b border-white/20 overflow-visible">
         <div
           className="
             flex gap-6
-            overflow-x-auto
             px-3 py-2
             sm:px-4
             lg:px-8

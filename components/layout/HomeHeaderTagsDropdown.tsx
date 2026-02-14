@@ -29,7 +29,7 @@ export const HomeHeaderTagsDropdown: React.FC<HomeHeaderTagsDropdownProps> = ({
       </span>
 
       {isTagsDropdownOpen && tags.length > 0 && (
-        <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50">
+        <div className="absolute top-full left-0 w-56 bg-white rounded-md shadow-lg z-50">
           <ul className="py-1 text-gray-700 max-h-96 overflow-y-auto">
             {tags.map((tag) => (
               <li key={tag.id}>
