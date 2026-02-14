@@ -2,6 +2,43 @@ import { ChapterContent } from "@/components/features/chapter/ChapterContent";
 import { Breadcrumb } from "@/components/ui/BreadCumb";
 import { Pagination } from "@/components/ui/Pagination";
 import { getChapterDetailBySlugAndNumber } from "@/modules/chapter/chapter.service";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug, chapterNumber } = await params;
+  const chapterNumberic = Number(chapterNumber);
+
+  if (!Number.isInteger(chapterNumberic)) {
+    return {
+      title: "Chương không hợp lệ",
+      description: "Chương bạn đang tìm không hợp lệ.",
+    };
+  }
+
+  const chapter = await getChapterDetailBySlugAndNumber(slug, chapterNumberic);
+
+  if (!chapter) {
+    return {
+      title: "Không tìm thấy chương",
+      description: "Chương bạn đang tìm không tồn tại.",
+    };
+  }
+
+  const title = `${chapter.book_name} - Chương ${chapter.chapter_number}: ${chapter.title} | Hắc Thạch Thôn`;
+  const description = `Đọc chương ${chapter.chapter_number} của truyện ${chapter.book_name} online miễn phí tại Hắc Thạch Thôn.`;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      // You can add images here if available for chapters
+    },
+  };
+}
 
 interface PageProps {
   params: {

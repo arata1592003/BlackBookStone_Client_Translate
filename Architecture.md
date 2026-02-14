@@ -140,6 +140,29 @@ All route names are in **Vietnamese**.
 
 ---
 
+## SEO & Metadata Strategy
+
+The project leverages Next.js 16 (App Router)'s built-in Metadata API to manage Search Engine Optimization (SEO) and browser display information.
+
+-   **Global Metadata (`app/layout.tsx`):**
+    *   Sets default title and description for the entire application.
+    *   `lang="vi"` is set on the `<html>` tag for optimal SEO and language support.
+
+-   **Page-Specific/Layout-Specific Metadata (Server Components):**
+    *   **Book Detail Pages (`app/truyen/[slug]/page.tsx`)**: Utilizes `generateMetadata` (Server Component) to create dynamic titles, descriptions, and Open Graph metadata based on individual book details (title, description, cover image).
+    *   **Chapter Reading Pages (`app/truyen/[slug]/chuong/[chapterNumber]/page.tsx`)**: Similarly, uses `generateMetadata` to generate dynamic metadata with titles including book name, chapter number, and chapter title.
+    *   **Homepage Layout (`app/(main)/trang-chu/layout.tsx`)**: Uses `export const metadata` (Server Component) to provide a specific title and description for the homepage, overriding the global metadata.
+    *   **User Area Layout (`app/(user)/tai-khoan/layout.tsx`)**: Uses `export const metadata` (Server Component) to provide a general title and description for the entire user account area (e.g., "Hắc Thạch Thôn - Tài Khoản").
+
+-   **Metadata for Client Components (`page.tsx`):**
+    *   `page.tsx` files that are Client Components (e.g., `/tai-khoan/ban-lam-viec`, `/tai-khoan/cai-dat` within the user section) **cannot** `export metadata` directly as per Next.js rules.
+    *   These pages automatically inherit metadata from their nearest Server Component parent `layout.tsx`. Thus, sub-pages in the user area will display metadata defined in `app/(user)/tai-khoan/layout.tsx`.
+
+-   **Revalidation Mechanism (ISR):**
+    *   Pages with dynamic data that doesn't change too frequently (e.g., book details `app/truyen/[slug]/page.tsx`) use `export const revalidate = <seconds>;` to implement Incremental Static Regeneration (ISR). This mechanism updates page content and metadata after a specified interval (e.g., 300 seconds = 5 minutes) without requiring a redeploy, balancing performance and data freshness.
+
+---
+
 ## State Management
 
 No centralized store. State is managed through:

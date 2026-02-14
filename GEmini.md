@@ -141,6 +141,27 @@ Các điểm chính:
 
 Các Server Actions giúp đơn giản hóa việc quản lý dữ liệu và logic phía máy chủ, đồng thời cải thiện hiệu suất bằng cách giảm thiểu lượng JavaScript phía client.
 
+### 2.7 SEO & Metadata Strategy
+
+Dự án sử dụng tính năng Metadata tích hợp của Next.js 16 (App Router) để quản lý SEO và thông tin hiển thị trên trình duyệt.
+
+-   **Metadata Toàn Cầu (`app/layout.tsx`):**
+    *   Thiết lập tiêu đề và mô tả mặc định cho toàn bộ ứng dụng.
+    *   Đặt `lang="vi"` cho thẻ `<html>` để tối ưu SEO và hỗ trợ ngôn ngữ.
+
+-   **Metadata Cụ Thể theo Trang/Layout (Server Components):**
+    *   **Trang Chi Tiết Truyện (`app/truyen/[slug]/page.tsx`)**: Sử dụng `generateMetadata` (Server Component) để tạo tiêu đề, mô tả và Open Graph metadata động dựa trên thông tin chi tiết của từng truyện (tiêu đề, mô tả, ảnh bìa).
+    *   **Trang Đọc Chương (`app/truyen/[slug]/chuong/[chapterNumber]/page.tsx`)**: Tương tự, sử dụng `generateMetadata` để tạo metadata động với tiêu đề bao gồm tên truyện, số chương và tiêu đề chương.
+    *   **Layout Trang Chủ (`app/(main)/trang-chu/layout.tsx`)**: Sử dụng `export const metadata` (Server Component) để cung cấp tiêu đề và mô tả cụ thể cho trang chủ, ghi đè metadata toàn cầu.
+    *   **Layout Khu Vực Người Dùng (`app/(user)/tai-khoan/layout.tsx`)**: Sử dụng `export const metadata` (Server Component) để cung cấp tiêu đề và mô tả chung cho toàn bộ khu vực tài khoản người dùng (ví dụ: "Hắc Thạch Thôn - Tài Khoản").
+
+-   **Metadata cho Client Components:**
+    *   Các `page.tsx` là Client Component (ví dụ: `/tai-khoan/ban-lam-viec`, `/tai-khoan/cai-dat`) không thể `export metadata` trực tiếp theo quy định của Next.js.
+    *   Chúng sẽ tự động kế thừa metadata từ Server Component `layout.tsx` cha gần nhất. Do đó, các trang con trong khu vực người dùng sẽ hiển thị metadata đã được định nghĩa trong `app/(user)/tai-khoan/layout.tsx`.
+
+-   **Cơ chế Tái Xác Thực (Revalidation):**
+    *   Các trang có dữ liệu động nhưng không thay đổi quá thường xuyên (ví dụ: chi tiết truyện `app/truyen/[slug]/page.tsx`) sử dụng `export const revalidate = <seconds>;` để thực hiện Incremental Static Regeneration (ISR). Điều này giúp cập nhật metadata và nội dung trang sau một khoảng thời gian nhất định (ví dụ: 300 giây = 5 phút) mà không cần deploy lại, cân bằng giữa hiệu suất và độ tươi mới của dữ liệu.
+
 
 ---
 

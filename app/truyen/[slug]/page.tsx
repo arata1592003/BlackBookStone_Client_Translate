@@ -1,6 +1,38 @@
 import { BookDetailSection } from "@/components/features/book/BookDetailSection";
 import { getBookInfo } from "@/modules/book/book.service";
 import { getNewestChapterListByBookSlug } from "@/modules/chapter/chapter.service";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const bookInfo = await getBookInfo(slug);
+
+  if (!bookInfo) {
+    return {
+      title: "Không tìm thấy truyện",
+      description: "Trang bạn đang tìm không tồn tại.",
+    };
+  }
+
+  return {
+    title: bookInfo.book_name_translated,
+    description: bookInfo.description
+      ? bookInfo.description.substring(0, 150) + "..."
+      : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại Hắc Thạch Thôn.`,
+    openGraph: {
+      title: bookInfo.book_name_translated,
+      description: bookInfo.description
+        ? bookInfo.description.substring(0, 150) + "..."
+        : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại Hắc Thạch Thôn.`,
+      images: [
+        {
+          url: bookInfo.cover_image_url,
+          alt: bookInfo.book_name_translated,
+        },
+      ],
+    },
+  };
+}
 
 // Tái xác thực trang này sau mỗi 300 giây (5 phút)
 export const revalidate = 300;

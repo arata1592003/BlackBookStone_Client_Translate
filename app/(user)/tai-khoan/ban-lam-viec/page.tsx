@@ -18,23 +18,20 @@ export default function BanLamViecPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-  const searchParams = useSearchParams(); // Khởi tạo useSearchParams
+  const searchParams = useSearchParams();
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Kiểm tra query param khi component mount
   useEffect(() => {
     if (searchParams.get("addBookSuccess")) {
       setShowSuccessMessage(true);
-      // Xóa query param khỏi URL để thông báo không xuất hiện lại khi refresh
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.delete("addBookSuccess");
       router.replace(`?${newSearchParams.toString()}`, { scroll: false });
 
-      // Tự động ẩn thông báo sau vài giây
       const timer = setTimeout(() => {
         setShowSuccessMessage(false);
-      }, 5000); // Hiển thị 5 giây
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
