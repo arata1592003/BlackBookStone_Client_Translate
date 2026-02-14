@@ -4,8 +4,8 @@ import {
   UserBookItem,
   ManagedBookDetails,
   ChapterContent,
-  BookNewChapterCard, // Import BookNewChapterCard
-  BookCompletedCard, // Import BookCompletedCard
+  BookNewChapterCard,
+  BookCompletedCard,
 } from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
@@ -13,8 +13,8 @@ import {
   mapToUserBookItem,
   mapToManagedBookDetails,
   mapToChapterContent,
-  mapToBookNewChapterCard, // Import mapToBookNewChapterCard
-  mapToBookCompletedCard, // Import mapToBookCompletedCard
+  mapToBookNewChapterCard,
+  mapToBookCompletedCard,
 } from "./book.mapper";
 import {
   fetchBookInfoBySlug,
@@ -28,8 +28,10 @@ import {
   fetchManagedBookDetailsById,
   fetchManagedChaptersByBookId,
   fetchChapterContentById,
-  fetchHotBooks, // Import the new function
-  fetchCompletedBooks, // Import the new function
+  fetchHotBooks,
+  fetchCompletedBooks,
+  searchBooks as repoSearchBooks,
+  countSearchResults as repoCountSearchResults,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -50,9 +52,24 @@ export async function getHotBookList(
   return rows.map(mapToBookCardWithAuthor);
 }
 
-export async function getCompletedBookList(limit?: number): Promise<BookCompletedCard[]> {
+export async function getCompletedBookList(
+  limit?: number,
+): Promise<BookCompletedCard[]> {
   const rows = await fetchCompletedBooks(limit);
   return rows.map(mapToBookCompletedCard);
+}
+
+export async function searchBooks(
+  query: string,
+  offset?: number, // Added offset
+  limit?: number,
+): Promise<BookCardWithAuthor[]> {
+  const rows = await repoSearchBooks(query, offset, limit); // Pass offset
+  return rows.map(mapToBookCardWithAuthor);
+}
+
+export async function countSearchResults(query: string): Promise<number> {
+  return repoCountSearchResults(query);
 }
 
 export async function getBookInfo(slug: string): Promise<BookInfo | null> {
@@ -116,9 +133,11 @@ export async function createBook(
 
   try {
     newBookId = await insertBook(supabase, bookPayload);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error inserting book:", error);
-    throw new Error(`Lỗi khi tạo sách: ${error.message || "Không xác định"}`);
+    throw new Error(
+      `Lỗi khi tạo sách: ${(error as Error).message || "Không xác định"}`,
+    );
   }
 
   if (!input.genres || input.genres.length === 0) {
@@ -133,7 +152,7 @@ export async function createBook(
 
     await insertBookTags(supabase, bookTags);
     return newBookId;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error inserting book tags, attempting rollback:", error);
 
     try {
@@ -148,7 +167,7 @@ export async function createBook(
 
     throw new Error(
       `Đã tạo sách nhưng lỗi khi gán thể loại. Đã hủy tạo sách. Lỗi: ${
-        error.message || "Không xác định"
+        (error as Error).message || "Không xác định"
       }`,
     );
   }
@@ -159,6 +178,8 @@ export async function getManagedBookDetails(
 ): Promise<ManagedBookDetails | null> {
   const bookRow = await fetchManagedBookDetailsById(bookId);
   if (!bookRow) return null;
+
+  console.log(bookRow);
 
   const chapterRows = await fetchManagedChaptersByBookId(bookId);
 

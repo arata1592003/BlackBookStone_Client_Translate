@@ -105,10 +105,9 @@ export type ManagedBookRow = {
   publication_status: string | null;
   cover_image_url: string | null;
   url_raw: string | null;
-  sources: {
-    source_name: string;
-    source_url: string;
-  } | null;
+  source_name: string;
+  source_url: string;
+  tags: string[];
   created_at: string;
   updated_at: string;
 };

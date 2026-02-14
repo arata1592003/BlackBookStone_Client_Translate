@@ -36,7 +36,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
     <article
       key={novel.id}
       onClick={() => router.push(`/tai-khoan/truyen/${novel.id}`)}
-      className="flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000]"
+      className="group flex items-start gap-5 relative self-stretch w-full flex-[0_0_auto] rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000] cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-xl hover:border-primary"
     >
       <Image
         src={backgroundPath || "/placeholder.jpg"}
@@ -59,7 +59,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               group
               px-4
             "
-              onClick={() => handleNovelAction(novel.id, "view")}
+              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "view"); }}
             >
               <Eye size={20} className="text-white/70 group-hover:text-white" />
             </div>
@@ -77,7 +77,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               hover:bg-red-900/70
               group
             "
-              onClick={() => handleNovelAction(novel.id, "delete")}
+              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "delete"); }}
             >
               <Trash
                 size={20}
@@ -107,7 +107,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
               )}
               <div
                 className="self-stretch flex items-center justify-center px-1 hover:bg-blue-900/20 transition-colors cursor-pointer"
-                onClick={() => handleNovelAction(novel.id, "edit")}
+                onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "edit"); }}
               >
                 <SquarePen size={20} className="text-white" />
               </div>
@@ -144,20 +144,20 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
         >
           <div className="flex-col items-start gap-2.5 flex-1 grow flex relative self-stretch">
             <Button
-              onClick={() => handleNovelAction(novel.id, "crawl")}
+              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "crawl"); }}
               className="w-full bg-emerald-600 hover:bg-emerald-500 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
             >
               <AppWindowMac size={20} className="text-white" />
               Cào
             </Button>
             <Button
-              onClick={() => handleNovelAction(novel.id, "translate")}
+              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "translate"); }}
               className="w-full bg-violet-600 hover:bg-violet-500 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
             >
               Dịch
             </Button>
             <Button
-              onClick={() => handleNovelAction(novel.id, "download")}
+              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "download"); }}
               className="w-full bg-teal-500 hover:bg-teal-400 border border-border-strong shadow-[0px_4px_4px_var(--color-shadow-white)] text-lg font-bold"
             >
               Tải

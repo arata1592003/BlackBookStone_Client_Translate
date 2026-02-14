@@ -7,7 +7,7 @@ import { UserProfile } from '@/modules/user/user.type';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export async function updateUserProfileAction(prevState: any, formData: FormData) {
+export async function updateUserProfileAction(prevState: { error?: string; success?: string; }, formData: FormData) {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -43,8 +43,8 @@ export async function updateUserProfileAction(prevState: any, formData: FormData
 
     return { success: 'Cập nhật thông tin thành công!' };
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Lỗi khi cập nhật profile:", error);
-    return { error: error.message || 'Có lỗi xảy ra khi cập nhật thông tin.' };
+    return { error: (error as Error).message || 'Có lỗi xảy ra khi cập nhật thông tin.' };
   }
 }

@@ -18,7 +18,6 @@ import { useAuth } from "@/components/providers/AuthProvider";
 const TAG_LIMIT = 30;
 
 export default function AddBookPage() {
-  const router = useRouter();
 
   const { user } = useAuth();
 
@@ -95,10 +94,10 @@ export default function AddBookPage() {
         );
         resetMetadataFields();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Lỗi khi lấy metadata:", error);
       setMetadataFetchError(
-        error.message || "Có lỗi xảy ra khi lấy thông tin.",
+        (error as Error).message || "Có lỗi xảy ra khi lấy thông tin.",
       );
       resetMetadataFields();
     } finally {
@@ -146,9 +145,9 @@ export default function AddBookPage() {
       } else {
         setAddBookError(result.error || "Có lỗi xảy ra khi thêm truyện.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Lỗi khi thêm truyện:", error);
-      setAddBookError(error.message || "Có lỗi xảy ra khi thêm truyện.");
+      setAddBookError((error as Error).message || "Có lỗi xảy ra khi thêm truyện.");
     } finally {
       setIsAddingBook(false);
     }

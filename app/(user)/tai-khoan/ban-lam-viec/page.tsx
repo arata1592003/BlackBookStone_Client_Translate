@@ -11,12 +11,15 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
+import { getVisiblePages } from "@/lib/utils"; // Import getVisiblePages
 
 const loupe1Path = "/icons8-search-50.png";
 
 export default function BanLamViecPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); // Add currentPage state
+  const booksPerPage = 10; // Define booksPerPage
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -37,6 +40,10 @@ export default function BanLamViecPage() {
     }
   }, [searchParams, router]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   const { data: books, isLoading } = useQuery({
     queryKey: ["ownedBooks", user?.id],
     queryFn: () => getOwnedBooksForCurrentUser(user),
@@ -47,10 +54,24 @@ export default function BanLamViecPage() {
     if (!books) {
       return [];
     }
-    return books.filter((book) =>
+    const filtered = books.filter((book) =>
       book.title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+
+    // Apply pagination here
+    const indexOfLastBook = currentPage * booksPerPage;
+    const indexOfFirstBook = indexOfLastBook - booksPerPage;
+    return filtered.slice(indexOfFirstBook, indexOfLastBook);
+  }, [books, searchQuery, currentPage, booksPerPage]);
+
+  const totalFilteredBooksCount = useMemo(() => {
+    if (!books) return 0;
+    return books.filter((book) =>
+      book.title?.toLowerCase().includes(searchQuery.toLowerCase()),
+    ).length;
   }, [books, searchQuery]);
+
+  const totalPages = Math.ceil(totalFilteredBooksCount / booksPerPage);
 
   const handleAddClick = () => {
     router.push("/tai-khoan/them-truyen");
@@ -138,6 +159,53 @@ export default function BanLamViecPage() {
         >
           {renderBookList()}
         </section>
+
+        <nav
+          className="flex items-center justify-center gap-2.5 p-2.5 relative self-stretch w-full flex-[0_0_auto]"
+          aria-label="Pagination"
+        >
+          <Button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-md bg-surface-raised hover:bg-surface-raised/70 text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Trang trước
+          </Button>
+
+          {getVisiblePages(currentPage, totalPages).map((pageNum, index) =>
+            pageNum === "..." ? (
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 text-text-secondary opacity-60"
+              >
+                ...
+              </span>
+            ) : (
+              <Button
+                key={index}
+                onClick={() =>
+                  typeof pageNum === "number" && setCurrentPage(pageNum)
+                }
+                disabled={typeof pageNum === "string"}
+                className={`px-3 py-1 rounded-md ${
+                  pageNum === currentPage
+                    ? "bg-primary text-white"
+                    : "bg-surface-raised hover:bg-surface-raised/70 text-text-primary"
+                }`}
+              >
+                {pageNum}
+              </Button>
+            ),
+          )}
+
+          <Button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-md bg-surface-raised hover:bg-surface-raised/70 text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Trang kế tiếp
+          </Button>
+        </nav>
       </div>
     </div>
   );

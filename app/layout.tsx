@@ -41,8 +41,6 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await supabase.auth.getSession();
-
   // console.log(data);
 
   return (

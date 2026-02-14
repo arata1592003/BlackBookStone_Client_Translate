@@ -5,10 +5,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { getAllTags } from "@/modules/tag/tag.service";
-import { Tag } from "@/modules/tag/tag.type";
-import { useAuth } from "@/components/providers/AuthProvider";
-
 interface MenuItem {
   id: string;
   label: string;
@@ -18,20 +14,6 @@ interface MenuItem {
 export const UserNavigationMenu = () => {
   const router = useRouter();
   const pathname = usePathname();
-
-  const [tags, setTags] = useState<Tag[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedTags = await getAllTags();
-        setTags(fetchedTags);
-      } catch (error) {
-        console.error("Failed to fetch tags:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   const menuItems: MenuItem[] = [
     {
@@ -77,7 +59,7 @@ export const UserNavigationMenu = () => {
 
   return (
     <nav
-      className="flex-col gap-10 w-[270px] px-0 py-5 bg-cover bg-center flex items-center"
+      className="fixed top-0 left-0 h-full w-[270px] px-0 py-5 bg-cover bg-center z-40 flex flex-col gap-10 items-center"
       style={{ backgroundImage: "url(/sidebar-user.png)" }}
       aria-label="Main navigation"
     >

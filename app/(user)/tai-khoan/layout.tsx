@@ -17,7 +17,7 @@ export default function UserLayout({
   return (
     <div className="flex h-full relative bg-black">
       <UserNavigationMenu />
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 ml-[270px]">
         {" "}
         <UserHeader />
         <main className="flex-1 flex flex-col"> {children}</main>

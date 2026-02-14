@@ -1,6 +1,6 @@
 type RequestOptions = Omit<RequestInit, "body"> & {
   accessToken?: string;
-  body?: Record<string, any>;
+  body?: Record<string, unknown>;
 };
 
 /**
@@ -69,24 +69,25 @@ export async function apiClient<T>(
 
     const data: T = await response.json();
     return data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error calling backend API:", error);
     let userFriendlyMessage = "Có lỗi xảy ra khi gọi Backend API.";
 
     // Kiểm tra lỗi network cụ thể như ECONNREFUSED
     if (
-      error.cause &&
-      typeof error.cause === "object" &&
-      "code" in error.cause
+      (error as Error).cause &&
+      typeof (error as Error).cause === "object" &&
+      "code" in ((error as Error).cause as object)
     ) {
-      if (error.cause.code === "ECONNREFUSED") {
+      const cause = (error as Error).cause as { code?: string }; // More specific type
+      if (cause.code === "ECONNREFUSED") {
         userFriendlyMessage =
           "Không thể kết nối đến máy chủ Backend. Vui lòng đảm bảo Backend đang chạy và thử lại sau.";
       } else {
-        userFriendlyMessage = `Lỗi mạng: ${error.cause.code}. Vui lòng kiểm tra kết nối internet hoặc trạng thái của Backend.`;
+        userFriendlyMessage = `Lỗi mạng: ${cause.code}. Vui lòng kiểm tra kết nối internet hoặc trạng thái của Backend.`;
       }
-    } else if (error.message) {
-      userFriendlyMessage = error.message;
+    } else if ((error as Error).message) {
+      userFriendlyMessage = (error as Error).message;
     }
 
     throw new Error(userFriendlyMessage);

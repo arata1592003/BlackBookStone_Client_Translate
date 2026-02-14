@@ -41,7 +41,7 @@ export const RegisterPage = () => {
         setPassword("");
         setConfirmPassword("");
       }
-    } catch (err) {
+    } catch {
       setError("Đã có lỗi xảy ra trong quá trình đăng ký. Vui lòng thử lại.");
     } finally {
       setLoading(false);

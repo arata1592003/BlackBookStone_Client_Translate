@@ -45,6 +45,15 @@ export type BookHotRow = BookCardWithAuthorRow & {
   total_views: number;
 };
 
+interface BookWithChaptersForHotRow {
+  id: string;
+  slug: string;
+  book_name_translated: string;
+  author_name_translated: string;
+  cover_image_url: string;
+  chapters: { view_count: number }[];
+}
+
 export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
@@ -68,19 +77,21 @@ export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
     throw error;
   }
 
-  const booksWithAggregatedViews = data.map((book: any) => {
-    const total_views =
-      (book.chapters as { view_count: number }[] | null)?.reduce(
-        (sum, chapter) => sum + (chapter.view_count || 0),
-        0,
-      ) || 0;
+  const booksWithAggregatedViews = data.map(
+    (book: BookWithChaptersForHotRow) => {
+      const total_views =
+        (book.chapters as { view_count: number }[] | null)?.reduce(
+          (sum, chapter) => sum + (chapter.view_count || 0),
+          0,
+        ) || 0;
 
-    const { chapters, ...restBook } = book;
-    return {
-      ...restBook,
-      total_views,
-    } as BookHotRow;
-  });
+      const { ...restBook } = book;
+      return {
+        ...restBook,
+        total_views,
+      } as BookHotRow;
+    },
+  );
 
   return booksWithAggregatedViews
     .sort((a, b) => b.total_views - a.total_views)
@@ -341,45 +352,80 @@ export async function deleteBook(
   }
 }
 
-export async function fetchManagedBookDetailsById(
-  bookId: string,
-): Promise<ManagedBookRow | null> {
-  const { data, error } = await supabaseClient
+export async function countSearchResults(query: string): Promise<number> {
+  const { count, error } = await supabaseClient
+    .from("books")
+    .select(
+      `
+      id
+      `,
+      { count: "exact", head: true },
+    )
+    .or(
+      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
+    )
+    .eq("is_published", true);
+
+  if (error) {
+    console.error("Error counting search results:", error.message);
+    throw error;
+  }
+  return count ?? 0;
+}
+
+export async function searchBooks(
+  query: string,
+  offset?: number, // Added offset
+  limit?: number,
+): Promise<BookCardWithAuthorRow[]> {
+  let dbQuery = supabaseClient
     .from("books")
     .select(
       `
       id,
       slug,
       book_name_translated,
-      book_name_raw,
       author_name_translated,
-      author_name_raw,
-      description,
-      publication_status,
       cover_image_url,
-      url_raw,
-      created_at,
-      updated_at,
-      sources:source_id (
-        source_name:name,
-        source_url:base_url
+      book_tags (
+        tags ( name )
       )
       `,
     )
+    .or(
+      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
+    )
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (typeof offset === "number" && typeof limit === "number") {
+    dbQuery = dbQuery.range(offset, offset + limit - 1);
+  }
+
+  const { data, error } = await dbQuery;
+
+  if (error) {
+    console.error("Error searching books:", error.message);
+    throw error;
+  }
+  return data ?? [];
+}
+
+export async function fetchManagedBookDetailsById(
+  bookId: string,
+): Promise<ManagedBookRow | null> {
+  const { data, error } = await supabaseClient
+    .from("books_with_tags")
+    .select("*")
     .eq("id", bookId)
     .single();
 
-  if (error) {
-    console.error("Error fetching managed book details by id:", error.message);
+  if (error || !data) {
+    console.error("Error fetching managed book details by id:", error?.message);
     return null;
   }
 
-  const bookData = data as any;
-  if (bookData && bookData.sources && Array.isArray(bookData.sources)) {
-    bookData.sources = bookData.sources[0] || null;
-  }
-
-  return bookData as ManagedBookRow | null;
+  return data;
 }
 
 export async function fetchManagedChaptersByBookId(

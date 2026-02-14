@@ -158,8 +158,11 @@ export const mapToManagedBookDetails = (
   description: bookRow.description,
   status: bookRow.publication_status,
   coverImageUrl: bookRow.cover_image_url,
-  source: bookRow.sources?.source_name || null,
-  sourceUrl: bookRow.sources?.source_url || null,
+  source: bookRow.source_name,
+  sourceUrl: bookRow.source_url,
+
+  genres: bookRow.tags,
+
   createdAt: bookRow.created_at,
   updatedAt: bookRow.updated_at,
   chapters: chapterRows.map(mapToManagedChapter),

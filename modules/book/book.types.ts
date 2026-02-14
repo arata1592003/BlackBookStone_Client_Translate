@@ -111,50 +111,49 @@ export type BookInfoFromSourceResponse = {
   cover_image_url: string | null;
 };
 
-// Kiểu dữ liệu cho request body API tạo book mới
 export type BookCreateRequest = {
   source: string;
-  book_id: string; // ID của truyện từ nguồn
+  book_id: string;
   book_name_raw: string;
   author_name_raw: string;
   book_name_translated: string;
   author_name_translated: string;
   publication_status: string; // Ví dụ: "ongoing", "completed"
-  url_raw: string; // URL gốc chính thức
+  url_raw: string;
   cover_image_url: string | null;
   description: string | null;
-  list_tag: string[]; // Mảng các tag_id
+  list_tag: string[];
 };
 
-// Kiểu dữ liệu cho phản hồi API tạo book mới
 export type BookCreateResponse = {
-  book_id: string; // ID của sách đã được tạo trong hệ thống
+  book_id: string;
 };
 
 export type ManagedBookDetails = {
   id: string;
   slug: string;
-  title: string; // book_name_translated
-  originalTitle: string | null; // book_name_raw
-  author: string; // author_name_translated
-  originalAuthor: string | null; // author_name_raw
+  title: string;
+  originalTitle: string | null;
+  author: string;
+  originalAuthor: string | null;
   description: string | null;
-  status: string | null; // publication_status
+  status: string | null;
   coverImageUrl: string | null;
-  source: string | null; // source_name
-  sourceUrl: string | null; // url_raw
+  source: string | null;
+  sourceUrl: string | null;
   createdAt: string;
   updatedAt: string;
   chapters: ManagedChapter[];
+  genres: string[] | null;
 };
 
 export type ManagedChapter = {
   id: string;
   chapterNumber: number;
-  title: string; // title_translated
-  originalTitle: string | null; // title_raw
+  title: string;
+  originalTitle: string | null;
   status: boolean; // "DONE", "PENDING", "ERROR"
-  lastUpdated: string; // updated_at
+  lastUpdated: string;
 };
 
 export type ChapterContent = {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { logout } from "@/app/actions/auth";
@@ -14,20 +14,31 @@ import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth";
 import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth";
 import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown";
 
+import { Search } from "lucide-react"; // Add this import
+
 export const HomeHeader = () => {
   const router = useRouter();
+  const searchParams = useSearchParams(); // Get searchParams
   const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || ""); // Initialize with URL query
 
   useEffect(() => {
     getAllTags()
       .then(setTags)
       .catch((error) => console.error("Failed to fetch tags:", error));
   }, []);
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q !== searchQuery) {
+      setSearchQuery(q || "");
+    }
+  }, [searchParams, searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,6 +66,13 @@ export const HomeHeader = () => {
 
   const handleLogout = async () => {
     await logout();
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    if (searchQuery.trim()) {
+      router.push(`/tim-kiem?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   const userMenuItems = [
@@ -112,10 +130,22 @@ export const HomeHeader = () => {
 
         {/* Search */}
         <div className="w-full lg:max-w-[360px]">
-          <input
-            placeholder="Tìm kiếm..."
-            className="w-full px-4 py-2 rounded text-black bg-white"
-          />
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center w-full">
+            <input
+              type="search"
+              placeholder="Tìm kiếm..."
+              className="w-full px-4 py-2 rounded text-black bg-white pr-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-black"
+              aria-label="Tìm kiếm"
+            >
+              <Search size={20} />
+            </button>
+          </form>
         </div>
 
         {/* Desktop auth */}

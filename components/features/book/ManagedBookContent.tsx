@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   FileEdit,
   Globe,
@@ -14,31 +15,17 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
+  ArrowLeft,
+  BookText,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import {
-  format,
-  parseISO,
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-} from "date-fns";
+import { format } from "date-fns";
+import { timeAgoFns } from "@/utils/date";
+
 import { vi } from "date-fns/locale";
 import { ManagedBookDetails, ChapterContent } from "@/modules/book/book.types";
 import { getChapterContentAction } from "@/app/actions/book";
-
-const formatTimeAgo = (dateString: string) => {
-  const date = parseISO(dateString);
-  const now = new Date();
-  const days = differenceInDays(now, date);
-  const hours = differenceInHours(now, date);
-  const minutes = differenceInMinutes(now, date);
-
-  if (days > 0) return `${days} ngày trước`;
-  if (hours > 0) return `${hours} giờ trước`;
-  if (minutes > 0) return `${minutes} phút trước`;
-  return "Vừa xong";
-};
+import { getVisiblePages } from "@/lib/utils";
 
 interface ManagedBookContentProps {
   book: ManagedBookDetails;
@@ -49,7 +36,6 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
   const [showDescription, setShowDescription] = useState(false);
   const [showChapters, setShowChapters] = useState(true);
 
-  // State for chapter reading modal
   const [showReadChapterModal, setShowReadChapterModal] = useState(false);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<"translated" | "raw">(
@@ -61,7 +47,6 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
   const [isFetchingChapterContent, setIsFetchingChapterContent] =
     useState(false);
 
-  // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const chaptersPerPage = 10;
 
@@ -73,6 +58,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
   );
 
   const totalPages = Math.ceil(book.chapters.length / chaptersPerPage);
+  const pageNumbers = getVisiblePages(currentPage, totalPages);
 
   const currentChapter = book.chapters[currentChapterIndex];
 
@@ -131,6 +117,14 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
 
   return (
     <div className="flex flex-col flex-1 p-6 bg-surface-section text-text-primary">
+      {/* Back Button */}
+      <Link
+        href="/tai-khoan/ban-lam-viec"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors mb-4"
+      >
+        <ArrowLeft size={20} />
+        Quay lại Bàn làm việc
+      </Link>
       {/* Page Title */}
       <h1 className="text-3xl font-bold mb-6 text-text-primary">
         Quản Lý Truyện: {book.title}
@@ -187,7 +181,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             )}
           </h3>
 
-          {/* <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4">
             {book.genres &&
               book.genres.map((genre, index) => (
                 <span
@@ -197,7 +191,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
                   <BookText size={16} /> {genre}
                 </span>
               ))}
-          </div> */}
+          </div>
 
           <p className="text-text-secondary text-sm mb-2">
             Trạng thái truyện:{" "}
@@ -311,7 +305,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-text-secondary">
-                      {formatTimeAgo(chapter.lastUpdated)}
+                      {timeAgoFns(chapter.lastUpdated)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                       <Button
@@ -337,19 +331,33 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
               >
                 Trang trước
               </Button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <Button
-                  key={i + 1}
-                  onClick={() => paginate(i + 1)}
-                  className={`px-3 py-1 rounded-md ${
-                    currentPage === i + 1
-                      ? "bg-primary text-white"
-                      : "bg-surface-raised hover:bg-surface-raised/70 text-text-primary"
-                  }`}
-                >
-                  {i + 1}
-                </Button>
-              ))}
+              {pageNumbers.map((pageNum, index) =>
+                pageNum === "..." ? (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="px-2 text-text-secondary opacity-60"
+                  >
+                    ...
+                  </span>
+                ) : (
+                  <Button
+                    key={index}
+                    // No variant "ghost" in this project's Button. Replace with direct classes.
+                    // No size "icon-sm" either.
+                    onClick={() =>
+                      typeof pageNum === "number" && paginate(pageNum)
+                    }
+                    disabled={typeof pageNum === "string"}
+                    className={`px-3 py-1 rounded-md ${
+                      pageNum === currentPage
+                        ? "bg-primary text-white"
+                        : "bg-surface-raised hover:bg-surface-raised/70 text-text-primary"
+                    }`}
+                  >
+                    {pageNum}
+                  </Button>
+                ),
+              )}
               <Button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}

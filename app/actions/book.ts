@@ -59,7 +59,7 @@ export async function fetchBookMetadataAction(url: string): Promise<{
     };
 
     return { success: true, data: metadata };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching book metadata from source:", error);
     return {
       success: false,
@@ -111,12 +111,13 @@ export async function createBookAction(
     return {
       success: true,
       message: `Truyện "${bookData.book_name_translated}" đã được thêm thành công!`,
+      bookId: newBookId,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in createBookAction:", error);
     return {
       success: false,
-      error: error.message || "Có lỗi không mong muốn xảy ra khi thêm truyện.",
+      error: (error as Error).message || "Có lỗi không mong muốn xảy ra khi thêm truyện.",
     };
   }
 }
@@ -142,7 +143,7 @@ export async function getManagedBookAction(
       return { success: false, error: "Không tìm thấy truyện." };
     }
     return { success: true, data: bookDetails };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in getManagedBookAction:", error);
     return {
       success: false,
@@ -175,7 +176,7 @@ export async function getChapterContentAction(
       return { success: false, error: "Không tìm thấy nội dung chương." };
     }
     return { success: true, data: chapterContent };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in getChapterContentAction:", error);
     return {
       success: false,
