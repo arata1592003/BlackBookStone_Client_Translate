@@ -7,6 +7,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
 import NextProgressBar from "@/components/layout/NextProgressBar";
 import GoogleAnalytics from "@/components/layout/GoogleAnalytics";
+import { FloatingSupportButton } from "@/components/features/support/FloatingSupportButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default async function RootLayout({
         </QueryProvider>
         <NextProgressBar />
         <GoogleAnalytics />
+        <FloatingSupportButton supportUrl="https://omg10.com/4/10612805" />
       </body>
     </html>
   );
