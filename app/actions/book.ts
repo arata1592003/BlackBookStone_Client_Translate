@@ -18,7 +18,7 @@ import { User } from "@supabase/supabase-js";
 
 interface BookMetadataFromSource {
   source?: string;
-  book_id?: string;
+  source_book_code?: string;
   book_name_raw?: string;
   author_name_raw?: string;
   url_raw?: string;
@@ -51,7 +51,7 @@ export async function fetchBookMetadataAction(url: string): Promise<{
 
     const metadata: BookMetadataFromSource = {
       source: apiResponse.source,
-      book_id: apiResponse.book_id,
+      source_book_code: apiResponse.source_book_code,
       book_name_raw: apiResponse.book_name_raw,
       author_name_raw: apiResponse.author_name_raw,
       url_raw: apiResponse.url_raw,
@@ -117,7 +117,9 @@ export async function createBookAction(
     console.error("Error in createBookAction:", error);
     return {
       success: false,
-      error: (error as Error).message || "Có lỗi không mong muốn xảy ra khi thêm truyện.",
+      error:
+        (error as Error).message ||
+        "Có lỗi không mong muốn xảy ra khi thêm truyện.",
     };
   }
 }

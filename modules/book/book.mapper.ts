@@ -141,6 +141,8 @@ export const mapToManagedChapter = (
   originalTitle: chapter.chapter_title_raw,
   status: chapter.chapter_status,
   lastUpdated: chapter.updated_at,
+  totalWordsRaw: chapter.total_words_raw, // Ánh xạ trường mới
+  urlRaw: chapter.url_raw, // Ánh xạ trường mới
 });
 
 export const mapToManagedBookDetails = (

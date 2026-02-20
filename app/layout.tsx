@@ -31,7 +31,8 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Hắc Thạch Thôn - Đọc truyện online miễn phí",
-  description: "Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên Hắc Thạch Thôn.",
+  description:
+    "Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên Hắc Thạch Thôn.",
 };
 
 export default async function RootLayout({
@@ -44,7 +45,11 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // console.log(data);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  console.log(session);
 
   return (
     <html lang="vi">

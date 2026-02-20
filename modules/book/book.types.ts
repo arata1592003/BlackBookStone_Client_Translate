@@ -104,7 +104,7 @@ export type UserBookItem = {
 // Kiểu dữ liệu cho phản hồi từ API lấy book-info
 export type BookInfoFromSourceResponse = {
   source: string;
-  book_id: string;
+  source_book_code: string;
   book_name_raw: string;
   author_name_raw: string;
   url_raw: string;
@@ -154,6 +154,8 @@ export type ManagedChapter = {
   originalTitle: string | null;
   status: boolean; // "DONE", "PENDING", "ERROR"
   lastUpdated: string;
+  totalWordsRaw: number | null;
+  urlRaw: string | null;
 };
 
 export type ChapterContent = {

@@ -375,7 +375,7 @@ export async function countSearchResults(query: string): Promise<number> {
 
 export async function searchBooks(
   query: string,
-  offset?: number, // Added offset
+  offset?: number,
   limit?: number,
 ): Promise<BookCardWithAuthorRow[]> {
   let dbQuery = supabaseClient
@@ -440,7 +440,9 @@ export async function fetchManagedChaptersByBookId(
       chapter_title_translated,
       chapter_title_raw,
       chapter_status,
-      updated_at
+      updated_at,
+      total_words_raw,
+      url_raw 
       `,
     )
     .eq("book_id", bookId)

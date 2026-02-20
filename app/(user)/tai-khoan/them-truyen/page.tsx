@@ -18,7 +18,6 @@ import { useAuth } from "@/components/providers/AuthProvider";
 const TAG_LIMIT = 30;
 
 export default function AddBookPage() {
-
   const { user } = useAuth();
 
   const [sourceBookCode, setSourceBookCode] = useState("");
@@ -80,7 +79,7 @@ export default function AddBookPage() {
       const result = await fetchBookMetadataAction(rawUrl);
 
       if (result.success && result.data) {
-        setSourceBookCode(result.data.book_id);
+        setSourceBookCode(result.data.source_book_code);
         setBookNameRaw(result.data.book_name_raw || "");
         setAuthorNameRaw(result.data.author_name_raw || "");
         setCoverImageUrl(result.data.cover_image_url || "");
@@ -147,7 +146,9 @@ export default function AddBookPage() {
       }
     } catch (error: unknown) {
       console.error("Lỗi khi thêm truyện:", error);
-      setAddBookError((error as Error).message || "Có lỗi xảy ra khi thêm truyện.");
+      setAddBookError(
+        (error as Error).message || "Có lỗi xảy ra khi thêm truyện.",
+      );
     } finally {
       setIsAddingBook(false);
     }

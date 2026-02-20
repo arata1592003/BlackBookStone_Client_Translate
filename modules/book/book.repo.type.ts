@@ -119,6 +119,8 @@ export type ManagedChapterRow = {
   chapter_title_raw: string | null;
   chapter_status: boolean; // "DONE", "PENDING", "ERROR"
   updated_at: string;
+  total_words_raw: number | null; // Thêm trường này
+  url_raw: string | null; // Thêm trường này
 };
 
 export type ChapterContentRow = {
