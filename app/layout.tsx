@@ -29,10 +29,11 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+
 export const metadata: Metadata = {
-  title: "Hắc Thạch Thôn - Đọc truyện online miễn phí",
-  description:
-    "Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên Hắc Thạch Thôn.",
+  title: `${APP_NAME} - Đọc truyện online miễn phí`,
+  description: `Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên ${APP_NAME}.`,
 };
 
 export default async function RootLayout({
@@ -45,11 +46,13 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  if (process.env.NODE_ENV === "development") {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  console.log(session);
+    console.log(session);
+  }
 
   return (
     <html lang="vi">

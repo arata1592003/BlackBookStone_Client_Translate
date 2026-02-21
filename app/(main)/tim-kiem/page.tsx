@@ -1,14 +1,15 @@
-// app/(main)/tim-kiem/page.tsx
 import { searchBooks, countSearchResults } from "@/modules/book/book.service";
 import type { Metadata } from "next";
-import SearchResultsClient from "@/components/features/search/SearchResultsClient"; // Import Client Component
+import SearchResultsClient from "@/components/features/search/SearchResultsClient";
 
 interface SearchPageProps {
   searchParams: {
     q?: string;
-    page?: string; // Add page param
+    page?: string;
   };
 }
+
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
 
 export async function generateMetadata({
   searchParams,
@@ -18,14 +19,14 @@ export async function generateMetadata({
 
   if (!query) {
     return {
-      title: "Hắc Thạch Thôn - Tìm kiếm",
-      description: "Tìm kiếm truyện trên Hắc Thạch Thôn.",
+      title: `${APP_NAME} - Tìm kiếm`,
+      description: `Tìm kiếm truyện trên ${APP_NAME}.`,
     };
   }
 
   return {
-    title: `Hắc Thạch Thôn - Kết quả tìm kiếm cho "${query}"`,
-    description: `Xem kết quả tìm kiếm truyện cho "${query}" trên Hắc Thạch Thôn.`,
+    title: `${APP_NAME} - Kết quả tìm kiếm cho "${query}"`,
+    description: `Xem kết quả tìm kiếm truyện cho "${query}" trên ${APP_NAME}.`,
   };
 }
 
@@ -56,7 +57,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <div className="max-w-screen-2xl mx-auto flex flex-col p-6 bg-surface-section text-text-primary">
       <h1 className="text-3xl font-bold mb-4">
         Kết quả tìm kiếm cho:{" "}
-                  <span className="text-primary">&quot;{query}&quot;</span>      </h1>
+        <span className="text-primary">&quot;{query}&quot;</span>{" "}
+      </h1>
       <SearchResultsClient
         initialSearchResults={searchResults}
         initialTotalResults={totalResults}
@@ -67,5 +69,3 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     </div>
   );
 }
-
-

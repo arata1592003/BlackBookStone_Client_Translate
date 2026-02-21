@@ -3,6 +3,8 @@ import { getBookInfo } from "@/modules/book/book.service";
 import { getNewestChapterListByBookSlug } from "@/modules/chapter/chapter.service";
 import type { Metadata } from "next";
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const bookInfo = await getBookInfo(slug);
@@ -18,12 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: bookInfo.book_name_translated,
     description: bookInfo.description
       ? bookInfo.description.substring(0, 150) + "..."
-      : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại Hắc Thạch Thôn.`,
+      : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại ${APP_NAME}.`,
     openGraph: {
       title: bookInfo.book_name_translated,
       description: bookInfo.description
         ? bookInfo.description.substring(0, 150) + "..."
-        : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại Hắc Thạch Thôn.`,
+        : `Đọc truyện ${bookInfo.book_name_translated} online miễn phí tại ${APP_NAME}.`,
       images: [
         {
           url: bookInfo.cover_image_url,

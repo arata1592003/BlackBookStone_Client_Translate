@@ -3,10 +3,11 @@ import { UserNavigationMenu } from "@/components/features/user/UserNavigationMen
 import React from "react";
 import type { Metadata } from "next";
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+
 export const metadata: Metadata = {
-  title: "Hắc Thạch Thôn - Tài Khoản",
-  description:
-    "Quản lý thông tin tài khoản, truyện đã đăng, lịch sử giao dịch và cài đặt của bạn trên Hắc Thạch Thôn.",
+  title: `${APP_NAME} - Tài Khoản`,
+  description: `Quản lý thông tin tài khoản, truyện đã đăng, lịch sử giao dịch và cài đặt của bạn trên ${APP_NAME}.`,
 };
 
 export default function UserLayout({

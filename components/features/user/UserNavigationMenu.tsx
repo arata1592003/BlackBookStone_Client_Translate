@@ -11,6 +11,8 @@ interface MenuItem {
   href: string;
 }
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+
 export const UserNavigationMenu = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -32,7 +34,7 @@ export const UserNavigationMenu = () => {
       id: "thong-tin",
       label: "Thông tin cá nhân",
       href: "/tai-khoan/thong-tin",
-    }, // Thêm mục mới
+    },
     { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
     { id: "dang-xuat", label: "Đăng xuất", href: "#" },
   ];
@@ -66,7 +68,7 @@ export const UserNavigationMenu = () => {
       <div className="flex items-center justify-center">
         <Image
           src="/logo.png"
-          alt="Hắc Thạch Thôn Logo"
+          alt="APP_NAME} Logo"
           width={228}
           height={90}
           style={{ objectFit: "contain" }}

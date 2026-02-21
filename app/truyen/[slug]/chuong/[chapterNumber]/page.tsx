@@ -4,6 +4,8 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getChapterDetailBySlugAndNumber } from "@/modules/chapter/chapter.service";
 import type { Metadata } from "next";
 
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -26,8 +28,8 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${chapter.book_name} - Chương ${chapter.chapter_number}: ${chapter.title} | Hắc Thạch Thôn`;
-  const description = `Đọc chương ${chapter.chapter_number} của truyện ${chapter.book_name} online miễn phí tại Hắc Thạch Thôn.`;
+  const title = `${chapter.book_name} - Chương ${chapter.chapter_number}: ${chapter.title} | ${APP_NAME}`;
+  const description = `Đọc chương ${chapter.chapter_number} của truyện ${chapter.book_name} online miễn phí tại ${APP_NAME}.`;
 
   return {
     title: title,
