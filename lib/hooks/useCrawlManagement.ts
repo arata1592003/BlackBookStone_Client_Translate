@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChapterRaw, CrawledChapterResult } from "@/modules/crawl/crawl.types";
 import { crawlChapterContentAction } from "@/app/actions/crawl";
@@ -34,7 +34,13 @@ export const useCrawlManagement = ({
     null,
   );
   const [isCrawlInProgress, setIsCrawlInProgress] = useState(false);
-  const [isCrawlStoppedByParent, setIsCrawlStoppedByParent] = useState(false); // NEW State
+
+  // NEW: Ref for immediate stop signal, and state for UI feedback
+  const stopCrawlRef = useRef(false);
+  const [hasCrawlBeenStoppedForUI, setHasCrawlBeenStoppedForUI] = useState(false);
+
+  const [totalChaptersToCrawlThisSession, setTotalChaptersToCrawlThisSession] =
+    useState(0);
 
   const totalManagedChapters = currentManagedChapters.length;
   const lastCrawledChapterNumber =
@@ -44,12 +50,12 @@ export const useCrawlManagement = ({
 
   const handleStartCrawlProcess = () => {
     setShowCrawlModal(true);
-    setIsCrawlStoppedByParent(false); // Reset stop state when starting
+    stopCrawlRef.current = false; // Reset ref state when starting
+    setHasCrawlBeenStoppedForUI(false); // Reset UI state
   };
 
   const handleCrawlComplete = () => {
     setShowCrawlModal(false);
-    router.refresh();
   };
 
   const handleCrawlStart = () => {
@@ -58,11 +64,28 @@ export const useCrawlManagement = ({
     setCrawledChapterResults([]); // Reset
     setCurrentCrawlingChapter(null); // Reset
     setCrawlContentError(null); // Reset
-    setIsCrawlStoppedByParent(false); // Ensure it's false when crawl starts
+    stopCrawlRef.current = false; // Ensure ref is false when crawl starts
+    setHasCrawlBeenStoppedForUI(false); // Ensure UI state is false when crawl starts
+    setTotalChaptersToCrawlThisSession(0); // Reset for new session
   };
 
   const onStopCrawlByParent = () => {
-    setIsCrawlStoppedByParent(true);
+    console.log("onStopCrawlByParent called: Setting stopCrawlRef.current to true");
+    stopCrawlRef.current = true; // Update ref for immediate check
+    setHasCrawlBeenStoppedForUI(true); // Update state for UI feedback
+  };
+
+  const resetCrawlLog = () => {
+    setCrawlLog([]);
+    setCrawledChapterResults([]);
+    setCurrentCrawlingChapter(null);
+    setCrawlContentError(null);
+    setTotalChaptersToCrawlThisSession(0);
+    setHasCrawlBeenStoppedForUI(false);
+  };
+
+  const triggerManualRefresh = () => {
+    router.refresh();
   };
 
   const handleConfirmCrawl = async (
@@ -78,16 +101,21 @@ export const useCrawlManagement = ({
           (chapter) => chapter.chapter_number > lastCrawledChapterNumber,
         );
 
+    setTotalChaptersToCrawlThisSession(chaptersToProcess.length); // Set total for this session
+
     setCrawlLog((prev) => [
       ...prev,
       `Bắt đầu cào ${chaptersToProcess.length} chương. (Tổng số chương gốc: ${chaptersToCrawl.length})`,
     ]);
 
     for (const chapter of chaptersToProcess) {
-      if (isCrawlStoppedByParent) {
+      console.log(`Checking stop signal for chapter ${chapter.chapter_number}. stopCrawlRef.current: ${stopCrawlRef.current}`);
+      if (stopCrawlRef.current) {
         setCrawlLog((prev) => [...prev, "Quá trình cào đã bị dừng."]);
+        console.log(`Crawl stopped for chapter ${chapter.chapter_number}. Breaking loop.`);
         break;
       }
+
 
       setCurrentCrawlingChapter({
         number: chapter.chapter_number,
@@ -136,9 +164,9 @@ export const useCrawlManagement = ({
           `Lỗi không xác định chương ${chapter.chapter_number}: ${errorMessage}`,
         ); // Set content error
         setCrawlLog((prev) => [
-          ...prev,
-          `❌ Lỗi không xác định khi cào chương ${chapter.chapter_number}: ${errorMessage}`,
-        ]);
+            ...prev,
+            `❌ Lỗi không xác định khi cào chương ${chapter.chapter_number}: ${errorMessage}`,
+          ]);
       }
     }
     setCurrentCrawlingChapter(null); // Clear current crawling chapter after loop
@@ -147,7 +175,7 @@ export const useCrawlManagement = ({
       `--- Quá trình cào hoàn tất. Thành công: ${successCount}, Lỗi: ${errorCount} ---`,
     ]);
     setIsCrawlInProgress(false);
-    router.refresh();
+    handleCrawlComplete(); // Call handleCrawlComplete when the crawl finishes
   };
 
   const handleViewRawContent = async (
@@ -175,7 +203,7 @@ export const useCrawlManagement = ({
     selectedRawContent,
     crawlLog,
     isCrawlInProgress,
-    isCrawlStoppedByParent, // NEW return value
+    isCrawlStoppedByParent: hasCrawlBeenStoppedForUI, // Expose hasCrawlBeenStoppedForUI as isCrawlStoppedByParent for external components
     totalManagedChapters,
     lastCrawledChapterNumber,
     handleStartCrawlProcess,
@@ -184,9 +212,12 @@ export const useCrawlManagement = ({
     handleConfirmCrawl,
     handleViewRawContent,
     setShowRawContentModal,
-    onStopCrawlByParent, // NEW return value
+    onStopCrawlByParent,
     crawledChapterResults,
     currentCrawlingChapter,
     crawlContentError,
+    totalChaptersToCrawlThisSession,
+    resetCrawlLog, // NEW
+    triggerManualRefresh, // NEW
   };
 };

@@ -13,6 +13,8 @@ interface CrawlProgressSectionProps {
   rawChaptersTotal: number;
   isCrawlStoppedByParent: boolean;
   onStopCrawl: () => void;
+  crawlLog: string[];
+  resetCrawlLog: () => void; // NEW
 }
 
 export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
@@ -23,6 +25,8 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
   rawChaptersTotal,
   isCrawlStoppedByParent,
   onStopCrawl,
+  crawlLog,
+  resetCrawlLog, // Deconstruct NEW
 }) => {
   return (
     <div className="flex-1 p-6 overflow-y-auto">
@@ -37,6 +41,20 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
           <Loader2 className="animate-spin" />
           {currentCrawlingChapter &&
             `Đang cào chương ${currentCrawlingChapter.number} (${crawledChapterResults.length}/${rawChaptersTotal})...`}
+        </div>
+      )}
+
+      {/* Crawl Log */}
+      {crawlLog.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-3">Nhật ký Cào:</h3>
+          <div className="max-h-60 overflow-y-auto border border-surface-border rounded-md p-3 bg-surface-raised font-mono text-sm">
+            {crawlLog.map((logEntry, index) => (
+              <p key={index} className="text-text-secondary">
+                {logEntry}
+              </p>
+            ))}
+          </div>
         </div>
       )}
 
@@ -65,6 +83,17 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
             className="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md transition-colors"
           >
             {isCrawlStoppedByParent ? "Đã dừng" : "Dừng Cào"}
+          </Button>
+        </div>
+      )}
+
+      {crawlLog.length > 0 && !isCrawlInProgress && (
+        <div className="mt-4">
+          <Button
+            onClick={resetCrawlLog}
+            className="w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md transition-colors"
+          >
+            Đặt lại Nhật ký
           </Button>
         </div>
       )}

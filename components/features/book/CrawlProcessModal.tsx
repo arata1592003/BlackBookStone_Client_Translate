@@ -16,15 +16,7 @@ interface CrawlProcessModalProps {
   onClose: () => void;
   onConfirmCrawl: (chaptersToCrawl: ChapterRaw[], recrawlAll: boolean) => void;
   onCrawlStart: () => void;
-  isCrawlInProgress: boolean;
-  crawlLog: string[];
-  isCrawlStoppedByParent: boolean;
-  onStopCrawlByParent: () => void;
-  totalManagedChapters: number;
-  lastCrawledChapterNumber: number;
-  crawledChapterResults: CrawledChapterResult[];
-  currentCrawlingChapter: { number: number; url: string } | null;
-  crawlContentError: string | null;
+  lastCrawledChapterNumber: number; // Still needed for confirmation logic
 }
 
 const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
@@ -33,13 +25,7 @@ const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
   onClose,
   onConfirmCrawl,
   onCrawlStart,
-  isCrawlInProgress,
-  isCrawlStoppedByParent,
-  onStopCrawlByParent,
   lastCrawledChapterNumber,
-  crawledChapterResults,
-  currentCrawlingChapter,
-  crawlContentError,
 }) => {
   const [isFetchingChapterList, setIsFetchingChapterList] = useState(false);
   const [chapterListError, setChapterListError] = useState<string | null>(null);
@@ -103,10 +89,6 @@ const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
     onClose();
   };
 
-  const handleStopCrawlProcess = () => {
-    onStopCrawlByParent();
-  };
-
   const handleCloseModal = () => {
     onClose();
   };
@@ -129,29 +111,17 @@ const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
         </div>
 
         {/* Modal Content */}
-        {isCrawlInProgress ? (
-          <CrawlProgressSection
-            isCrawlInProgress={isCrawlInProgress}
-            crawlContentError={crawlContentError}
-            crawledChapterResults={crawledChapterResults}
-            currentCrawlingChapter={currentCrawlingChapter}
-            isCrawlStoppedByParent={isCrawlStoppedByParent}
-            onStopCrawl={handleStopCrawlProcess}
-            rawChaptersTotal={rawChaptersFound.length}
-          />
-        ) : (
-          <CrawlConfirmationSection
-            isFetchingChapterList={isFetchingChapterList}
-            chapterListError={chapterListError}
-            chapterListMessage={chapterListMessage}
-            recrawlAll={recrawlAll}
-            setRecrawlAll={setRecrawlAll}
-            chaptersToCrawl={chaptersToCrawl}
-            rawChaptersFound={rawChaptersFound}
-            onStartCrawl={() => handleConfirmStartCrawl(chaptersToCrawl, false)}
-            onRecrawlAll={() => handleConfirmStartCrawl(rawChaptersFound, true)}
-          />
-        )}
+        <CrawlConfirmationSection
+          isFetchingChapterList={isFetchingChapterList}
+          chapterListError={chapterListError}
+          chapterListMessage={chapterListMessage}
+          recrawlAll={recrawlAll}
+          setRecrawlAll={setRecrawlAll}
+          chaptersToCrawl={chaptersToCrawl}
+          rawChaptersFound={rawChaptersFound}
+          onStartCrawl={() => handleConfirmStartCrawl(chaptersToCrawl, false)}
+          onRecrawlAll={() => handleConfirmStartCrawl(rawChaptersFound, true)}
+        />
 
         {/* Modal Footer */}
         <div className="flex justify-end p-4 border-t border-surface-border">

@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookText, Loader2 } from "lucide-react";
-import { ManagedBookDetails, ManagedChapter } from "@/modules/book/book.types";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { RawContentModal } from "@/components/features/book/RawContentModal";
-import CrawlProcessModal from "@/components/features/book/CrawlProcessModal";
+import CrawlProcessModal from "./CrawlProcessModal";
+import { RawContentModal } from "./RawContentModal";
+import CrawlLogViewerModal from "./CrawlLogViewerModal";
 import { useCrawlManagement } from "@/lib/hooks/useCrawlManagement";
+import { ManagedBookDetails, ManagedChapter } from "@/modules/book/book.types";
 
 interface CrawlManagementPageProps {
   bookId: string;
@@ -39,7 +41,12 @@ export default function CrawlManagementPage({
     crawledChapterResults,
     currentCrawlingChapter,
     crawlContentError,
+    totalChaptersToCrawlThisSession,
+    resetCrawlLog,
+    triggerManualRefresh,
   } = useCrawlManagement({ bookId, currentManagedChapters });
+
+  const [showCrawlLogViewerModal, setShowCrawlLogViewerModal] = useState(false); // NEW State
 
   return (
     <div className="flex flex-col flex-1 p-6 bg-surface-section text-text-primary">
@@ -84,39 +91,50 @@ export default function CrawlManagementPage({
         <h2 className="text-2xl font-bold text-text-primary mb-4">
           Điều khiển Cào dữ liệu
         </h2>
-        <Button
-          onClick={handleStartCrawlProcess}
-          disabled={isCrawlInProgress}
-          className="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
-        >
+        <div className="flex flex-col md:flex-row gap-4 w-full">
           {isCrawlInProgress ? (
-            <>
-              <Loader2 className="animate-spin" /> Đang cào...
-            </>
-          ) : (
-            "Bắt đầu Cào"
-          )}
-        </Button>
-
-        {/* Crawl Log */}
-        {crawlLog.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-3">Nhật ký Cào:</h3>
-            <div className="max-h-60 overflow-y-auto border border-surface-border rounded-md p-3 bg-surface-raised font-mono text-sm">
-              {crawlLog.map((logEntry, index) => (
-                <p key={index} className="text-text-secondary">
-                  {logEntry}
-                </p>
-              ))}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="flex items-center gap-2 text-text-secondary">
+                <Loader2 className="animate-spin" />
+                Đang cào chương {currentCrawlingChapter?.number || "..."} (
+                {crawledChapterResults.length}/{totalChaptersToCrawlThisSession}
+                )...
+              </div>
+              <Button
+                onClick={onStopCrawlByParent}
+                disabled={isCrawlStoppedByParent}
+                className="w-full px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+              >
+                {isCrawlStoppedByParent ? "Đã dừng" : "Dừng Cào"}
+              </Button>
             </div>
-          </div>
-        )}
+          ) : (
+            <Button
+              onClick={handleStartCrawlProcess}
+              className="flex-1 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+            >
+              Bắt đầu Cào
+            </Button>
+          )}
+          <Button
+            onClick={() => setShowCrawlLogViewerModal(true)}
+            className="flex-1 px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+          >
+            Xem Nhật ký Cào
+          </Button>
+        </div>
       </section>
 
       {/* Existing Chapters List */}
       <section className="bg-bg-box p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-2xl font-bold text-text-primary mb-4">
-          Danh sách Chương đã cào ({totalManagedChapters})
+        <h2 className="text-2xl font-bold text-text-primary mb-4 flex justify-between items-center">
+          <span>Danh sách Chương đã cào ({totalManagedChapters})</span>
+          <Button
+            onClick={triggerManualRefresh}
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm"
+          >
+            Làm mới danh sách Chương
+          </Button>
         </h2>
         {totalManagedChapters === 0 ? (
           <p className="text-text-muted">Chưa có chương nào được cào.</p>
@@ -209,15 +227,7 @@ export default function CrawlManagementPage({
           onClose={handleCrawlComplete}
           onConfirmCrawl={handleConfirmCrawl}
           onCrawlStart={handleCrawlStart}
-          isCrawlInProgress={isCrawlInProgress}
-          crawlLog={crawlLog}
-          isCrawlStoppedByParent={isCrawlStoppedByParent}
-          onStopCrawlByParent={onStopCrawlByParent}
-          totalManagedChapters={totalManagedChapters}
           lastCrawledChapterNumber={lastCrawledChapterNumber}
-          crawledChapterResults={crawledChapterResults}
-          currentCrawlingChapter={currentCrawlingChapter}
-          crawlContentError={crawlContentError}
         />
       )}
 
@@ -227,6 +237,23 @@ export default function CrawlManagementPage({
           title={selectedRawContent.title}
           content={selectedRawContent.content}
           onClose={() => setShowRawContentModal(false)}
+        />
+      )}
+
+      {/* Crawl Log Viewer Modal */}
+      {showCrawlLogViewerModal && (
+        <CrawlLogViewerModal
+          bookTitle={bookDetails.title}
+          onClose={() => setShowCrawlLogViewerModal(false)}
+          crawlLog={crawlLog}
+          crawledChapterResults={crawledChapterResults}
+          currentCrawlingChapter={currentCrawlingChapter}
+          rawChaptersTotal={totalChaptersToCrawlThisSession}
+          isCrawlStoppedByParent={isCrawlStoppedByParent}
+          resetCrawlLog={resetCrawlLog}
+          isCrawlInProgress={isCrawlInProgress}
+          crawlContentError={crawlContentError}
+          onStopCrawl={onStopCrawlByParent}
         />
       )}
     </div>
