@@ -314,7 +314,6 @@ export async function insertBook(
   supabase: SupabaseClient,
   bookPayload: BookInsertPayload,
 ): Promise<string> {
-  console.log(bookPayload);
   const { data, error } = await supabase
     .from("books")
     .insert(bookPayload)
@@ -459,10 +458,12 @@ export async function searchBooksForClient(
     throw error;
   }
 
-  return data?.map((row: any) => ({
-    ...row,
-    chapter_count: row.chapters?.[0]?.count || 0,
-  })) ?? [];
+  return (
+    data?.map((row: any) => ({
+      ...row,
+      chapter_count: row.chapters?.[0]?.count || 0,
+    })) ?? []
+  );
 }
 
 export async function fetchManagedBookDetailsById(

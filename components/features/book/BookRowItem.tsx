@@ -29,9 +29,11 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
       <div
         className="
           grid
-          grid-cols-[auto_1fr_170px_100px_100px]
+          grid-cols-[auto_1fr_auto]
+          md:grid-cols-[auto_1fr_170px_100px_100px]
           items-center
-          gap-3
+          gap-2 md:gap-3
+          py-2 md:py-0
           min-h-[60px]
           rounded-md
           px-1
@@ -46,9 +48,9 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
         <div
           className="
             relative
-            w-[24px]
-            sm:w-[30px]
-            md:w-[36px]
+            w-[32px]
+            sm:w-[36px]
+            md:w-[40px]
             aspect-[2/3]
             shrink-0
             rounded
@@ -61,11 +63,7 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
               src={book.cover_image_url}
               alt={book.book_name_translated ?? ""}
               fill
-              sizes="
-                (max-width: 640px) 24px,
-                (max-width: 768px) 30px,
-                36px
-              "
+              sizes="40px"
               className="object-cover"
             />
           ) : (
@@ -73,12 +71,12 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
           )}
         </div>
 
-        {/* Title */}
+        {/* Title & Info */}
         <div className="min-w-0 flex flex-col justify-center">
           <span
             className="
               text-sm
-              sm:text-base
+              md:text-base
               text-text-secondary
               font-medium
               line-clamp-1
@@ -87,9 +85,24 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
           >
             {book.book_name_translated}
           </span>
+          
+          {/* Mobile-only info (Chapter number) */}
+          <div className="flex items-center gap-2 md:hidden">
+             {book.author_name_translated && (
+              <span className="text-[10px] text-text-muted line-clamp-1 max-w-[80px]">
+                {book.author_name_translated}
+              </span>
+            )}
+            <span className="text-[10px] text-primary-accent font-bold">
+              {book.latestChapterNumber ? `Chương ${book.latestChapterNumber}` : ""}
+            </span>
+          </div>
+
+          {/* Desktop-only info (Author) */}
           {book.author_name_translated && (
             <span
               className="
+                hidden md:block
                 text-xs
                 text-text-muted
                 line-clamp-1
@@ -100,22 +113,18 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
           )}
         </div>
 
-        {/* Genres */}
-        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2 hidden sm:block">
-          {" "}
-          {/* Hidden on small screens */}
+        {/* Genres - Hidden on small screens */}
+        <div className="hidden md:block text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
           {genresText}
         </div>
 
-        {/* Chapter Number */}
-        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis hidden sm:block">
-          {" "}
-          {/* Hidden on small screens */}
+        {/* Chapter Number - Hidden on small screens, shown separately on mobile */}
+        <div className="hidden md:block text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis">
           {book.latestChapterNumber && `Chương ${book.latestChapterNumber}`}
         </div>
 
         {/* Time Ago */}
-        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
+        <div className="text-[10px] md:text-sm text-text-muted text-right md:text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
           {timeAgo}
         </div>
       </div>

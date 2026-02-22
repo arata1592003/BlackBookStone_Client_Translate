@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface MenuItem {
   id: string;
@@ -11,9 +11,11 @@ interface MenuItem {
   href: string;
 }
 
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+interface UserNavigationMenuProps {
+  isMobile?: boolean;
+}
 
-export const UserNavigationMenu = () => {
+export const UserNavigationMenu = ({ isMobile = false }: UserNavigationMenuProps) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,36 +43,28 @@ export const UserNavigationMenu = () => {
 
   const handleMenuItemClick = (item: MenuItem) => {
     if (item.id === "dang-xuat") {
-      console.log("Logout clicked from navigation menu");
+      console.log("Logout clicked");
     } else {
       router.push(item.href);
-    }
-    console.log(`Navigating to: ${item.href}`);
-  };
-
-  const handleMenuItemKeyDown = (
-    event: React.KeyboardEvent<HTMLButtonElement>,
-    item: MenuItem,
-  ) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleMenuItemClick(item);
-      console.log(`Navigating to (keyboard): ${item.href}`);
     }
   };
 
   return (
     <nav
-      className="fixed top-0 left-0 h-full w-[270px] px-0 py-5 bg-cover bg-center z-40 flex flex-col gap-10 items-center"
+      className={cn(
+        "h-full w-[270px] px-0 py-5 bg-cover bg-center z-40 flex flex-col gap-10 items-center transition-all",
+        !isMobile && "fixed top-0 left-0 border-r border-border-default/30",
+        isMobile && "relative w-full"
+      )}
       style={{ backgroundImage: "url(/sidebar-user.png)" }}
       aria-label="Main navigation"
     >
       <div className="flex items-center justify-center">
         <Image
           src="/logo.png"
-          alt="APP_NAME} Logo"
-          width={228}
-          height={90}
+          alt="Logo"
+          width={200}
+          height={80}
           style={{ objectFit: "contain" }}
           priority
         />
@@ -94,22 +88,21 @@ export const UserNavigationMenu = () => {
               >
                 <Button
                   variant="ghost"
-                  className={`items-center gap-1 px-3 py-2 flex-1 grow flex w-full justify-start rounded-none h-auto ${
+                  className={cn(
+                    "items-center gap-1 px-3 py-2 flex-1 grow flex w-full justify-start rounded-none h-auto transition-all",
                     isActive
-                      ? "bg-surface-overlay-alpha border-r-[6px] [border-right-style:solid] border-accent-red"
+                      ? "bg-surface-overlay-alpha border-r-[6px] border-accent-red"
                       : "bg-surface-overlay-alpha hover:bg-foreground/10"
-                  }`}
+                  )}
                   onClick={() => handleMenuItemClick(item)}
-                  onKeyDown={(e) => handleMenuItemKeyDown(e, item)}
                   role="menuitem"
                   aria-current={isActive ? "page" : undefined}
                 >
                   <span
-                    className={`${
-                      isActive
-                        ? "w-fit mt-[-6.00px] text-accent-red"
-                        : "relative self-stretch mt-[-1.00px] text-foreground"
-                    } font-inter font-normal text-2xl tracking-[0] leading-[normal]`}
+                    className={cn(
+                      "font-inter font-normal text-xl tracking-[0] leading-[normal] truncate",
+                      isActive ? "text-accent-red" : "text-foreground"
+                    )}
                   >
                     {item.label}
                   </span>

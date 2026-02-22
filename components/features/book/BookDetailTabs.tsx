@@ -24,7 +24,7 @@ export const BookDetailTabs = ({
   defaultTab = "chapters",
 }: Props) => {
   return (
-    <section className="w-[902px] mt-6">
+    <section className="w-full mt-6">
       <Tabs defaultValue={defaultTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-surface-card border border-border-default rounded-t-lg rounded-b-none h-auto p-0 overflow-hidden">
           {TABS.map((tabItem) => (

@@ -6,6 +6,7 @@ import { timeAgo } from "@/utils/date";
 import { Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface BookCabinetItemProps {
   novel: UserBookItem;
@@ -15,7 +16,7 @@ interface BookCabinetItemProps {
 export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
   return (
     <article
-      className="flex items-start relative self-stretch w-full flex-[0_0_auto] rounded-md overflow-hidden border border-solid border-border-subtle shadow-lg"
+      className="flex items-stretch relative self-stretch w-full rounded-md overflow-hidden border border-solid border-border-default shadow-lg bg-surface-card"
       style={{
         backgroundImage: `url(${"/dark-rock-wall-seamless-texture-free-105.png"})`,
         backgroundSize: "cover",
@@ -28,47 +29,48 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
           flex-1
           transition-all duration-200 ease-out
           hover:bg-background/60
-          hover:shadow-xl
-          hover:scale-[1.01]
           cursor-pointer
+          min-w-0
         "
       >
-        <div className="h-[150px] items-center flex-1 grow flex gap-5 relative bg-background/50 p-2 rounded-md">
-          <div className="items-center justify-center gap-2.5 aspect-[0.7] flex relative self-stretch">
+        <div className="min-h-[100px] md:h-[150px] items-center flex gap-2 md:gap-5 relative bg-background/50 p-1 md:p-3">
+          {/* Cover - Small on mobile to maximize text space */}
+          <div className="relative w-[60px] xs:w-[70px] md:w-[100px] aspect-[0.7] shrink-0 overflow-hidden rounded shadow-sm">
             <Image
-              className="relative flex-1 grow aspect-[0.7] object-cover rounded"
+              className="object-cover"
               alt={`${novel.title} cover`}
               src={novel.coverImageUrl || "/placeholder.jpg"}
-              width={100}
-              height={150}
+              fill
+              sizes="(max-width: 768px) 60px, 100px"
             />
           </div>
 
-          <div className="flex-col items-start gap-[5px] px-5 py-[5px] flex-1 grow flex relative self-stretch">
-            <div className="flex items-center gap-2.5 relative self-stretch w-full flex-[0_0_auto]">
-              <h2 className="relative flex items-center justify-center w-fit font-roboto font-bold text-foreground text-2xl tracking-[0.10px] leading-6 whitespace-nowrap">
+          {/* Info */}
+          <div className="flex-col items-start gap-0.5 md:gap-2 flex-1 grow flex relative min-w-0 py-0.5 md:py-1">
+            <div className="flex flex-wrap items-center gap-1.5 md:gap-2 self-stretch w-full">
+              <h2 className="font-roboto font-bold text-foreground text-base md:text-2xl tracking-tight leading-tight truncate">
                 {novel.title}
               </h2>
 
               {novel.status && (
-                <Badge className="bg-accent-red-bg text-accent-red-text border-none">
+                <Badge className="bg-accent-red-bg text-accent-red-text border-none text-[9px] md:text-xs px-1 py-0">
                   {novel.status}
                 </Badge>
               )}
             </div>
 
-            <div className="flex items-center gap-5 relative self-stretch w-full flex-[0_0_auto]">
-              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-foreground text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
-                Chương: {novel.totalChapters}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-0 md:gap-5 self-stretch w-full">
+              <span className="font-roboto font-normal text-foreground text-[11px] md:text-xl opacity-90">
+                Chương: <span className="font-semibold">{novel.totalChapters}</span>
               </span>
-              <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-foreground text-xl tracking-[0.10px] leading-5 whitespace-nowrap">
+              <span className="font-roboto font-normal text-foreground text-[9px] md:text-xl opacity-70 italic md:not-italic">
                 Cập nhật: {timeAgo(novel.updatedAt)}
               </span>
             </div>
 
-            <div className="inline-flex items-center justify-center gap-2 relative flex-[0_0_auto]">
-              {novel.genres.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="bg-border-white-alpha text-foreground font-normal">
+            <div className="flex flex-wrap gap-1 md:gap-2 mt-auto">
+              {novel.genres.slice(0, 3).map((tag, index) => (
+                <Badge key={index} variant="secondary" className="bg-foreground/10 text-foreground font-normal text-[9px] md:text-xs px-1 py-0">
                   {tag}
                 </Badge>
               ))}
@@ -77,21 +79,29 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
         </div>
       </Link>
 
+      {/* Delete Action - Minimal width on mobile */}
       <div
         className="
           flex items-center justify-center
           self-stretch
-          w-[60px]
+          w-10 md:w-[60px]
           cursor-pointer
           transition-colors
           hover:bg-destructive/70
+          bg-destructive/10
+          md:bg-transparent
+          border-l border-border-default/30
           group
         "
-        onClick={() => onDelete(novel.id)}
+        onClick={(e) => {
+          e.preventDefault();
+          onDelete(novel.id);
+        }}
+        title="Xóa khỏi tủ truyện"
       >
         <Trash
-          size={26}
-          className="text-foreground/70 group-hover:text-foreground transition-colors"
+          size={16}
+          className="text-foreground/70 group-hover:text-foreground transition-colors md:size-7"
         />
       </div>
     </article>

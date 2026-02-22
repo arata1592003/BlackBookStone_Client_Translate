@@ -13,20 +13,20 @@ interface StatCardData {
 
 const StatCard = ({ title, value }: StatCardData) => (
   <article
-    className="flex flex-col justify-between flex-1 grow rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_var(--color-shadow-default)] bg-cover bg-center relative self-stretch"
+    className="flex flex-col justify-between rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_var(--color-shadow-default)] bg-cover bg-center relative min-h-[100px] md:min-h-[120px]"
     style={{
       backgroundImage: "url('/dark-rock-wall-seamless-texture-free-105.png')",
     }}
   >
-    <div className="flex flex-col justify-between px-5 py-[10px] flex-1 w-full">
+    <div className="flex flex-col justify-between px-3 md:px-5 py-3 md:py-4 flex-1 w-full bg-background/40">
       <h2
-        className="text-xl font-bold text-foreground"
+        className="text-sm md:text-lg font-bold text-foreground leading-tight"
         style={{ whiteSpace: "pre-line" }}
       >
         {title}
       </h2>
 
-      <p className="text-xl text-foreground">{value}</p>
+      <p className="text-sm md:text-xl font-semibold text-foreground mt-2">{value}</p>
     </div>
   </article>
 );
@@ -40,7 +40,6 @@ export const UserStats = () => {
     enabled: !!user,
   });
 
-  // Sử dụng useMemo để chỉ tính toán lại stats khi rawStats thay đổi
   const stats = useMemo(() => {
     if (!rawStats) return null;
     return [
@@ -57,7 +56,7 @@ export const UserStats = () => {
         value: `${rawStats.totalCost.toLocaleString()} đ`,
       },
       {
-        title: "Số lượng giao dịch",
+        title: "Giao dịch",
         value: `${rawStats.transactionCount} lần`,
       },
     ];
@@ -66,13 +65,13 @@ export const UserStats = () => {
   if (isLoading || !stats) {
     return (
       <section
-        className="h-[150px] items-center gap-20 px-[50px] py-2.5 w-full flex relative self-stretch"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full"
         aria-label="Statistics loading"
       >
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton
             key={index}
-            className="flex-1 self-stretch rounded-lg"
+            className="h-[100px] md:h-[120px] rounded-lg w-full"
           />
         ))}
       </section>
@@ -81,7 +80,7 @@ export const UserStats = () => {
 
   return (
     <section
-      className="h-[150px] items-center gap-20 px-[50px] py-2.5 w-full flex relative self-stretch"
+      className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full"
       aria-label="Statistics"
     >
       {stats.map((stat, index) => (

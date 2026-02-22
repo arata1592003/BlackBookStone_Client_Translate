@@ -26,8 +26,8 @@ export default function TuTruyenPage() {
   };
 
   return (
-    <main className="flex flex-col items-start gap-5 p-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
-      <div className="flex flex-col h-full items-start gap-5 px-[30px] py-5 relative self-stretch w-full">
+    <main className="flex flex-col items-start gap-4 md:gap-5 p-2 md:p-2.5 relative flex-1 self-stretch w-full grow bg-surface-section overflow-x-hidden">
+      <div className="flex flex-col h-full items-start gap-4 md:gap-5 px-2 sm:px-4 md:px-[30px] py-4 md:py-5 relative self-stretch w-full">
         {isLoading ? (
           <div className="text-foreground text-center w-full">
           </div>

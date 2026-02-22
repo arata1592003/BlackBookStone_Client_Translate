@@ -66,7 +66,7 @@ export default async function ChapterReadPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto flex flex-col relative bg-[var(--color-surface-user-account-bg)] min-h-screen">
-      <div className="flex flex-col items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
+      <div className="flex flex-col items-start gap-6 md:gap-[30px] px-4 md:px-8 lg:px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
         <BreadcrumbResponsive
           slug={slug}
           bookTitle={chapter.book_name}

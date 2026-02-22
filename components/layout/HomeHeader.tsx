@@ -14,16 +14,23 @@ import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth";
 import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth";
 import { HomeHeaderTagsDropdown } from "./HomeHeaderTagsDropdown";
 
-import { Search } from "lucide-react"; // Add this import
+import { 
+  Search, 
+  ListFilter, 
+  LayoutGrid, 
+  Zap, 
+  Flame, 
+  CheckCircle2 
+} from "lucide-react";
 
 export const HomeHeader = () => {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Get searchParams
+  const searchParams = useSearchParams();
   const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
 
   const [tags, setTags] = useState<Tag[]>([]);
   const userDropdownRef = useRef<HTMLDivElement>(null);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || ""); // Initialize with URL query
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || "");
 
   useEffect(() => {
     getAllTags()
@@ -51,7 +58,7 @@ export const HomeHeader = () => {
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/tim-kiem?q=${encodeURIComponent(searchQuery.trim())}`);
     }
@@ -74,7 +81,7 @@ export const HomeHeader = () => {
   ];
 
   return (
-    <header className="bg-[url('/sidebar-user.png')] bg-cover bg-center text-foreground">
+    <header className="bg-[url('/sidebar-user.png')] bg-cover bg-center text-foreground shadow-md">
       {/* ================= TOP ================= */}
       <div
         className="
@@ -115,17 +122,17 @@ export const HomeHeader = () => {
           <form onSubmit={handleSearchSubmit} className="relative flex items-center w-full">
             <input
               type="search"
-              placeholder="Tìm kiếm..."
-              className="w-full px-4 py-2 rounded text-foreground bg-background pr-10"
+              placeholder="Tìm kiếm truyện, tác giả..."
+              className="w-full px-4 py-2 rounded-full text-foreground bg-background/80 focus:bg-background border border-border-default/50 pr-10 focus:ring-2 focus:ring-primary/50 transition-all outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button
               type="submit"
-              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-foreground"
+              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-text-muted hover:text-primary transition-colors"
               aria-label="Tìm kiếm"
             >
-              <Search size={20} />
+              <Search size={18} />
             </button>
           </form>
         </div>
@@ -146,25 +153,54 @@ export const HomeHeader = () => {
       </div>
 
       {/* ================= NAV ================= */}
-      <nav className="relative border-t border-b border-border-default/50 overflow-visible">
+      <nav className="relative border-t border-border-default/20 bg-surface-base/30 backdrop-blur-md">
         <div
           className="
-            flex gap-6
-            px-3 py-2
-            sm:px-4
+            flex items-center gap-6 md:gap-8
+            px-4 py-3
+            sm:px-6
             lg:px-8
             xl:px-32
-            text-sm sm:text-base
+            text-sm md:text-base
+            overflow-x-auto no-scrollbar
           "
         >
-          <HomeHeaderTagsDropdown
-            tags={tags}
-            isTagsDropdownOpen={false}
-            setIsTagsDropdownOpen={() => {}}
-          />
+          {/* Tags Dropdown Section */}
+          <div className="flex items-center gap-2 shrink-0 border-r border-border-default/30 pr-6 mr-2">
+            <HomeHeaderTagsDropdown
+              tags={tags}
+              isTagsDropdownOpen={false}
+              setIsTagsDropdownOpen={() => {}}
+            />
+          </div>
 
-          <span className="whitespace-nowrap cursor-pointer">Sắp xếp</span>
-          <span className="whitespace-nowrap cursor-pointer">Trạng thái</span>
+          {/* Nav Links */}
+          <div className="flex items-center gap-6 md:gap-8">
+            <Link href="/truyen-moi" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
+              <Zap size={16} className="text-text-muted group-hover:text-primary-accent" />
+              <span className="font-medium">Mới cập nhật</span>
+            </Link>
+
+            <Link href="/truyen-hot" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
+              <Flame size={16} className="text-text-muted group-hover:text-primary-accent" />
+              <span className="font-medium">Truyện Hot</span>
+            </Link>
+
+            <Link href="/truyen-full" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
+              <CheckCircle2 size={16} className="text-text-muted group-hover:text-primary-accent" />
+              <span className="font-medium">Hoàn thành</span>
+            </Link>
+
+            <div className="flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-text-secondary hover:text-primary-accent transition-colors group">
+              <ListFilter size={16} className="text-text-muted group-hover:text-primary-accent" />
+              <span className="font-medium">Sắp xếp</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-text-secondary hover:text-primary-accent transition-colors group">
+              <LayoutGrid size={16} className="text-text-muted group-hover:text-primary-accent" />
+              <span className="font-medium">Trạng thái</span>
+            </div>
+          </div>
         </div>
       </nav>
     </header>

@@ -192,8 +192,6 @@ export async function getManagedBookDetails(
   const bookRow = await fetchManagedBookDetailsById(bookId);
   if (!bookRow) return null;
 
-  console.log(bookRow);
-
   const chapterRows = await fetchManagedChaptersByBookId(bookId);
 
   return mapToManagedBookDetails(bookRow, chapterRows);

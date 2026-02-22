@@ -11,6 +11,7 @@ import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getVisiblePages } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface Props {
   slug: string;
@@ -29,9 +30,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
 
     async function load() {
       setLoading(true);
-
       const offset = (currentPage - 1) * chaptersPerPage;
-
       const [list, total] = await Promise.all([
         getChapterListByBookSlug(slug, offset, chaptersPerPage, newestFirst),
         getChapterCountByBookSlug(slug),
@@ -53,138 +52,99 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
   const pageNumbers = getVisiblePages(currentPage, totalPages);
 
   return (
-    <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
-      <div className="flex items-start gap-2.5 px-5 py-2.5 relative self-stretch w-full flex-[0_0_auto]">
-        <label className="inline-flex items-center gap-2.5 cursor-pointer">
+    <div className="flex flex-col w-full">
+      {/* Controls */}
+      <div className="flex items-center px-2 py-3 border-b border-border-default/50">
+        <label className="inline-flex items-center gap-2 cursor-pointer group">
           <input
             type="checkbox"
-            className="relative w-5 h-5 bg-background rounded-sm aspect-[1] appearance-none checked:bg-primary"
-            aria-label="Mới nhất"
+            className="w-4 h-4 bg-background border-border-default rounded checked:bg-primary accent-primary"
             checked={newestFirst}
             onChange={(e) => {
               setNewestFirst(e.target.checked);
               setCurrentPage(1);
             }}
           />
-          <ArrowDownWideNarrow size={20} className="text-text-secondary" />
-          <span className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
-            Mới nhất
+          <ArrowDownWideNarrow size={18} className="text-text-secondary group-hover:text-primary transition-colors" />
+          <span className="text-sm md:text-base font-medium text-text-secondary group-hover:text-primary transition-colors">
+            Mới nhất trước
           </span>
         </label>
       </div>
 
-      <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
-        <div className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-border-default">
-          <div className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto]">
-            <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
-              STT
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 p-2.5 relative flex-1 grow">
-            <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
-              Tiêu đề chương
-            </div>
-          </div>
-          <div className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto]">
-            <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
-              Thời gian
-            </div>
-          </div>
-        </div>
-
+      {/* List */}
+      <div className="flex flex-col w-full">
         {loading ? (
-          <div className="text-text-secondary text-center py-6 w-full">
-            Đang tải...
+          <div className="text-text-muted text-center py-10 w-full italic">
+            Đang tải danh sách chương...
           </div>
         ) : chapters.length === 0 ? (
-          <div className="text-text-secondary text-center py-6 w-full opacity-70">
-            Không có chương nào
+          <div className="text-text-muted text-center py-10 w-full opacity-70">
+            Hiện chưa có chương nào.
           </div>
         ) : (
-          chapters.map((chapter) => (
-            <Link
-              key={chapter.id}
-              href={`/truyen/${slug}/chuong/${chapter.chapter_number}`}
-              className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-border-default no-underline text-text-secondary hover:bg-foreground/10"
-            >
-              <div className="flex w-[52px] items-center justify-center gap-2.5 p-2.5 relative">
-                <div className="relative flex items-center justify-center w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
-                  {chapter.chapter_number}
+          <div className="flex flex-col">
+            {chapters.map((chapter) => (
+              <Link
+                key={chapter.id}
+                href={`/truyen/${slug}/chuong/${chapter.chapter_number}`}
+                className="flex items-center justify-between py-3 md:py-4 px-2 md:px-4 border-b border-border-default/30 last:border-none hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                  <span className="text-xs md:text-sm font-mono text-text-muted w-8 md:w-10 shrink-0">
+                    {chapter.chapter_number.toString().padStart(2, '0')}
+                  </span>
+                  <p className="text-sm md:text-lg font-medium text-text-secondary group-hover:text-primary transition-colors truncate pr-4">
+                    {chapter.chapter_title_translated}
+                  </p>
                 </div>
-              </div>
-              <div className="flex w-[757px] items-center gap-2.5 p-2.5 relative">
-                <p className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
-                  {chapter.chapter_title_translated}
-                </p>
-              </div>
-              <div className="flex w-[91px] items-center justify-end gap-2.5 p-2.5 relative">
-                <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
+                <time className="text-[10px] md:text-sm text-text-muted shrink-0 italic md:not-italic">
                   {timeAgo(chapter.created_at)}
-                </div>
-              </div>
-            </Link>
-          ))
+                </time>
+              </Link>
+            ))}
+          </div>
         )}
       </div>
 
-      <nav
-        className="flex items-center justify-center gap-2.5 p-2.5 relative self-stretch w-full flex-[0_0_auto]"
-        aria-label="Pagination"
-      >
+      {/* Pagination */}
+      <nav className="flex items-center justify-center gap-1.5 md:gap-2.5 py-6" aria-label="Pagination">
         <Button
-          size="icon-sm"
+          variant="outline"
+          size="icon-xs"
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="p-[5px] bg-primary rounded-sm"
-          aria-label="Previous page"
+          className="md:size-8"
         >
-          <ChevronLeft size={20} className="text-text-secondary" />
+          <ChevronLeft size={16} />
         </Button>
 
-        {pageNumbers.map((pageNum, index) =>
-          pageNum === "..." ? (
-            <span
-              key={`ellipsis-${index}`}
-              className="px-2 text-text-secondary opacity-60"
-            >
-              ...
-            </span>
-          ) : (
+        <div className="flex items-center gap-1">
+          {pageNumbers.map((pageNum, index) => (
             <Button
               key={index}
-              variant="ghost"
-              size="icon-sm"
-              onClick={() =>
-                typeof pageNum === "number" && setCurrentPage(pageNum)
-              }
+              variant={pageNum === currentPage ? "default" : "ghost"}
+              size="icon-xs"
+              onClick={() => typeof pageNum === "number" && setCurrentPage(pageNum)}
               disabled={typeof pageNum === "string"}
-              className={`p-[5px] rounded-sm overflow-hidden ${
-                pageNum === currentPage ? "bg-primary" : "bg-background"
-              }`}
-              aria-label={
-                typeof pageNum === "number" ? `Page ${pageNum}` : "More pages"
-              }
-              aria-current={pageNum === currentPage ? "page" : undefined}
+              className={cn(
+                "md:size-8 text-xs md:text-sm",
+                pageNum === currentPage ? "bg-primary" : "text-text-secondary"
+              )}
             >
-              <div
-                className={`flex items-center justify-center w-[19px] h-[19px] font-inter font-medium text-base text-center tracking-[0] leading-[normal] whitespace-nowrap ${
-                  pageNum === currentPage ? "text-text-secondary" : "text-foreground"
-                }`}
-              >
-                {pageNum}
-              </div>
+              {pageNum}
             </Button>
-          ),
-        )}
+          ))}
+        </div>
 
         <Button
-          size="icon-sm"
+          variant="outline"
+          size="icon-xs"
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="p-[5px] bg-primary rounded-sm"
-          aria-label="Next page"
+          className="md:size-8"
         >
-          <ChevronRight size={20} className="text-text-secondary" />
+          <ChevronRight size={16} />
         </Button>
       </nav>
     </div>

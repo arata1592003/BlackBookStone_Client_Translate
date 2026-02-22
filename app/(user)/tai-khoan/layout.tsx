@@ -16,12 +16,15 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-full relative bg-[var(--color-surface-user-account-bg)]">
-      <UserNavigationMenu />
-      <div className="flex flex-col flex-1 ml-[270px]">
-        {" "}
+    <div className="flex h-full relative bg-[var(--color-surface-user-account-bg)] overflow-hidden">
+      <div className="hidden lg:block">
+        <UserNavigationMenu />
+      </div>
+      <div className="flex flex-col flex-1 lg:ml-[270px] min-w-0">
         <UserHeader />
-        <main className="flex-1 flex flex-col"> {children}</main>
+        <main className="flex-1 flex flex-col overflow-y-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

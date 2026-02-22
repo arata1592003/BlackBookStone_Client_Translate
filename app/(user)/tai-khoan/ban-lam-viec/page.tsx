@@ -102,30 +102,30 @@ export default function BanLamViecPage() {
   };
 
   return (
-    <div className="flex flex-col items-start gap-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
+    <div className="flex flex-col items-start gap-4 md:gap-6 relative flex-1 self-stretch w-full grow bg-surface-section overflow-x-hidden">
       <UserStats />
 
       {showSuccessMessage && (
-        <div className="bg-success/20 text-success p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0 mt-4">
-          <CheckCircle2 size={20} />
+        <div className="mx-4 md:mx-8 bg-success/20 text-success p-3 rounded-md text-sm flex items-center gap-2 max-w-lg mt-2">
+          <CheckCircle2 size={20} className="shrink-0" />
           <span>Thêm truyện thành công! Yêu cầu crawl đang được xử lý.</span>
         </div>
       )}
 
-      <div className="flex flex-col items-start justify-center gap-2.5 relative flex-1 self-stretch w-full grow">
-        <div className="items-center justify-end gap-[50px] px-[50px] py-2.5 w-full flex-[0_0_auto] flex relative self-stretch">
+      <div className="flex flex-col items-start justify-center gap-4 md:gap-6 relative flex-1 self-stretch w-full grow px-4 md:px-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 w-full">
           <Button
             onClick={handleAddClick}
-            className="bg-primary border border-foreground px-2.5 py-[5px] rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] hover:opacity-90 transition-opacity"
+            className="bg-primary border border-foreground px-4 py-2 rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] hover:opacity-90 transition-opacity flex items-center justify-center gap-2 h-11 sm:h-10"
             aria-label="Thêm mới"
           >
             <BookPlus size={20} className="text-foreground" />
-            <span className="font-inter font-bold text-foreground text-xl tracking-[0] leading-[normal] whitespace-nowrap">
-              Thêm
+            <span className="font-inter font-bold text-foreground text-lg md:text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+              Thêm truyện
             </span>
           </Button>
 
-          <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-surface-card rounded-md overflow-hidden">
+          <div className="inline-flex items-center gap-3 md:gap-5 px-4 md:px-5 py-2 relative flex-1 sm:flex-none sm:min-w-[300px] bg-surface-card rounded-md border border-border-default overflow-hidden h-11 sm:h-10">
             <label htmlFor="search-input" className="sr-only">
               Tìm kiếm
             </label>
@@ -134,25 +134,24 @@ export default function BanLamViecPage() {
               type="search"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Tìm kiếm..."
-              className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto] w-fit mt-[-1.00px] font-roboto font-normal text-foreground text-xl tracking-[0] leading-[normal] whitespace-nowrap bg-transparent border-none outline-none"
+              placeholder="Tìm kiếm truyện của bạn..."
+              className="flex-1 font-roboto font-normal text-foreground text-base md:text-lg tracking-[0] leading-[normal] bg-transparent border-none outline-none min-w-0"
               aria-label="Tìm kiếm tiểu thuyết"
             />
-
-            <div className="flex w-5 h-5 items-start gap-2.5 relative bg-surface-card aspect-[1]">
+            <div className="flex w-5 h-5 items-center justify-center shrink-0">
               <Image
-                className="relative flex-1 self-stretch grow object-cover"
+                className="relative object-cover"
                 alt="Search icon"
                 src={loupe1Path}
-                width={20}
-                height={20}
+                width={18}
+                height={18}
               />
             </div>
           </div>
         </div>
 
         <section
-          className="flex-col items-start gap-2.5 px-[30px] py-2.5 flex-1 w-full grow flex relative self-stretch"
+          className="flex flex-col gap-4 w-full grow relative self-stretch"
           aria-label="Danh sách tiểu thuyết"
         >
           {renderBookList()}
