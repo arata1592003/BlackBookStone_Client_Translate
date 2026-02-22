@@ -26,6 +26,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
           src={book.cover_image_url}
           alt={book.book_name_translated}
           fill
+          sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
           className="object-cover transition-transform group-hover:scale-105"
         />
       </div>
