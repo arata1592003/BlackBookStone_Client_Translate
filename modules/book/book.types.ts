@@ -49,6 +49,12 @@ export type BookCardWithAuthor = {
   view: number;
 };
 
+export type SearchBookResult = BookCardWithAuthor & {
+  description: string | null;
+  status: string | null; // Mapped from publication_status
+  chapterCount: number;
+};
+
 export type BookNewChapterCard = BookCardWithAuthor & {
   latestChapterNumber: number | null;
   latestChapterUpdatedAt: string | null;

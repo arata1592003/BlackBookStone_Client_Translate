@@ -4,6 +4,12 @@ export type BookCardWithAuthorRow = {
   book_name_translated: string | null;
   author_name_translated: string | null;
   cover_image_url: string | null;
+  description: string | null;
+  publication_status: string | null;
+};
+
+export type SearchBookRepoRow = BookCardWithAuthorRow & {
+  chapter_count: number;
 };
 
 export type BookNewChapterCardRow = BookCardWithAuthorRow & {

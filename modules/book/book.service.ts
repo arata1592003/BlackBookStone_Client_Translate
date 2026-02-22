@@ -6,6 +6,7 @@ import {
   ChapterContent,
   BookNewChapterCard,
   BookCompletedCard,
+  SearchBookResult, // NEW: Import SearchBookResult
 } from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
@@ -15,6 +16,7 @@ import {
   mapToChapterContent,
   mapToBookNewChapterCard,
   mapToBookCompletedCard,
+  mapToSearchBookResult, // NEW: Import mapToSearchBookResult
 } from "./book.mapper";
 import {
   fetchBookInfoBySlug,
@@ -32,6 +34,7 @@ import {
   fetchCompletedBooks,
   searchBooks as repoSearchBooks,
   countSearchResults as repoCountSearchResults,
+  searchBooksForClient, // NEW: Import searchBooksForClient
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -66,6 +69,16 @@ export async function searchBooks(
 ): Promise<BookCardWithAuthor[]> {
   const rows = await repoSearchBooks(query, offset, limit); // Pass offset
   return rows.map(mapToBookCardWithAuthor);
+}
+
+// NEW: Function to get detailed search results
+export async function getSearchBooksWithDetails(
+  query: string,
+  offset?: number,
+  limit?: number,
+): Promise<SearchBookResult[]> {
+  const rows = await searchBooksForClient(query, offset, limit);
+  return rows.map(mapToSearchBookResult);
 }
 
 export async function countSearchResults(query: string): Promise<number> {

@@ -1,4 +1,4 @@
-import { searchBooks, countSearchResults } from "@/modules/book/book.service";
+import { getSearchBooksWithDetails, countSearchResults } from "@/modules/book/book.service";
 import type { Metadata } from "next";
 import SearchResultsClient from "@/components/features/search/SearchResultsClient";
 
@@ -39,23 +39,23 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   if (!query) {
     return (
-      <div className="max-w-screen-2xl mx-auto flex flex-col p-6 bg-surface-section text-text-primary">
-        <h1 className="text-3xl font-bold mb-4">Tìm kiếm</h1>
-        <p className="text-text-secondary">
+      <main className="max-w-7xl mx-auto flex flex-col py-8 px-6 lg:px-8 bg-surface-section text-text-primary min-h-[60vh]">
+        <h1 className="text-4xl font-bold mb-6">Tìm kiếm</h1>
+        <p className="text-text-secondary text-lg">
           Vui lòng nhập từ khóa để tìm kiếm truyện.
         </p>
-      </div>
+      </main>
     );
   }
 
   const [searchResults, totalResults] = await Promise.all([
-    searchBooks(query, offset, booksPerPage),
+    getSearchBooksWithDetails(query, offset, booksPerPage),
     countSearchResults(query),
   ]);
 
   return (
-    <div className="max-w-screen-2xl mx-auto flex flex-col p-6 bg-surface-section text-text-primary">
-      <h1 className="text-3xl font-bold mb-4">
+    <main className="max-w-7xl mx-auto flex flex-col py-8 px-6 lg:px-8 bg-surface-section text-text-primary min-h-[60vh]">
+      <h1 className="text-4xl font-bold mb-6">
         Kết quả tìm kiếm cho:{" "}
         <span className="text-primary">&quot;{query}&quot;</span>{" "}
       </h1>
@@ -66,6 +66,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         booksPerPage={booksPerPage}
         currentPage={currentPage}
       />
-    </div>
+    </main>
   );
 }

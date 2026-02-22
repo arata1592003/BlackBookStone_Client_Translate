@@ -1,0 +1,3 @@
+colors: {
+  "primary-accent": "hsl(var(--primary-accent))",
+}

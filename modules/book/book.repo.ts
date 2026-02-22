@@ -411,6 +411,49 @@ export async function searchBooks(
   return data ?? [];
 }
 
+// New function for detailed search results
+export async function searchBooksForClient(
+  query: string,
+  offset?: number,
+  limit?: number,
+): Promise<SearchBookRepoRow[]> {
+  let dbQuery = supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      slug,
+      book_name_translated,
+      author_name_translated,
+      cover_image_url,
+      description,
+      publication_status,
+      chapters(count)
+      `,
+    )
+    .or(
+      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
+    )
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (typeof offset === "number" && typeof limit === "number") {
+    dbQuery = dbQuery.range(offset, offset + limit - 1);
+  }
+
+  const { data, error } = await dbQuery;
+
+  if (error) {
+    console.error("Error searching books for client:", error.message);
+    throw error;
+  }
+
+  return data?.map((row: any) => ({
+    ...row,
+    chapter_count: row.chapters?.[0]?.count || 0,
+  })) ?? [];
+}
+
 export async function fetchManagedBookDetailsById(
   bookId: string,
 ): Promise<ManagedBookRow | null> {

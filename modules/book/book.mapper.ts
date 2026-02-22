@@ -9,6 +9,7 @@ import {
   ChapterContentRow,
   BookNewChapterCardRow,
   BookCompletedCardRow,
+  SearchBookRepoRow, // Moved import
 } from "@/modules/book/book.repo.type";
 import {
   BookCardWithAuthor,
@@ -19,6 +20,7 @@ import {
   ChapterContent,
   BookNewChapterCard,
   BookCompletedCard,
+  SearchBookResult, // Moved import
 } from "@/modules/book/book.types";
 
 export const mapToBookCardWithAuthor = (
@@ -72,6 +74,21 @@ export const mapToBookCompletedCard = (
     totalChapters: totalChapters,
   };
 };
+
+import { SearchBookRepoRow } from "./book.repo.type";
+import { SearchBookResult } from "./book.types";
+
+export const mapToSearchBookResult = (row: SearchBookRepoRow): SearchBookResult => ({
+  id: row.id,
+  slug: row.slug,
+  book_name_translated: row.book_name_translated,
+  author_name_translated: row.author_name_translated,
+  cover_image_url: row.cover_image_url,
+  view: 0, // Default view to 0, as it's not fetched by SearchBookRepoRow
+  description: row.description,
+  status: row.publication_status,
+  chapterCount: row.chapter_count,
+});
 
 export const mapToBookInfo = (
   book: BookInfoRow,
