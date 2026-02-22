@@ -1,7 +1,7 @@
 "use client";
 
 import { ChapterList } from "@/components/features/chapter/ChapterList";
-import { Button } from "@/components/ui/Button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 
 type Props = {
@@ -23,53 +23,36 @@ export const BookDetailTabs = ({
   description,
   defaultTab = "chapters",
 }: Props) => {
-  const [tab, setTab] = useState<TabKey>(defaultTab);
-
   return (
-    <section className="flex flex-col w-[902px] items-start relative flex-[0_0_auto] rounded-sm overflow-hidden border border-solid border-white">
-      <nav
-        className="flex w-[900px] items-start relative flex-[0_0_auto] border-b [border-bottom-style:solid] border-white"
-        role="tablist"
-      >
-        {TABS.map((tabItem, index) => (
-          <Button
-            key={tabItem.id}
-            variant="ghost"
-            role="tab"
-            aria-selected={tab === tabItem.id}
-            onClick={() => setTab(tabItem.id)}
-            className={`rounded-none p-2.5 h-auto ${
-              index < TABS.length - 1
-                ? "border-r [border-right-style:solid] border-white"
-                : ""
-            } ${
-              tab === tabItem.id
-                ? "bg-surface-card font-bold"
-                : "hover:bg-surface-hover"
-            }`}
-          >
-            <span className="font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
+    <section className="w-[902px] mt-6">
+      <Tabs defaultValue={defaultTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-surface-card border border-border-default rounded-t-lg rounded-b-none h-auto p-0 overflow-hidden">
+          {TABS.map((tabItem) => (
+            <TabsTrigger
+              key={tabItem.id}
+              value={tabItem.id}
+              className="py-3 text-lg font-medium text-text-secondary data-[state=active]:bg-surface-raised data-[state=active]:text-primary rounded-none border-r border-border-default last:border-r-0 transition-all"
+            >
               {tabItem.label}
-            </span>
-          </Button>
-        ))}
-      </nav>
-
-      <div className="flex flex-col items-start gap-2.5 px-0 py-2.5 relative self-stretch w-full flex-[0_0_auto]">
-        {tab === "intro" && (
-          <div className="p-4 text-text-secondary text-base leading-relaxed font-roboto font-normal">
-            {description || "Chưa có giới thiệu"}
-          </div>
-        )}
-
-        {tab === "chapters" && <ChapterList slug={slug} />}
-
-        {tab === "comments" && (
-          <div className="p-4 text-text-secondary text-base opacity-70 font-roboto font-normal">
-            Bình luận sẽ cập nhật
-          </div>
-        )}
-      </div>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <div className="bg-surface-card border-x border-b border-border-default rounded-b-lg p-4 min-h-[200px]">
+          <TabsContent value="intro" className="mt-0 outline-none">
+            <div className="text-text-secondary text-base leading-relaxed font-roboto font-normal">
+              {description || "Chưa có giới thiệu"}
+            </div>
+          </TabsContent>
+          <TabsContent value="chapters" className="mt-0 outline-none">
+            <ChapterList slug={slug} />
+          </TabsContent>
+          <TabsContent value="comments" className="mt-0 outline-none">
+            <div className="text-text-secondary text-base opacity-70 font-roboto font-normal">
+              Bình luận sẽ cập nhật
+            </div>
+          </TabsContent>
+        </div>
+      </Tabs>
     </section>
   );
 };

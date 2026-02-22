@@ -13,7 +13,7 @@ export function FloatingSupportButton({ supportUrl }: FloatingSupportButtonProps
       href={supportUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-4 right-4 z-50 flex items-center justify-center space-x-2 rounded-full bg-accent-red p-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-accent-red"
+      className="fixed bottom-4 right-4 z-50 flex items-center justify-center space-x-2 rounded-full bg-accent-red p-3 text-foreground shadow-lg transition-all duration-300 hover:scale-105 hover:bg-accent-red"
       aria-label="Ủng hộ"
     >
       <Heart className="h-6 w-6" />

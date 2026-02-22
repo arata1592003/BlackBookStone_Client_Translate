@@ -29,7 +29,7 @@ export const TagListSidebar = () => {
         <Link
           key={tag.id}
           href={`/the-loai/${tag.name}`}
-          className="block px-2 py-1 rounded-md border border-text-muted/20 bg-surface-card hover:bg-surface-secondary text-text-primary hover:text-red-400 text-sm transition-colors hover:border-primary"
+          className="block px-2 py-1 rounded-md border border-text-muted/20 bg-surface-card hover:bg-surface-secondary text-text-primary hover:text-primary-accent text-sm transition-colors hover:border-primary"
         >
           {tag.name}
         </Link>

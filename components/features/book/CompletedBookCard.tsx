@@ -47,7 +47,7 @@ export const CompletedBookCard = ({ book }: Props) => {
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 bg-neutral-700" />
+            <div className="absolute inset-0 bg-muted" />
           )}
         </div>
 
@@ -58,19 +58,18 @@ export const CompletedBookCard = ({ book }: Props) => {
               font-medium
               text-text-primary
               line-clamp-2
-              group-hover:text-red-400
+              group-hover:text-primary-accent
               transition-colors
             "
           >
             {book.book_name_translated}
           </p>
-          <p
-            className="
-              text-xs
-              text-neutral-500
-              line-clamp-1
-            "
-          >
+                      <p
+                        className="
+                        text-xs
+                        text-text-muted
+                        line-clamp-1
+                      "          >
             {book.totalChapters} Chương
           </p>
         </div>

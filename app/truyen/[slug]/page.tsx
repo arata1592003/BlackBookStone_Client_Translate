@@ -52,7 +52,7 @@ export default async function BookDetailPage({ params }: Props) {
   const newestChapterList = await getNewestChapterListByBookSlug(slug, 10);
 
   return (
-    <div className="max-w-screen-2xl mx-auto flex flex-col bg-white min-h-screen ">
+    <div className="max-w-screen-2xl mx-auto flex flex-col bg-[var(--color-surface-user-account-bg)] min-h-screen ">
       <div className="flex items-start gap-4 md:gap-[30px] px-4 py-4 md:px-8 lg:px-[50px] md:py-5 relative w-full bg-surface-section">
         <div className="flex flex-col items-start gap-4 md:gap-[30px] relative w-full">
           <BookDetailSection

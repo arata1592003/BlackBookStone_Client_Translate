@@ -4,11 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================
-   ROOT DESIGN TOKENS (HỆ MÀU CHÍNH CỦA BẠN)
+   TAILWIND 4 THEME SYSTEM
 ========================= */
 
-:root {
-  /* ===== Surface ===== */
+@theme {
+  /* ===== Surface Colors ===== */
   --color-surface-base: #0b0b0b;
   --color-surface-raised: #141414;
   --color-surface-section: #292929;
@@ -16,84 +16,141 @@
   --color-surface-overlay: #0d0d0d;
   --color-surface-overlay-alpha: #0d0d0d1a;
   --color-surface-hover: #3a3a3a;
+  --color-surface-user-account-bg: #1a1a1a;
 
-  /* ===== Text ===== */
+  /* ===== Brand & Action Colors ===== */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #6366f1;
+  --color-primary-foreground: #ffffff;
+  
+  --color-primary-accent: #6366f1;
+  --color-secondary-accent: #0d9488;
+  
+  --color-success: #4ade80;
+  --color-warning: #eab308;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-accent-red: #e63946;
+  --color-accent-red-bg: #3a1f1c;
+  --color-accent-red-text: #f5b7b1;
+
+  /* ===== Text Colors ===== */
   --color-text-primary: #eaeaea;
   --color-text-secondary: #d1d5db;
   --color-text-muted: #9ca3af;
   --color-text-faint: #aba6a6;
 
-  /* ===== Border ===== */
+  /* ===== Border & Shadow ===== */
   --color-border-default: #222222;
   --color-border-subtle: #868686;
   --color-border-strong: #cecece;
+  --color-border-white-alpha: #ffffff33;
 
-  /* ===== Primary Accent ===== */
-  --primary-accent: #6366f1;
+  --color-shadow-default: #000000;
+  --color-shadow-white: rgba(255, 255, 255, 0.1);
 
-  /* =========================
-     MAP SANG HỆ TAILWIND / SHADCN
-     (KHÔNG tạo màu mới — chỉ map lại)
-  ========================= */
+  /* ===== Book Card Variants (Dark) ===== */
+  --color-book-card-variant1-bg: #1c3a3a;
+  --color-book-card-variant1-text: #b1f5f5;
+  --color-book-card-variant2-bg: #1c3a2f;
+  --color-book-card-variant2-text: #b1f5d5;
+  --color-book-card-variant3-bg: #3a1f1c;
+  --color-book-card-variant3-text: #f5b7b1;
 
-  --background: var(--color-surface-base);
-  --foreground: var(--color-text-primary);
-  --card: var(--color-surface-card);
-  --card-foreground: var(--color-text-primary);
-  --border: var(--color-border-default);
-  --input: var(--color-border-default);
-  --ring: var(--primary-accent);
-  --primary: var(--primary-accent);
-  --primary-foreground: #ffffff;
+  /* ===== Map to Shadcn/UI (Dark default) ===== */
+  --color-background: var(--color-surface-base);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-surface-card);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-surface-card);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-muted: var(--color-surface-section);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-accent-red);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-border: var(--color-border-default);
+  --color-input: var(--color-border-default);
+  --color-ring: var(--color-primary-hover);
+
+  /* ===== Radius & Fonts ===== */
+  --radius-sm: 5px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius: 0.625rem;
+
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-roboto: var(--font-roboto), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
 }
 
-/* ===== DARK MODE (giữ nguyên hệ màu của bạn) ===== */
+/* =========================
+   LIGHT MODE OVERRIDES
+========================= */
 
-.dark {
-  --background: var(--color-surface-base);
-  --foreground: var(--color-text-primary);
-  --card: var(--color-surface-card);
-  --card-foreground: var(--color-text-primary);
-  --border: var(--color-border-default);
-  --ring: var(--primary-accent);
+.light {
+  /* Surface */
+  --color-surface-base: #ffffff;
+  --color-surface-raised: #f9fafb;
+  --color-surface-section: #f3f4f6;
+  --color-surface-card: #ffffff;
+  --color-surface-overlay: #fdfdfd;
+  --color-surface-overlay-alpha: #fdfdfd1a;
+  --color-surface-hover: #e5e7eb;
+  --color-surface-user-account-bg: #e0e0e0;
+
+  /* Brand */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-success: #22c55e;
+  --color-warning: #ca8a04;
+  --color-destructive: #dc2626;
+
+  /* Text */
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-text-faint: #9ca3af;
+
+  /* Border & Shadow */
+  --color-border-default: #d1d5db;
+  --color-border-subtle: #e5e7eb;
+  --color-border-strong: #9ca3af;
+  --color-border-white-alpha: #00000033;
+  --color-shadow-white: rgba(0, 0, 0, 0.1);
+
+  /* Book Card Variants (Light) */
+  --color-book-card-variant1-bg: #e0f2f2;
+  --color-book-card-variant1-text: #0f4c4c;
+  --color-book-card-variant2-bg: #e0f2e8;
+  --color-book-card-variant2-text: #0f4c3a;
+  --color-book-card-variant3-bg: #f2e0e0;
+  --color-book-card-variant3-text: #4c0f0f;
+  
+  /* Update Shadcn/UI mappings for Light */
+  --color-background: var(--color-surface-base);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-surface-card);
+  --color-card-foreground: var(--color-text-primary);
+  --color-border: var(--color-border-default);
+  --color-input: var(--color-border-default);
 }
 
 /* =========================
    BASE STYLES
 ========================= */
 
-html,
-body {
-  height: 100%;
-  min-height: 100vh;
-  margin: 0;
-}
-
 @layer base {
   * {
-    border-color: var(--color-border-default);
+    @apply border-border outline-ring/50;
   }
 
   body {
-    background: var(--color-surface-base);
-    color: var(--color-text-primary);
-  }
-}
-
-/* =========================
-   CUSTOM UTILITIES
-========================= */
-
-@layer utilities {
-  .text-primary-accent {
-    color: var(--primary-accent);
-  }
-
-  .bg-surface-card {
-    background: var(--color-surface-card);
-  }
-
-  .border-default {
-    border-color: var(--color-border-default);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    min-height: 100vh;
+    height: 100%;
+    margin: 0;
   }
 }

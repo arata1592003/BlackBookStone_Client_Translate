@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { BookCardWithAuthor, SearchBookResult } from "@/modules/book/book.types"; // Updated import
-import { PagePagination } from "@/components/ui/PagePagination";
+import { PagePagination } from "@/components/ui/page-pagination";
 import { SearchBookCard } from "../book/SearchBookCard"; // Import SearchBookCard
 
 interface SearchResultsClientProps {

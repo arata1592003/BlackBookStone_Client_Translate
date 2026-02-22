@@ -75,10 +75,9 @@ export const mapToBookCompletedCard = (
   };
 };
 
-import { SearchBookRepoRow } from "./book.repo.type";
-import { SearchBookResult } from "./book.types";
-
-export const mapToSearchBookResult = (row: SearchBookRepoRow): SearchBookResult => ({
+export const mapToSearchBookResult = (
+  row: SearchBookRepoRow,
+): SearchBookResult => ({
   id: row.id,
   slug: row.slug,
   book_name_translated: row.book_name_translated,

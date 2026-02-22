@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { SearchBookResult } from "@/modules/book/book.types"; // Updated import to SearchBookResult
@@ -21,12 +22,12 @@ export const SearchBookCard = ({ book }: SearchBookCardProps) => {
           "group flex flex-col md:flex-row gap-4 p-4 h-52", // Changed px-3 py-6 to px-3 pt-4 pb-8
           "bg-surface-card rounded-md overflow-hidden",
           "shadow-md hover:shadow-lg transition-all duration-200",
-          "border border-surface-border hover:border-primary-accent", // Subtle border and accent on hover
+          "border border-border-default hover:border-primary-accent", // Subtle border and accent on hover
         )}
       >
         {/* Image Section */}
         <div className="relative flex-shrink-0 w-full h-full md:w-2/7 pb-4">
-          <div className="relative w-full h-full rounded-md overflow-hidden border border-surface-border">
+          <div className="relative w-full h-full rounded-md overflow-hidden border border-border-default">
             <Image
               src={book.cover_image_url || "/placeholder.jpg"}
               alt={book.book_name_translated || "Ảnh bìa truyện"}
@@ -37,9 +38,9 @@ export const SearchBookCard = ({ book }: SearchBookCardProps) => {
           </div>
 
           {isCompleted && (
-            <span className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full z-10">
+            <Badge className="absolute top-2 left-2 bg-success text-foreground font-semibold rounded-full z-10">
               FULL
-            </span>
+            </Badge>
           )}
         </div>
 
@@ -78,7 +79,7 @@ export const SearchBookCard = ({ book }: SearchBookCardProps) => {
                 size={16}
                 className="text-text-secondary mt-1 flex-shrink-0"
               />
-              <p className="text-text-tertiary text-sm line-clamp-4">
+              <p className="text-text-muted text-sm line-clamp-4">
                 {book.description}
               </p>
             </div>

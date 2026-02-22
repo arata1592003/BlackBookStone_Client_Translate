@@ -38,7 +38,8 @@ Tài liệu này cung cấp hướng dẫn về quy tắc đặt tên cho các t
 ### 5. Tệp và Thư mục (Files and Folders)
 
 *   **Quy tắc:**
-    *   **Component:** `PascalCase.tsx` (ví dụ: `BookCard.tsx`, `LoginPage.tsx`).
+    *   **Component thông thường (features, layout):** `PascalCase.tsx` (ví dụ: `BookCard.tsx`, `LoginPage.tsx`).
+    *   **Component UI nguyên thủy (Shadcn):** `lowercase.tsx` (ví dụ: `button.tsx`, `card.tsx`, `input.tsx`).
     *   **Module Logic (service, repo, mapper, type):** `kebab-case.ts` hoặc `dot.case.ts` theo style hiện tại của dự án (ví dụ: `book.service.ts`, `user.type.ts`).
     *   **Route Next.js (trong thư mục `app`):** `page.tsx`, `layout.tsx` theo quy ước của Next.js. Tên thư mục route nên là `kebab-case` hoặc tiếng Việt không dấu theo quy ước hiện tại của dự án (ví dụ: `tai-khoan`, `trang-chu`).
 

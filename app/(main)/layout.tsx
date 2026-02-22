@@ -16,7 +16,9 @@ export default function RootMainLayout({
   return (
     <>
       <HomeHeader />
-      {children}
+      <div className="bg-[var(--color-surface-user-account-bg)] min-h-screen">
+        {children}
+      </div>
     </>
   );
 }

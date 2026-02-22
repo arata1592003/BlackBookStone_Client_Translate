@@ -1,8 +1,13 @@
 "use client";
 
 import React from "react";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RawContentModalProps {
   title: string;
@@ -16,32 +21,20 @@ export const RawContentModal: React.FC<RawContentModalProps> = ({
   onClose,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="relative bg-bg-box text-text-primary rounded-lg shadow-xl max-w-2xl w-full h-full max-h-[90vh] flex flex-col">
-        {/* Modal Header */}
-        <div className="flex justify-between items-center p-4 border-b border-surface-border">
-          <h2 className="text-xl font-bold">Nội dung RAW: {title}</h2>
-          <Button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-surface-hover transition-colors"
-            title="Đóng"
-          >
-            <X size={20} />
-          </Button>
-        </div>
-
-        {/* Modal Content */}
-        <div className="flex-1 p-6 overflow-y-auto whitespace-pre-wrap font-mono text-sm">
-          {content}
-        </div>
-
-        {/* Modal Footer */}
-        <div className="flex justify-end p-4 border-t border-surface-border">
-          <Button onClick={onClose} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md">
-            Đóng
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl w-full max-h-[90vh] flex flex-col p-0 gap-0 bg-surface-card border-border-default overflow-hidden">
+        <DialogHeader className="p-6 border-b border-border-default">
+          <DialogTitle className="text-xl font-bold text-text-primary">
+            Nội dung RAW: {title}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <ScrollArea className="flex-1 p-6">
+          <div className="whitespace-pre-wrap font-mono text-sm text-text-secondary">
+            {content}
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
   );
 };

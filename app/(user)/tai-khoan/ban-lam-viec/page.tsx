@@ -3,7 +3,7 @@
 import { UserBookCard } from "@/components/features/user/UserBookCard";
 import { UserStats } from "@/components/features/user/UserStats";
 import { getOwnedBooksForCurrentUser } from "@/modules/book/book.service";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { BookPlus } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState, useEffect } from "react";
@@ -84,16 +84,14 @@ export default function BanLamViecPage() {
   const renderBookList = () => {
     if (isLoading) {
       return (
-        <div className="flex flex-col items-center justify-center flex-1 w-full text-white">
-          <p>Đang tải danh sách truyện...</p>
+        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground">
         </div>
       );
     }
 
     if (!filteredBooks || filteredBooks.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center flex-1 w-full text-white">
-          <p>Không tìm thấy truyện nào.</p>
+        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground">
         </div>
       );
     }
@@ -108,7 +106,7 @@ export default function BanLamViecPage() {
       <UserStats />
 
       {showSuccessMessage && (
-        <div className="bg-emerald-500/20 text-emerald-500 p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0 mt-4">
+        <div className="bg-success/20 text-success p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0 mt-4">
           <CheckCircle2 size={20} />
           <span>Thêm truyện thành công! Yêu cầu crawl đang được xử lý.</span>
         </div>
@@ -118,16 +116,16 @@ export default function BanLamViecPage() {
         <div className="items-center justify-end gap-[50px] px-[50px] py-2.5 w-full flex-[0_0_auto] flex relative self-stretch">
           <Button
             onClick={handleAddClick}
-            className="bg-blue-500 border border-white px-2.5 py-[5px] rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] hover:opacity-90 transition-opacity"
+            className="bg-primary border border-foreground px-2.5 py-[5px] rounded-md shadow-[0px_4px_4px_var(--color-shadow-white)] hover:opacity-90 transition-opacity"
             aria-label="Thêm mới"
           >
-            <BookPlus size={20} className="text-white" />
-            <span className="font-inter font-bold text-white text-xl tracking-[0] leading-[normal] whitespace-nowrap">
+            <BookPlus size={20} className="text-foreground" />
+            <span className="font-inter font-bold text-foreground text-xl tracking-[0] leading-[normal] whitespace-nowrap">
               Thêm
             </span>
           </Button>
 
-          <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-white rounded-md overflow-hidden">
+          <div className="inline-flex items-center gap-5 px-5 py-2.5 relative flex-[0_0_auto] bg-surface-card rounded-md overflow-hidden">
             <label htmlFor="search-input" className="sr-only">
               Tìm kiếm
             </label>
@@ -137,11 +135,11 @@ export default function BanLamViecPage() {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Tìm kiếm..."
-              className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto] w-fit mt-[-1.00px] font-roboto font-normal text-black text-xl tracking-[0] leading-[normal] whitespace-nowrap bg-transparent border-none outline-none"
+              className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto] w-fit mt-[-1.00px] font-roboto font-normal text-foreground text-xl tracking-[0] leading-[normal] whitespace-nowrap bg-transparent border-none outline-none"
               aria-label="Tìm kiếm tiểu thuyết"
             />
 
-            <div className="flex w-5 h-5 items-start gap-2.5 relative bg-white aspect-[1]">
+            <div className="flex w-5 h-5 items-start gap-2.5 relative bg-surface-card aspect-[1]">
               <Image
                 className="relative flex-1 self-stretch grow object-cover"
                 alt="Search icon"
@@ -189,7 +187,7 @@ export default function BanLamViecPage() {
                 disabled={typeof pageNum === "string"}
                 className={`px-3 py-1 rounded-md ${
                   pageNum === currentPage
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-surface-raised hover:bg-surface-raised/70 text-text-primary"
                 }`}
               >

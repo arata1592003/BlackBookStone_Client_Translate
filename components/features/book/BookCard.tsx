@@ -38,7 +38,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
         text-text-secondary
         line-clamp-1
         text-center
-        group-hover:text-red-400
+        group-hover:text-primary-accent
       "
       >
         {book.book_name_translated}

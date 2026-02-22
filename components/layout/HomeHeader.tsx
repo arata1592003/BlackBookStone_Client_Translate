@@ -22,8 +22,6 @@ export const HomeHeader = () => {
   const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
 
   const [tags, setTags] = useState<Tag[]>([]);
-  const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || ""); // Initialize with URL query
 
@@ -39,22 +37,6 @@ export const HomeHeader = () => {
       setSearchQuery(q || "");
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userDropdownRef.current &&
-        !userDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsUserDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [userDropdownRef]);
 
   const handleLoginClick = () => {
     router.push("/dang-nhap");
@@ -92,7 +74,7 @@ export const HomeHeader = () => {
   ];
 
   return (
-    <header className="bg-[url('/sidebar-user.png')] bg-cover bg-center text-white">
+    <header className="bg-[url('/sidebar-user.png')] bg-cover bg-center text-foreground">
       {/* ================= TOP ================= */}
       <div
         className="
@@ -121,8 +103,8 @@ export const HomeHeader = () => {
             handleLoginClick={handleLoginClick}
             handleRegisterClick={handleRegisterClick}
             handleLogout={handleLogout}
-            isUserDropdownOpen={isUserDropdownOpen}
-            setIsUserDropdownOpen={setIsUserDropdownOpen}
+            isUserDropdownOpen={false}
+            setIsUserDropdownOpen={() => {}}
             userDropdownRef={userDropdownRef}
             userMenuItems={userMenuItems}
           />
@@ -134,13 +116,13 @@ export const HomeHeader = () => {
             <input
               type="search"
               placeholder="Tìm kiếm..."
-              className="w-full px-4 py-2 rounded text-black bg-white pr-10"
+              className="w-full px-4 py-2 rounded text-foreground bg-background pr-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button
               type="submit"
-              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-black"
+              className="absolute right-0 top-0 h-full w-10 flex items-center justify-center text-foreground"
               aria-label="Tìm kiếm"
             >
               <Search size={20} />
@@ -156,15 +138,15 @@ export const HomeHeader = () => {
           handleLoginClick={handleLoginClick}
           handleRegisterClick={handleRegisterClick}
           handleLogout={handleLogout}
-          isUserDropdownOpen={isUserDropdownOpen}
-          setIsUserDropdownOpen={setIsUserDropdownOpen}
+          isUserDropdownOpen={false}
+          setIsUserDropdownOpen={() => {}}
           userDropdownRef={userDropdownRef}
           userMenuItems={userMenuItems}
         />
       </div>
 
       {/* ================= NAV ================= */}
-      <nav className="relative border-t border-b border-white/20 overflow-visible">
+      <nav className="relative border-t border-b border-border-default/50 overflow-visible">
         <div
           className="
             flex gap-6
@@ -177,8 +159,8 @@ export const HomeHeader = () => {
         >
           <HomeHeaderTagsDropdown
             tags={tags}
-            isTagsDropdownOpen={isTagsDropdownOpen}
-            setIsTagsDropdownOpen={setIsTagsDropdownOpen}
+            isTagsDropdownOpen={false}
+            setIsTagsDropdownOpen={() => {}}
           />
 
           <span className="whitespace-nowrap cursor-pointer">Sắp xếp</span>

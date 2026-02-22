@@ -4,9 +4,10 @@
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState, useCallback } from "react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getAllTags } from "@/modules/tag/tag.service";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -169,13 +170,13 @@ export default function AddBookPage() {
       </p>
 
       {addBookSuccess && (
-        <div className="bg-emerald-500/20 text-emerald-500 p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0">
+        <div className="bg-success/20 text-success p-3 rounded-md text-sm flex items-center gap-2 w-full max-w-lg mx-auto md:mx-0">
           <CheckCircle2 size={20} />
           {addBookSuccess}
         </div>
       )}
       {addBookError && (
-        <div className="bg-red-500/20 text-red-500 p-3 rounded-md text-sm w-full max-w-lg mx-auto md:mx-0">
+        <div className="bg-destructive/20 text-destructive p-3 rounded-md text-sm w-full max-w-lg mx-auto md:mx-0">
           {addBookError}
         </div>
       )}
@@ -205,7 +206,7 @@ export default function AddBookPage() {
             </Button>
           </form>
           {metadataFetchError && (
-            <div className="bg-red-500/20 text-red-500 p-3 rounded-md text-sm">
+            <div className="bg-destructive/20 text-destructive p-3 rounded-md text-sm">
               {metadataFetchError}
             </div>
           )}
@@ -215,13 +216,13 @@ export default function AddBookPage() {
         <div className="flex flex-col gap-6">
           <form onSubmit={handleAddBookFinal} className="flex flex-col gap-6">
             {isFetchingMetadata && (
-              <div className="flex flex-col gap-4 animate-pulse">
-                <div className="h-8 bg-gray-700 rounded" />
-                <div className="h-8 bg-gray-700 rounded" />
-                <div className="h-8 bg-gray-700 rounded" />
-                <div className="h-8 bg-gray-700 rounded" />
-                <div className="h-20 bg-gray-700 rounded" />
-                <div className="h-10 bg-gray-700 rounded" />
+              <div className="flex flex-col gap-4">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-10 w-full" />
               </div>
             )}
 

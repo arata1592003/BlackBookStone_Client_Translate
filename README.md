@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BlackStoneBook Client
 
-## Getting Started
+BlackStoneBook Client là một ứng dụng web đọc truyện trực tuyến và quản lý dịch thuật, được xây dựng với các công nghệ hiện đại nhằm tối ưu hóa hiệu suất và trải nghiệm người dùng.
 
-First, run the development server:
+## Công nghệ sử dụng
+
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: Shadcn UI (Radix UI)
+- **Styling**: Tailwind CSS 4 (CSS-first configuration)
+- **Language**: TypeScript
+- **Backend**: Supabase (PostgreSQL + Auth)
+- **State Management**: React Query (TanStack Query)
+- **Iconography**: Lucide React
+
+## Đặc điểm nổi bật
+
+- **Kiến trúc phân lớp**: Tách biệt rõ ràng giữa Presentation, Service, Mapper và Repository.
+- **Hệ thống Theme mạnh mẽ**: Hỗ trợ Dark Mode (mặc định) và Light Mode dựa trên Tailwind 4 và biến CSS.
+- **Tối ưu hóa SEO**: Tích hợp Metadata động cho từng đầu truyện và chương.
+- **Hiệu suất cao**: Sử dụng Server Components cho render ban đầu và Server Actions cho các thao tác dữ liệu.
+- **Giao diện tiếng Việt**: Toàn bộ nội dung và tuyến đường đều sử dụng tiếng Việt.
+
+## Bắt đầu
+
+### Cài đặt dependencies
+
+```bash
+npm install
+```
+
+### Chạy môi trường phát triển
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000) trên trình duyệt của bạn để xem kết quả.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tài liệu tham khảo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Kiến trúc dự án](./Architecture.md)
+- [Quy tắc đặt tên](./NAMING_CONVENTIONS.md)
+- [Quy ước Commit](./COMMIT_CONVENTION.md)
+- [Hướng dẫn vận hành Gemini](./gemini.md)
 
-## Learn More
+## Triển khai
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Dễ dàng triển khai trên Vercel Platform. Tham khảo [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) để biết thêm chi tiết.

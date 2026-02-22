@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getUserStats } from "@/modules/user/user.service";
 import { useQuery } from "@tanstack/react-query";
@@ -12,20 +13,20 @@ interface StatCardData {
 
 const StatCard = ({ title, value }: StatCardData) => (
   <article
-    className="flex flex-col justify-between flex-1 grow rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_#000000] bg-cover bg-center relative self-stretch"
+    className="flex flex-col justify-between flex-1 grow rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_var(--color-shadow-default)] bg-cover bg-center relative self-stretch"
     style={{
       backgroundImage: "url('/dark-rock-wall-seamless-texture-free-105.png')",
     }}
   >
     <div className="flex flex-col justify-between px-5 py-[10px] flex-1 w-full">
       <h2
-        className="text-xl font-bold text-white"
+        className="text-xl font-bold text-foreground"
         style={{ whiteSpace: "pre-line" }}
       >
         {title}
       </h2>
 
-      <p className="text-xl text-white">{value}</p>
+      <p className="text-xl text-foreground">{value}</p>
     </div>
   </article>
 );
@@ -69,10 +70,10 @@ export const UserStats = () => {
         aria-label="Statistics loading"
       >
         {Array.from({ length: 4 }).map((_, index) => (
-          <div
+          <Skeleton
             key={index}
-            className="flex-1 self-stretch bg-gray-700 animate-pulse rounded-lg"
-          ></div>
+            className="flex-1 self-stretch rounded-lg"
+          />
         ))}
       </section>
     );

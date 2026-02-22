@@ -3,25 +3,29 @@
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getTransactionsForCurrentUser } from "@/modules/wallet/wallet.service";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function LichSuGiaoDichPage() {
   const { user } = useAuth();
 
   // Sử dụng useQuery để lấy và cache dữ liệu
   const { data: transactions, isLoading } = useQuery({
-    // queryKey: khóa duy nhất để định danh và cache query này.
-    // Khi user.id thay đổi, React Query sẽ tự động fetch lại.
     queryKey: ["transactions", user?.id],
-    // queryFn: hàm sẽ được gọi để fetch dữ liệu.
     queryFn: () => getTransactionsForCurrentUser(user, 100),
-    // enabled: chỉ chạy query này khi `user` không phải là null.
     enabled: !!user,
   });
 
   const formatGemChange = (change: number) => {
     const isPositive = change > 0;
     const sign = isPositive ? "+" : "";
-    const colorClass = isPositive ? "text-green-500" : "text-red-500";
+    const colorClass = isPositive ? "text-success" : "text-destructive";
     return (
       <span className={colorClass}>
         {sign}
@@ -42,45 +46,47 @@ export default function LichSuGiaoDichPage() {
       </div>
 
       {/* Table Container */}
-      <div className="flex flex-col w-full bg-surface-card rounded-lg border border-border-default overflow-hidden">
-        {/* Table Header */}
-        <div className="flex items-center px-4 py-3 bg-surface-overlay border-b border-border-default font-bold text-text-secondary">
-          <div className="w-2/5">Nội dung</div>
-          <div className="w-1/5 text-right">Thay đổi</div>
-          <div className="w-1/5 text-right">Số dư sau</div>
-          <div className="w-1/5 text-right">Thời gian</div>
-        </div>
-
-        {/* Table Body */}
-        <div className="flex flex-col">
-          {isLoading ? ( // Sử dụng isLoading từ useQuery
-            <div className="p-10 text-center text-text-muted">
-              Đang tải lịch sử giao dịch...
-            </div>
-          ) : transactions?.length === 0 || !transactions ? ( // Kiểm tra cả trường hợp !transactions
-            <div className="p-10 text-center text-text-muted">
-              Không có giao dịch nào.
-            </div>
-          ) : (
-            transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center px-4 py-4 border-b border-border-default last:border-b-0 hover:bg-surface-hover"
-              >
-                <div className="w-2/5 text-text-primary">{tx.content}</div>
-                <div className="w-1/5 text-right font-mono">
-                  {formatGemChange(tx.change)}
-                </div>
-                <div className="w-1/5 text-right font-mono text-text-secondary">
-                  {tx.balanceAfter?.toLocaleString("vi-VN")}
-                </div>
-                <div className="w-1/5 text-right text-text-muted">
-                  {tx.createdAt}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+      <div className="w-full bg-surface-card rounded-lg border border-border-default overflow-hidden">
+        <Table>
+          <TableHeader className="bg-surface-overlay">
+            <TableRow className="hover:bg-transparent border-border-default">
+              <TableHead className="w-2/5 font-bold text-text-secondary">Nội dung</TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Thay đổi</TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Số dư sau</TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Thời gian</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="p-10 text-center text-text-muted">
+                  Đang tải lịch sử giao dịch...
+                </TableCell>
+              </TableRow>
+            ) : transactions?.length === 0 || !transactions ? (
+              <TableRow>
+                <TableCell colSpan={4} className="p-10 text-center text-text-muted">
+                  Không có giao dịch nào.
+                </TableCell>
+              </TableRow>
+            ) : (
+              transactions.map((tx) => (
+                <TableRow key={tx.id} className="border-border-default hover:bg-surface-hover">
+                  <TableCell className="w-2/5 text-text-primary">{tx.content}</TableCell>
+                  <TableCell className="w-1/5 text-right font-mono">
+                    {formatGemChange(tx.change)}
+                  </TableCell>
+                  <TableCell className="w-1/5 text-right font-mono text-text-secondary">
+                    {tx.balanceAfter?.toLocaleString("vi-VN")}
+                  </TableCell>
+                  <TableCell className="w-1/5 text-right text-text-muted">
+                    {tx.createdAt}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </section>
   );

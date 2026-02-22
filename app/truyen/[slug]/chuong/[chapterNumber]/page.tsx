@@ -1,6 +1,6 @@
 import { ChapterContent } from "@/components/features/chapter/ChapterContent";
-import { Breadcrumb } from "@/components/ui/BreadCumb";
-import { Pagination } from "@/components/ui/Pagination";
+import { BreadcrumbResponsive } from "@/components/ui/bread-cumb";
+import { ChapterPagination } from "@/components/ui/chapter-pagination";
 import { getChapterDetailBySlugAndNumber } from "@/modules/chapter/chapter.service";
 import type { Metadata } from "next";
 
@@ -65,16 +65,16 @@ export default async function ChapterReadPage({ params }: PageProps) {
   }
 
   return (
-    <div className="mx-auto flex flex-col relative bg-white min-h-screen">
+    <div className="mx-auto flex flex-col relative bg-[var(--color-surface-user-account-bg)] min-h-screen">
       <div className="flex flex-col items-start gap-[30px] px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
-        <Breadcrumb
+        <BreadcrumbResponsive
           slug={slug}
           bookTitle={chapter.book_name}
           chapterTitle={chapter.title}
           chapterNumber={chapter.chapter_number}
         />
 
-        <Pagination
+        <ChapterPagination
           slug={slug}
           prevChapter={chapter.prev_chapter}
           nextChapter={chapter.next_chapter}
@@ -88,7 +88,7 @@ export default async function ChapterReadPage({ params }: PageProps) {
           content={chapter.content}
         />
 
-        <Pagination
+        <ChapterPagination
           slug={slug}
           prevChapter={chapter.prev_chapter}
           nextChapter={chapter.next_chapter}

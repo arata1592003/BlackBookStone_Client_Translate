@@ -1,9 +1,10 @@
 // components/features/user/UserProfileForm.tsx
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { UserProfile } from "@/modules/user/user.type";
 import { updateUserProfileAction } from "@/app/actions/user";
@@ -49,13 +50,13 @@ export const UserProfileForm = () => {
 
   if (isProfileLoading) {
     return (
-      <div className="flex flex-col gap-4 w-full max-w-md animate-pulse">
-        <div className="h-8 bg-gray-700 rounded" />
-        <div className="h-8 bg-gray-700 rounded" />
-        <div className="h-8 bg-gray-700 rounded" />
-        <div className="h-8 bg-gray-700 rounded" />
-        <div className="h-8 bg-gray-700 rounded" />
-        <div className="h-10 bg-blue-700 rounded" />
+      <div className="flex flex-col gap-4 w-full max-w-md">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-10 w-full" />
       </div>
     );
   }
@@ -70,12 +71,12 @@ export const UserProfileForm = () => {
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
       {state?.success && (
-        <div className="bg-emerald-500/20 text-emerald-500 p-3 rounded-md text-sm">
+        <div className="bg-success/20 text-success p-3 rounded-md text-sm">
           {state.success}
         </div>
       )}
       {state?.error && (
-        <div className="bg-red-500/20 text-red-500 p-3 rounded-md text-sm">
+        <div className="bg-destructive/20 text-destructive p-3 rounded-md text-sm">
           {state.error}
         </div>
       )}
@@ -116,7 +117,7 @@ export const UserProfileForm = () => {
           defaultValue={user?.email || ""}
           readOnly
           disabled
-          className="bg-gray-700 cursor-not-allowed"
+          className="bg-muted cursor-not-allowed"
           placeholder="Email của bạn"
         />
       </div>

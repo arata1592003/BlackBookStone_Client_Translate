@@ -4,12 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookText, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import CrawlProcessModal from "./CrawlProcessModal";
 import { RawContentModal } from "./RawContentModal";
 import CrawlLogViewerModal from "./CrawlLogViewerModal";
 import { useCrawlManagement } from "@/lib/hooks/useCrawlManagement";
 import { ManagedBookDetails, ManagedChapter } from "@/modules/book/book.types";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface CrawlManagementPageProps {
   bookId: string;
@@ -65,7 +74,7 @@ export default function CrawlManagementPage({
       </h1>
 
       {/* Book Info Summary */}
-      <div className="flex items-center gap-4 bg-bg-box p-4 rounded-lg shadow-md mb-8">
+      <div className="flex items-center gap-4 bg-surface-card p-4 rounded-lg shadow-md mb-8">
         <Image
           src={bookDetails.coverImageUrl || "/placeholder.jpg"}
           alt={bookDetails.title}
@@ -87,7 +96,7 @@ export default function CrawlManagementPage({
       </div>
 
       {/* Crawl Control Section (includes Start Crawl Button and Log) */}
-      <section className="bg-bg-box p-6 rounded-lg shadow-md mb-8">
+      <section className="bg-surface-card p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-bold text-text-primary mb-4">
           Điều khiển Cào dữ liệu
         </h2>
@@ -103,7 +112,7 @@ export default function CrawlManagementPage({
               <Button
                 onClick={onStopCrawlByParent}
                 disabled={isCrawlStoppedByParent}
-                className="w-full px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+                className="w-full px-8 py-4 bg-destructive hover:bg-destructive/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
               >
                 {isCrawlStoppedByParent ? "Đã dừng" : "Dừng Cào"}
               </Button>
@@ -111,14 +120,14 @@ export default function CrawlManagementPage({
           ) : (
             <Button
               onClick={handleStartCrawlProcess}
-              className="flex-1 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+              className="flex-1 px-8 py-4 bg-primary hover:bg-primary/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
             >
               Bắt đầu Cào
             </Button>
           )}
           <Button
             onClick={() => setShowCrawlLogViewerModal(true)}
-            className="flex-1 px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
+            className="flex-1 px-8 py-4 bg-muted hover:bg-muted/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2 text-lg"
           >
             Xem Nhật ký Cào
           </Button>
@@ -126,12 +135,12 @@ export default function CrawlManagementPage({
       </section>
 
       {/* Existing Chapters List */}
-      <section className="bg-bg-box p-6 rounded-lg shadow-md mb-8">
+      <section className="bg-surface-card p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-2xl font-bold text-text-primary mb-4 flex justify-between items-center">
           <span>Danh sách Chương đã cào ({totalManagedChapters})</span>
           <Button
             onClick={triggerManualRefresh}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm"
+            className="px-4 py-2 bg-accent hover:bg-accent/90 text-foreground rounded-md text-sm"
           >
             Làm mới danh sách Chương
           </Button>
@@ -139,64 +148,39 @@ export default function CrawlManagementPage({
         {totalManagedChapters === 0 ? (
           <p className="text-text-muted">Chưa có chương nào được cào.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-surface-raised">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Chương
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Tiêu đề
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Số từ
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    URL gốc
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-right text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
+          <div className="w-full">
+            <Table>
+              <TableHeader className="bg-surface-raised">
+                <TableRow className="border-border-default">
+                  <TableHead className="w-20 text-text-secondary uppercase">Chương</TableHead>
+                  <TableHead className="text-text-secondary uppercase">Tiêu đề</TableHead>
+                  <TableHead className="w-32 text-text-secondary uppercase">Số từ</TableHead>
+                  <TableHead className="text-text-secondary uppercase">URL gốc</TableHead>
+                  <TableHead className="w-20 text-right text-text-secondary uppercase">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {currentManagedChapters.map((chapter) => (
-                  <tr key={chapter.id} className="hover:bg-surface-raised/50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-text-primary">
+                  <TableRow key={chapter.id} className="border-border-default/50 hover:bg-surface-raised/50">
+                    <TableCell className="font-medium text-text-primary">
                       {chapter.chapterNumber}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-text-secondary">
+                    </TableCell>
+                    <TableCell className="text-text-secondary">
                       {chapter.title}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-text-secondary">
+                    </TableCell>
+                    <TableCell className="text-text-secondary">
                       {chapter.totalWordsRaw || "N/A"}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-text-secondary max-w-xs truncate">
+                    </TableCell>
+                    <TableCell className="text-text-secondary max-w-xs truncate">
                       <a
                         href={chapter.urlRaw || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:underline"
+                        className="text-primary hover:underline"
                       >
                         {chapter.urlRaw || "N/A"}
                       </a>
-                    </td>
+                    </TableCell>
                     <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                       <Button
                         variant="ghost"
@@ -204,16 +188,16 @@ export default function CrawlManagementPage({
                         onClick={() =>
                           handleViewRawContent(chapter.title, chapter.id)
                         }
-                        className="text-blue-400 hover:text-blue-300 p-1 rounded-md hover:bg-surface-raised transition-colors"
+                        className="text-primary hover:text-primary/80 p-1 rounded-md hover:bg-surface-raised transition-colors"
                         title="Xem nội dung Raw"
                       >
                         <BookText size={18} />
                       </Button>
                     </td>
-                  </tr>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </section>

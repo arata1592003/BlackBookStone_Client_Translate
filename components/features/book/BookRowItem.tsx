@@ -36,10 +36,10 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
           rounded-md
           px-1
           transition-colors
-          group-hover:bg-white/5
+          group-hover:bg-foreground/5
           focus-visible:outline-none
           focus-visible:ring-2
-          focus-visible:ring-red-500/60
+          focus-visible:ring-primary/60
         "
       >
         {/* Cover */}
@@ -69,7 +69,7 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 bg-neutral-700" />
+            <div className="absolute inset-0 bg-muted" />
           )}
         </div>
 
@@ -82,7 +82,7 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
               text-text-secondary
               font-medium
               line-clamp-1
-              group-hover:text-red-400
+              group-hover:text-primary-accent
             "
           >
             {book.book_name_translated}
@@ -91,7 +91,7 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
             <span
               className="
                 text-xs
-                text-neutral-400
+                text-text-muted
                 line-clamp-1
               "
             >
@@ -101,21 +101,21 @@ export function BookRowItem({ book }: { book: BookNewChapterCard }) {
         </div>
 
         {/* Genres */}
-        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2 hidden sm:block">
+        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2 hidden sm:block">
           {" "}
           {/* Hidden on small screens */}
           {genresText}
         </div>
 
         {/* Chapter Number */}
-        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis hidden sm:block">
+        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis hidden sm:block">
           {" "}
           {/* Hidden on small screens */}
           {book.latestChapterNumber && `Chương ${book.latestChapterNumber}`}
         </div>
 
         {/* Time Ago */}
-        <div className="text-sm text-neutral-400 text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
+        <div className="text-sm text-text-muted text-left whitespace-nowrap overflow-hidden text-ellipsis pl-2">
           {timeAgo}
         </div>
       </div>

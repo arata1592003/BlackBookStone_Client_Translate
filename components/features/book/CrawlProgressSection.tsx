@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { CrawledChapterResult } from "../../../modules/crawl/crawl.types";
 
 interface CrawlProgressSectionProps {
@@ -31,7 +31,7 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
   return (
     <div className="flex-1 p-6 overflow-y-auto">
       {crawlContentError && (
-        <div className="bg-red-500/20 text-red-500 p-3 rounded-md text-sm mb-4">
+        <div className="bg-destructive/20 text-destructive p-3 rounded-md text-sm mb-4">
           {crawlContentError}
         </div>
       )}
@@ -48,7 +48,7 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
       {crawlLog.length > 0 && (
         <div className="mt-6">
           <h3 className="text-xl font-semibold mb-3">Nhật ký Cào:</h3>
-          <div className="max-h-60 overflow-y-auto border border-surface-border rounded-md p-3 bg-surface-raised font-mono text-sm">
+          <div className="max-h-60 overflow-y-auto border border-border-default rounded-md p-3 bg-surface-raised font-mono text-sm">
             {crawlLog.map((logEntry, index) => (
               <p key={index} className="text-text-secondary">
                 {logEntry}
@@ -64,7 +64,7 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
           <h3 className="text-xl font-semibold mb-3">
             Kết quả cào ({crawledChapterResults.length}/{rawChaptersTotal}):
           </h3>
-          <div className="max-h-60 overflow-y-auto border border-surface-border rounded-md p-3 bg-surface-raised font-mono text-sm">
+          <div className="max-h-60 overflow-y-auto border border-border-default rounded-md p-3 bg-surface-raised font-mono text-sm">
             {crawledChapterResults.map((result) => (
               <p key={result.chapter_id} className="text-text-secondary">
                 [#{result.chapter_number}] {result.chapter_title_raw} (ID:{" "}
@@ -80,7 +80,7 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
           <Button
             onClick={onStopCrawl}
             disabled={isCrawlStoppedByParent}
-            className="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md transition-colors"
+            className="w-full px-6 py-3 bg-destructive hover:bg-destructive/90 text-foreground font-bold rounded-md transition-colors"
           >
             {isCrawlStoppedByParent ? "Đã dừng" : "Dừng Cào"}
           </Button>
@@ -91,7 +91,7 @@ export const CrawlProgressSection: React.FC<CrawlProgressSectionProps> = ({
         <div className="mt-4">
           <Button
             onClick={resetCrawlLog}
-            className="w-full px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md transition-colors"
+            className="w-full px-6 py-3 bg-muted hover:bg-muted/90 text-foreground font-bold rounded-md transition-colors"
           >
             Đặt lại Nhật ký
           </Button>

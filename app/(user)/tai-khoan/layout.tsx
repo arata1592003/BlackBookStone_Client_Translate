@@ -16,7 +16,7 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-full relative bg-black">
+    <div className="flex h-full relative bg-[var(--color-surface-user-account-bg)]">
       <UserNavigationMenu />
       <div className="flex flex-col flex-1 ml-[270px]">
         {" "}

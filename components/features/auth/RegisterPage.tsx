@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -57,7 +57,7 @@ export const RegisterPage = () => {
           </h2>
         </div>
         {successMessage ? (
-          <div className="text-green-600 text-center">{successMessage}</div>
+          <div className="text-success text-center">{successMessage}</div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
@@ -71,7 +71,7 @@ export const RegisterPage = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-gray-500 text-auth-text rounded-t-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-muted-foreground text-auth-text rounded-t-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
                   placeholder="Địa chỉ email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +87,7 @@ export const RegisterPage = () => {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-gray-500 text-auth-text focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-muted-foreground text-auth-text focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
                   placeholder="Mật khẩu"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +103,7 @@ export const RegisterPage = () => {
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-gray-500 text-auth-text rounded-b-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-auth-border placeholder-muted-foreground text-auth-text rounded-b-md focus:outline-none focus:ring-auth-focus-ring focus:border-auth-focus-ring focus:z-10 sm:text-sm"
                   placeholder="Xác nhận mật khẩu"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -112,7 +112,7 @@ export const RegisterPage = () => {
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm text-center">{error}</div>
+              <div className="text-destructive text-sm text-center">{error}</div>
             )}
 
             <div>

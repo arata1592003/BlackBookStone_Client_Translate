@@ -11,6 +11,7 @@ import {
   ChapterContentRow,
   BookNewChapterCardRow,
   BookCompletedCardRow,
+  SearchBookRepoRow,
 } from "@/modules/book/book.repo.type";
 import { SupabaseClient } from "@supabase/supabase-js";
 
@@ -24,6 +25,8 @@ export async function fetchNewestBooks(): Promise<BookNewChapterCardRow[]> {
       book_name_translated,
       author_name_translated,
       cover_image_url,
+      description,
+      publication_status,
       book_tags (
         tags ( name )
       ),
@@ -51,6 +54,8 @@ interface BookWithChaptersForHotRow {
   book_name_translated: string;
   author_name_translated: string;
   cover_image_url: string;
+  description: string | null;
+  publication_status: string | null;
   chapters: { view_count: number }[];
 }
 
@@ -64,6 +69,8 @@ export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
       book_name_translated,
       author_name_translated,
       cover_image_url,
+      description,
+      publication_status,
       chapters(view_count)
       `,
     )
@@ -110,6 +117,8 @@ export async function fetchCompletedBooks(
       book_name_translated,
       author_name_translated,
       cover_image_url,
+      description,
+      publication_status,
       book_chapter_stats (
         total_chapters,
         translated_chapters
@@ -387,6 +396,8 @@ export async function searchBooks(
       book_name_translated,
       author_name_translated,
       cover_image_url,
+      description,
+      publication_status,
       book_tags (
         tags ( name )
       )

@@ -6,7 +6,7 @@ import {
 } from "@/modules/chapter/chapter.service";
 import type { ChapterRow } from "@/modules/chapter/chapter.type";
 import { timeAgo } from "@/utils/date";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ArrowDownWideNarrow, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -58,7 +58,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
         <label className="inline-flex items-center gap-2.5 cursor-pointer">
           <input
             type="checkbox"
-            className="relative w-5 h-5 bg-white rounded-sm aspect-[1] appearance-none checked:bg-white"
+            className="relative w-5 h-5 bg-background rounded-sm aspect-[1] appearance-none checked:bg-primary"
             aria-label="Mới nhất"
             checked={newestFirst}
             onChange={(e) => {
@@ -74,7 +74,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
       </div>
 
       <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto]">
-        <div className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-white">
+        <div className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-border-default">
           <div className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto]">
             <div className="relative w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base tracking-[0] leading-[normal] whitespace-nowrap">
               STT
@@ -105,7 +105,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
             <Link
               key={chapter.id}
               href={`/truyen/${slug}/chuong/${chapter.chapter_number}`}
-              className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-white no-underline text-text-secondary hover:bg-white/10"
+              className="flex items-start justify-between relative self-stretch w-full flex-[0_0_auto] border-b [border-bottom-style:solid] border-border-default no-underline text-text-secondary hover:bg-foreground/10"
             >
               <div className="flex w-[52px] items-center justify-center gap-2.5 p-2.5 relative">
                 <div className="relative flex items-center justify-center w-fit mt-[-1.00px] font-inter font-medium text-text-secondary text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
@@ -159,7 +159,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
               }
               disabled={typeof pageNum === "string"}
               className={`p-[5px] rounded-sm overflow-hidden ${
-                pageNum === currentPage ? "bg-primary" : "bg-white"
+                pageNum === currentPage ? "bg-primary" : "bg-background"
               }`}
               aria-label={
                 typeof pageNum === "number" ? `Page ${pageNum}` : "More pages"
@@ -168,7 +168,7 @@ export const ChapterList = ({ slug, chaptersPerPage = 10 }: Props) => {
             >
               <div
                 className={`flex items-center justify-center w-[19px] h-[19px] font-inter font-medium text-base text-center tracking-[0] leading-[normal] whitespace-nowrap ${
-                  pageNum === currentPage ? "text-text-secondary" : "text-black"
+                  pageNum === currentPage ? "text-text-secondary" : "text-foreground"
                 }`}
               >
                 {pageNum}

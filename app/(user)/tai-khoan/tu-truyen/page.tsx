@@ -29,12 +29,10 @@ export default function TuTruyenPage() {
     <main className="flex flex-col items-start gap-5 p-2.5 relative flex-1 self-stretch w-full grow bg-surface-section">
       <div className="flex flex-col h-full items-start gap-5 px-[30px] py-5 relative self-stretch w-full">
         {isLoading ? (
-          <div className="text-white text-center w-full">
-            Đang tải tủ truyện...
+          <div className="text-foreground text-center w-full">
           </div>
         ) : !books || books.length === 0 ? (
-          <div className="text-white text-center w-full">
-            Tủ truyện của bạn đang trống.
+          <div className="text-foreground text-center w-full">
           </div>
         ) : (
           books.map((book) => (

@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, X } from "lucide-react";
 import { fetchRawChaptersAction } from "@/app/actions/crawl";
 import { ManagedBookDetails, ManagedChapter } from "@/modules/book/book.types";
-import { Button } from "@/components/ui/Button";
-import { ChapterRaw, CrawledChapterResult } from "@/modules/crawl/crawl.types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ChapterRaw } from "@/modules/crawl/crawl.types";
 import { CrawlConfirmationSection } from "./CrawlConfirmationSection";
-import { CrawlProgressSection } from "./CrawlProgressSection";
 
 interface CrawlProcessModalProps {
   bookId: string;
@@ -16,7 +19,7 @@ interface CrawlProcessModalProps {
   onClose: () => void;
   onConfirmCrawl: (chaptersToCrawl: ChapterRaw[], recrawlAll: boolean) => void;
   onCrawlStart: () => void;
-  lastCrawledChapterNumber: number; // Still needed for confirmation logic
+  lastCrawledChapterNumber: number;
 }
 
 const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
@@ -89,51 +92,30 @@ const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
     onClose();
   };
 
-  const handleCloseModal = () => {
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="relative bg-bg-box text-text-primary rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
-        {/* Modal Header */}
-        <div className="flex justify-between items-center p-4 border-b border-surface-border">
-          <h2 className="text-xl font-bold">
-            Xác nhận quá trình Cào dữ liệu cho: {bookDetails.title}
-          </h2>
-          <Button
-            onClick={handleCloseModal}
-            className="p-2 rounded-full hover:bg-surface-hover transition-colors"
-            title="Đóng"
-          >
-            <X size={20} />
-          </Button>
-        </div>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl w-full max-h-[90vh] flex flex-col p-0 gap-0 bg-surface-card border-border-default overflow-hidden">
+        <DialogHeader className="p-6 border-b border-border-default">
+          <DialogTitle className="text-xl font-bold text-text-primary">
+            Xác nhận Cào dữ liệu cho: {bookDetails.title}
+          </DialogTitle>
+        </DialogHeader>
 
-        {/* Modal Content */}
-        <CrawlConfirmationSection
-          isFetchingChapterList={isFetchingChapterList}
-          chapterListError={chapterListError}
-          chapterListMessage={chapterListMessage}
-          recrawlAll={recrawlAll}
-          setRecrawlAll={setRecrawlAll}
-          chaptersToCrawl={chaptersToCrawl}
-          rawChaptersFound={rawChaptersFound}
-          onStartCrawl={() => handleConfirmStartCrawl(chaptersToCrawl, false)}
-          onRecrawlAll={() => handleConfirmStartCrawl(rawChaptersFound, true)}
-        />
-
-        {/* Modal Footer */}
-        <div className="flex justify-end p-4 border-t border-surface-border">
-          <Button
-            onClick={handleCloseModal}
-            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md"
-          >
-            Hủy
-          </Button>
+        <div className="flex-1 overflow-y-auto">
+          <CrawlConfirmationSection
+            isFetchingChapterList={isFetchingChapterList}
+            chapterListError={chapterListError}
+            chapterListMessage={chapterListMessage}
+            recrawlAll={recrawlAll}
+            setRecrawlAll={setRecrawlAll}
+            chaptersToCrawl={chaptersToCrawl}
+            rawChaptersFound={rawChaptersFound}
+            onStartCrawl={() => handleConfirmStartCrawl(chaptersToCrawl, false)}
+            onRecrawlAll={() => handleConfirmStartCrawl(rawChaptersFound, true)}
+          />
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

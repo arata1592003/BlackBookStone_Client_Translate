@@ -18,9 +18,20 @@ import {
   ArrowLeft,
   BookText,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { format } from "date-fns";
 import { timeAgoFns } from "@/utils/date";
+import { cn } from "@/lib/utils";
 
 import { vi } from "date-fns/locale";
 import { ManagedBookDetails, ChapterContent } from "@/modules/book/book.types";
@@ -69,12 +80,11 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
 
   const handleEditInfo = () => {
     alert(`Chỉnh sửa thông tin truyện: ${book.title}`);
-    // In a real app, this would navigate to an edit form
   };
 
   const handleReadChapter = async (index: number) => {
     setCurrentChapterIndex(index);
-    setChapterContent(null); // Reset content when opening new chapter
+    setChapterContent(null);
     setIsFetchingChapterContent(true);
 
     const chapterToRead = book.chapters[index];
@@ -86,7 +96,6 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
         setChapterContent(data);
       } else {
         console.error("Failed to fetch chapter content:", error);
-        // Optionally display an error message to the user
       }
     }
     setIsFetchingChapterContent(false);
@@ -105,7 +114,6 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
     }
   };
 
-  // Function to change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const formattedCreatedAt = format(new Date(book.createdAt), "dd/MM/yyyy", {
@@ -133,7 +141,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         {/* Book Cover and Quick Actions */}
         <div className="md:w-1/4 flex flex-col items-center">
-          <div className="relative w-full aspect-[2/3] max-w-[180px] rounded-lg overflow-hidden shadow-lg border border-surface-border">
+          <div className="relative w-full aspect-[2/3] max-w-[180px] rounded-lg overflow-hidden shadow-lg border border-border-default">
             <Image
               src={book.coverImageUrl || "/placeholder.jpg"}
               alt={book.title}
@@ -145,19 +153,19 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
           <div className="mt-4 w-full max-w-[250px] flex flex-col gap-2">
             <Button
               onClick={handleEditInfo}
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2 bg-primary hover:bg-primary/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2"
             >
               <FileEdit size={20} />
               Chỉnh sửa thông tin
             </Button>
             <Button
               onClick={handleCrawl}
-              className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-md transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2 bg-success hover:bg-success/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2"
             >
               <Globe size={20} />
               Quản lý cào
             </Button>
-            <Button className="w-full py-2 border border-red-600 text-red-500 hover:bg-red-900/20 font-bold rounded-md transition-colors flex items-center justify-center gap-2">
+            <Button className="w-full py-2 border border-destructive text-destructive hover:bg-destructive/20 font-bold rounded-md transition-colors flex items-center justify-center gap-2">
               <Trash2 size={20} />
               Xóa truyện
             </Button>
@@ -165,7 +173,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
         </div>
 
         {/* Book Details and Status */}
-        <div className="md:w-3/4 bg-bg-box p-6 rounded-lg shadow-md border border-surface-border">
+        <div className="md:w-3/4 bg-surface-card p-6 rounded-lg shadow-md border border-border-default">
           <h2 className="text-2xl font-bold text-text-primary mb-2">
             {book.title}
           </h2>
@@ -184,12 +192,13 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
           <div className="flex flex-wrap gap-2 mb-4">
             {book.genres &&
               book.genres.map((genre, index) => (
-                <span
+                <Badge
                   key={index}
-                  className="flex items-center gap-1 bg-surface-raised px-3 py-1 rounded-full text-sm text-text-primary"
+                  variant="secondary"
+                  className="flex items-center gap-1 bg-surface-raised px-3 py-1 rounded-full text-sm text-text-primary font-normal"
                 >
                   <BookText size={16} /> {genre}
-                </span>
+                </Badge>
               ))}
           </div>
 
@@ -205,7 +214,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
               href={book.sourceUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:underline"
+              className="text-primary hover:underline"
             >
               {book.source || "N/A"}
             </a>
@@ -224,7 +233,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
           </p>
 
           <h3
-            className="text-xl font-bold text-text-primary mt-6 mb-3 border-b border-gray-700 pb-2 cursor-pointer flex justify-between items-center"
+            className="text-xl font-bold text-text-primary mt-6 mb-3 border-b border-border-default pb-2 cursor-pointer flex justify-between items-center"
             onClick={() => setShowDescription(!showDescription)}
           >
             Mô tả {showDescription ? <ChevronUp /> : <ChevronDown />}
@@ -238,90 +247,69 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
       </div>
 
       {/* Chapters Management */}
-      <div className="bg-bg-box p-6 rounded-lg shadow-md border border-surface-border mt-6">
+      <div className="bg-surface-card p-6 rounded-lg shadow-md border border-border-default mt-6">
         <h3
           className="text-xl font-bold text-text-primary mb-4 cursor-pointer flex justify-between items-center"
           onClick={() => setShowChapters(!showChapters)}
         >
-          <ListOrdered size={24} className="mr-2" /> Danh sách chương (
-          {book.chapters.length}){" "}
+          <div className="flex items-center">
+            <ListOrdered size={24} className="mr-2" /> Danh sách chương (
+            {book.chapters.length})
+          </div>
           {showChapters ? <ChevronUp /> : <ChevronDown />}
         </h3>
         {showChapters && (
-          <div className="overflow-x-auto animate-fade-in">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-surface-raised">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Chương
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Tiêu đề
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Tình trạng dịch
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Cập nhật
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2 text-right text-xs font-medium text-text-secondary uppercase tracking-wider"
-                  >
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
+          <div className="w-full animate-fade-in">
+            <Table>
+              <TableHeader className="bg-surface-raised">
+                <TableRow className="border-border-default">
+                  <TableHead className="w-20 text-text-secondary uppercase">Chương</TableHead>
+                  <TableHead className="text-text-secondary uppercase">Tiêu đề</TableHead>
+                  <TableHead className="w-40 text-text-secondary uppercase">Tình trạng dịch</TableHead>
+                  <TableHead className="w-40 text-text-secondary uppercase">Cập nhật</TableHead>
+                  <TableHead className="w-20 text-right text-text-secondary uppercase">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {currentChapters.map((chapter, index) => (
-                  <tr key={chapter.id} className="hover:bg-surface-raised/50">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-text-primary">
+                  <TableRow key={chapter.id} className="border-border-default/50 hover:bg-surface-raised/50">
+                    <TableCell className="font-medium text-text-primary">
                       {chapter.chapterNumber}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-text-secondary">
+                    </TableCell>
+                    <TableCell className="text-text-secondary">
                       {chapter.title}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "rounded-full font-semibold",
                           chapter.status === true
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                            ? "bg-success/20 text-success"
+                            : "bg-destructive/20 text-destructive"
+                        )}
                       >
                         {chapter.status === true ? "Đã dịch" : "Chưa dịch"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-text-secondary">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-text-secondary">
                       {timeAgoFns(chapter.lastUpdated)}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
                       <Button
                         onClick={() =>
                           handleReadChapter(indexOfFirstChapter + index)
                         }
-                        className="text-blue-400 hover:text-blue-300 p-1 rounded-md hover:bg-surface-raised transition-colors"
+                        className="text-primary hover:text-primary/80 p-1 rounded-md hover:bg-surface-raised transition-colors"
                         title="Đọc chương"
                       >
                         <BookMarked size={18} />
                       </Button>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
             {/* Pagination Controls */}
             <div className="flex justify-center mt-4 space-x-2">
               <Button
@@ -342,17 +330,16 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
                 ) : (
                   <Button
                     key={index}
-                    // No variant "ghost" in this project's Button. Replace with direct classes.
-                    // No size "icon-sm" either.
                     onClick={() =>
                       typeof pageNum === "number" && paginate(pageNum)
                     }
                     disabled={typeof pageNum === "string"}
-                    className={`px-3 py-1 rounded-md ${
+                    className={cn(
+                      "px-3 py-1 rounded-md",
                       pageNum === currentPage
-                        ? "bg-primary text-white"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-surface-raised hover:bg-surface-raised/70 text-text-primary"
-                    }`}
+                    )}
                   >
                     {pageNum}
                   </Button>
@@ -372,16 +359,16 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
 
       {/* Chapter Read Modal */}
       {showReadChapterModal && currentChapter && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-xl max-w-4xl w-full h-full max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 p-4">
+          <div className="relative bg-surface-card text-foreground rounded-lg shadow-xl max-w-4xl w-full h-full max-h-[90vh] flex flex-col">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center p-4 border-b border-border-default">
               <h2 className="text-xl font-bold">
                 {currentChapter.title} ({currentChapter.chapterNumber})
               </h2>
               <Button
                 onClick={() => setShowReadChapterModal(false)}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-full hover:bg-surface-hover transition-colors"
                 title="Đóng"
               >
                 <X size={20} />
@@ -389,23 +376,25 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             </div>
 
             {/* Tabs for content */}
-            <div className="flex border-b border-gray-200 dark:border-gray-700">
+            <div className="flex border-b border-border-default">
               <button
-                className={`flex-1 py-2 text-center text-lg font-medium ${
+                className={cn(
+                  "flex-1 py-2 text-center text-lg font-medium transition-all",
                   activeTab === "translated"
                     ? "border-b-2 border-primary text-primary"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
+                    : "text-text-muted hover:text-foreground"
+                )}
                 onClick={() => setActiveTab("translated")}
               >
                 Bản dịch
               </button>
               <button
-                className={`flex-1 py-2 text-center text-lg font-medium ${
+                className={cn(
+                  "flex-1 py-2 text-center text-lg font-medium transition-all",
                   activeTab === "raw"
                     ? "border-b-2 border-primary text-primary"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
+                    : "text-text-muted hover:text-foreground"
+                )}
                 onClick={() => setActiveTab("raw")}
               >
                 Bản gốc
@@ -428,11 +417,11 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             </div>
 
             {/* Modal Footer (Navigation) */}
-            <div className="flex justify-between p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between p-4 border-t border-border-default">
               <Button
                 onClick={handlePrevChapter}
                 disabled={currentChapterIndex === 0}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-md flex items-center gap-2"
+                className="px-4 py-2 bg-muted hover:bg-muted/90 text-foreground rounded-md flex items-center gap-2"
               >
                 <ChevronLeft size={20} />
                 Chương trước
@@ -440,7 +429,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
               <Button
                 onClick={handleNextChapter}
                 disabled={currentChapterIndex === book.chapters.length - 1}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-md flex items-center gap-2"
+                className="px-4 py-2 bg-muted hover:bg-muted/90 text-foreground rounded-md flex items-center gap-2"
               >
                 Chương kế tiếp
                 <ChevronRight size={20} />

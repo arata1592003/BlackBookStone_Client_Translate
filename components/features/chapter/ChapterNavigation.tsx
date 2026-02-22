@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, List } from "lucide-react";
 import Link from "next/link";
 
@@ -23,7 +23,7 @@ export const ChapterNavigation = ({
       {prevChapterNumber ? (
         <Link
           href={`/truyen/${bookSlug}/chuong/${prevChapterNumber}`}
-          className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-sm overflow-hidden border-0 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary no-underline"
+          className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-sm overflow-hidden border-0 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-primary no-underline"
           aria-label="Chương trước"
         >
           <ChevronLeft size={20} aria-hidden="true" />
@@ -42,7 +42,7 @@ export const ChapterNavigation = ({
 
       <Button
         size="icon-lg"
-        className="w-[50px] h-[50px] bg-primary rounded-sm hover:opacity-90 transition-opacity focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
+        className="w-[50px] h-[50px] bg-primary rounded-sm hover:opacity-90 transition-opacity focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-primary"
         aria-label="Menu"
       >
         <List size={24} aria-hidden="true" className="text-text-secondary" />
@@ -51,7 +51,7 @@ export const ChapterNavigation = ({
       {nextChapterNumber ? (
         <Link
           href={`/truyen/${bookSlug}/chuong/${nextChapterNumber}`}
-          className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-sm overflow-hidden border-0 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary no-underline"
+          className="inline-flex items-center justify-center gap-2.5 p-2.5 relative flex-[0_0_auto] bg-primary rounded-sm overflow-hidden border-0 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-primary no-underline"
           aria-label="Chương tiếp"
         >
           <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-medium text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">

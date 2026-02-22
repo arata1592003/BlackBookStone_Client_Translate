@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -97,7 +97,7 @@ export const UserNavigationMenu = () => {
                   className={`items-center gap-1 px-3 py-2 flex-1 grow flex w-full justify-start rounded-none h-auto ${
                     isActive
                       ? "bg-surface-overlay-alpha border-r-[6px] [border-right-style:solid] border-accent-red"
-                      : "bg-surface-overlay-alpha hover:bg-white/10"
+                      : "bg-surface-overlay-alpha hover:bg-foreground/10"
                   }`}
                   onClick={() => handleMenuItemClick(item)}
                   onKeyDown={(e) => handleMenuItemKeyDown(e, item)}
@@ -108,7 +108,7 @@ export const UserNavigationMenu = () => {
                     className={`${
                       isActive
                         ? "w-fit mt-[-6.00px] text-accent-red"
-                        : "relative self-stretch mt-[-1.00px] text-white"
+                        : "relative self-stretch mt-[-1.00px] text-foreground"
                     } font-inter font-normal text-2xl tracking-[0] leading-[normal]`}
                   >
                     {item.label}

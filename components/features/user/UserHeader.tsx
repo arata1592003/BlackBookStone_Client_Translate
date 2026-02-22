@@ -12,7 +12,7 @@ export const UserHeader = () => {
 
   return (
     <header className="flex flex-col items-start self-stretch w-full relative flex-[0_0_auto]">
-      <div className="flex items-center justify-between p-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-overlay">
+      <div className="flex items-center justify-between p-5 relative self-stretch w-full flex-[0_0_auto] bg-[var(--color-surface-overlay)]">
         {/* Logo và Beta 1.0 */}
         <div className="inline-flex items-center gap-2 relative flex-[0_0_auto]">
           <div className="inline-flex items-center gap-2 relative flex-[0_0_auto]">
@@ -23,7 +23,7 @@ export const UserHeader = () => {
               width={32}
               height={32}
             />
-            <h1 className="relative flex items-center justify-center w-fit font-roboto font-medium text-white text-2xl tracking-[0.10px] leading-6 whitespace-nowrap">
+            <h1 className="relative flex items-center justify-center w-fit font-roboto font-medium text-foreground text-2xl tracking-[0.10px] leading-6 whitespace-nowrap">
               ${APP_NAME}
             </h1>
           </div>
@@ -34,14 +34,14 @@ export const UserHeader = () => {
 
         {/* Tên người dùng và nút Home*/}
         <div className="inline-flex items-center gap-4 relative flex-[0_0_auto]">
-          <span className="relative flex items-center justify-center w-fit font-roboto font-medium text-white text-xl tracking-[0.10px] leading-6 whitespace-nowrap">
+          <span className="relative flex items-center justify-center w-fit font-roboto font-medium text-foreground text-xl tracking-[0.10px] leading-6 whitespace-nowrap">
             {userProfile?.first_name || userProfile?.last_name || "Người dùng"}
           </span>
           <Link
             href="/trang-chu"
-            className="flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center p-2 rounded-full hover:bg-foreground/10 transition-colors"
           >
-            <Home className="text-white" size={24} />
+            <Home className="text-foreground" size={24} />
           </Link>
         </div>
       </div>

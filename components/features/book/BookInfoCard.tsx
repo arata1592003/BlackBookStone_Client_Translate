@@ -4,7 +4,8 @@ import { BookInfo } from "@/modules/book/book.types";
 import { Bookmark, List, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   bookInfo: BookInfo & {
@@ -66,20 +67,19 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
 
         {bookInfo.genres && bookInfo.genres.length > 0 && (
           <div
-            className="inline-flex items-start gap-2.5 px-0 py-2.5 relative flex-[0_0_auto]"
+            className="inline-flex items-start gap-2 px-0 py-2 relative flex-[0_0_auto] flex-wrap"
             role="list"
             aria-label="Book genres"
           >
             {bookInfo.genres.map((genre) => (
-              <div
+              <Badge
                 key={genre.id}
-                className="inline-flex items-center gap-2.5 p-[5px] relative flex-[0_0_auto] bg-border-white-alpha rounded-md overflow-hidden"
+                variant="secondary"
+                className="bg-border-white-alpha text-text-secondary font-normal"
                 role="listitem"
               >
-                <span className="relative flex items-center justify-center w-fit mt-[-1.00px] font-roboto font-normal text-text-secondary text-base text-center tracking-[0.10px] leading-4 whitespace-nowrap">
-                  {genre.name}
-                </span>
-              </div>
+                {genre.name}
+              </Badge>
             ))}
           </div>
         )}

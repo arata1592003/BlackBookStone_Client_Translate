@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ChapterRaw } from "../../../modules/crawl/crawl.types";
 
 interface CrawlConfirmationSectionProps {
@@ -34,12 +34,12 @@ export const CrawlConfirmationSection: React.FC<
     <div className="flex-1 p-6 overflow-y-auto">
       {/* Messages */}
       {chapterListError && (
-        <div className="bg-red-500/20 text-red-500 p-3 rounded-md text-sm mb-4">
+        <div className="bg-destructive/20 text-destructive p-3 rounded-md text-sm mb-4">
           {chapterListError}
         </div>
       )}
       {chapterListMessage && (
-        <div className="bg-blue-500/20 text-blue-500 p-3 rounded-md text-sm mb-4">
+        <div className="bg-primary/20 text-primary p-3 rounded-md text-sm mb-4">
           {chapterListMessage}
         </div>
       )}
@@ -58,7 +58,7 @@ export const CrawlConfirmationSection: React.FC<
             type="checkbox"
             checked={recrawlAll}
             onChange={(e) => setRecrawlAll(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-blue-600 rounded"
+            className="form-checkbox h-5 w-5 text-primary rounded"
             disabled={isFetchingChapterList}
           />
           Cào lại toàn bộ (bao gồm cả các chương đã cào)
@@ -66,14 +66,14 @@ export const CrawlConfirmationSection: React.FC<
         <Button
           onClick={onStartCrawl}
           disabled={isFetchingChapterList || chaptersToCrawl.length === 0}
-          className="w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-md transition-colors"
+          className="w-full px-6 py-3 bg-success hover:bg-success/90 text-foreground font-bold rounded-md transition-colors"
         >
           Tiếp tục Cào ({chaptersToCrawl.length} chương mới)
         </Button>
         <Button
           onClick={onRecrawlAll}
           disabled={isFetchingChapterList || rawChaptersFound.length === 0}
-          className="w-full px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-md transition-colors"
+          className="w-full px-6 py-3 bg-warning hover:bg-warning/90 text-foreground font-bold rounded-md transition-colors"
         >
           Cào lại toàn bộ ({rawChaptersFound.length} chương)
         </Button>

@@ -30,11 +30,11 @@ export default function NapTienPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-white text-center w-full p-10">
+        <div className="text-text-primary text-center w-full p-10">
           Đang tải các gói nạp...
         </div>
       ) : !plans || plans.length === 0 ? (
-        <div className="text-white text-center w-full p-10">
+        <div className="text-text-primary text-center w-full p-10">
           Hiện không có gói nạp nào khả dụng.
         </div>
       ) : (
@@ -62,10 +62,10 @@ export default function NapTienPage() {
                 {plan.bonusGems > 0 && (
                   <p className="text-sm text-text-secondary flex items-center gap-1">
                     Thưởng thêm{" "}
-                    <span className="text-green-400 font-bold">
+                    <span className="text-success font-bold">
                       {plan.bonusGems.toLocaleString("vi-VN")}
                     </span>{" "}
-                    <Gem size={16} className="text-green-400" />
+                    <Gem size={16} className="text-success" />
                   </p>
                 )}
               </div>
