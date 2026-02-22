@@ -38,7 +38,7 @@ export const HomeHeader = () => {
     if (q !== searchQuery) {
       setSearchQuery(q || "");
     }
-  }, [searchParams, searchQuery]);
+  }, [searchParams]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
