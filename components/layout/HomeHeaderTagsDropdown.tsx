@@ -2,7 +2,7 @@
 
 import { Tag } from "@/modules/tag/tag.type";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,18 +13,33 @@ import { ChevronDown, Tag as TagIcon } from "lucide-react";
 
 interface HomeHeaderTagsDropdownProps {
   tags: Tag[];
-  isTagsDropdownOpen: boolean; // Managed by Shadcn now, but keeping for prop compatibility if needed
+  isTagsDropdownOpen: boolean; 
   setIsTagsDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const HomeHeaderTagsDropdown: React.FC<HomeHeaderTagsDropdownProps> = ({
   tags,
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors h-6">
+        <span className="whitespace-nowrap text-sm md:text-base">Thể loại</span>
+        <ChevronDown size={16} />
+      </div>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors">
-          <span className="whitespace-nowrap">Thể loại</span>
+          <span className="whitespace-nowrap text-sm md:text-base">Thể loại</span>
           <ChevronDown size={16} />
         </div>
       </DropdownMenuTrigger>

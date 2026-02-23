@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { UserProfile } from "@/modules/user/user.type";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ interface HomeHeaderMobileAuthProps {
   handleLogout: () => Promise<void>;
   isUserDropdownOpen: boolean;
   setIsUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userDropdownRef: any; // Not used with Shadcn Dropdown
+  userDropdownRef: any; 
   userMenuItems: { id: string; label: string; href: string }[];
 }
 
@@ -35,6 +35,12 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
   handleLogout,
   userMenuItems,
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const renderUserButtonContent = () => {
     if (isProfileLoading) {
       return <span className="w-20 h-5 bg-foreground/30 animate-pulse rounded-md" />;
@@ -44,6 +50,11 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
     }
     return "Tài khoản";
   };
+
+  // Tránh Hydration mismatch bằng cách không render Dropdown cho đến khi client-side sẵn sàng
+  if (!mounted) {
+    return <div className="flex gap-2 lg:hidden h-9" />; 
+  }
 
   return (
     <div className="flex gap-2 lg:hidden">

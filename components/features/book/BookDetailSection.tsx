@@ -30,7 +30,11 @@ export function BookDetailSection({
         <BookInfoCard bookInfo={bookInfo} onGoChapterList={goToChapterList} />
         <ChapterNewestList slug={slug} newestChapterList={newestChapterList} />
         <div ref={chapterTabRef} className="w-full">
-          <BookDetailTabs slug={slug} description={bookInfo.description || undefined} />
+          <BookDetailTabs 
+            bookId={bookInfo.id}
+            slug={slug} 
+            description={bookInfo.description || undefined} 
+          />
         </div>
       </div>
     </div>
