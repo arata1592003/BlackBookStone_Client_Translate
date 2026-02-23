@@ -22,11 +22,11 @@ export const HomeOverviewSection = ({ hotBooks, newChapterBooks, completedBooks 
       {/* ĐỀ CỬ */}
       <section className="p-3 rounded-lg bg-surface-card">
         <h2 className="text-text-muted text-lg md:text-xl font-semibold mb-4">Đề cử</h2>
-        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-y-6 gap-x-3 md:gap-4 justify-items-center">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-y-6 gap-x-3 md:gap-4 justify-items-center">
           {recommendedBooks.map((book, index) => (
             <div 
               key={book.id} 
-              className={index >= 10 ? "hidden lg:block" : "block"}
+              className={index >= 12 ? "hidden md:block" : "block"}
             >
               <BookCard book={book} />
             </div>

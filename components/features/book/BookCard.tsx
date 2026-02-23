@@ -9,7 +9,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
       className="
         block
         flex-none shrink-0
-        w-[115px] xs:w-[125px] sm:w-[130px] md:w-[140px]
+        w-[100px] xs:w-[110px] sm:w-[120px] md:w-[130px] lg:w-[140px]
         no-underline
         text-inherit
         group
@@ -27,7 +27,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
           src={book.cover_image_url}
           alt={book.book_name_translated}
           fill
-          sizes="(max-width: 640px) 115px, (max-width: 768px) 130px, 140px"
+          sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
           className="object-cover transition-transform group-hover:scale-105"
         />
       </div>
@@ -35,7 +35,7 @@ export const BookCard = ({ book }: { book: BookCardWithAuthor }) => {
       <p
         className="
         mt-2.5
-        text-[13px] sm:text-sm
+        text-xs
         text-text-secondary
         font-medium
         line-clamp-2
