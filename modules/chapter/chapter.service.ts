@@ -8,7 +8,24 @@ import {
   fetchNewestChaptersByBookSlug,
   fetchNextChapterNumber,
   fetchPrevChapterNumber,
+  fetchAllChaptersContentByBookId,
 } from "./chapter.repo";
+
+export async function getFullBookDataForDownload(bookId: string) {
+  const chapters = await fetchAllChaptersContentByBookId(bookId);
+  return chapters.map((ch) => ({
+    number: ch.chapter_number,
+    titleRaw: ch.chapter_title_raw,
+    titleTranslated: ch.chapter_title_translated,
+    summary: ch.summary_translated,
+    contentRaw: Array.isArray(ch.chapter_content) 
+      ? ch.chapter_content[0]?.content_raw 
+      : ch.chapter_content?.content_raw,
+    contentTranslated: Array.isArray(ch.chapter_content)
+      ? ch.chapter_content[0]?.content_translated
+      : ch.chapter_content?.content_translated,
+  }));
+}
 
 export async function getNewestChapterListByBookSlug(
   slug: string,

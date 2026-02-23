@@ -167,3 +167,27 @@ export async function fetchNextChapterNumber(
 
   return data?.chapter_number ?? null;
 }
+
+export async function fetchAllChaptersContentByBookId(bookId: string) {
+  const { data, error } = await supabaseClient
+    .from("chapters")
+    .select(`
+      chapter_number,
+      chapter_title_raw,
+      chapter_title_translated,
+      summary_translated,
+      chapter_content (
+        content_raw,
+        content_translated
+      )
+    `)
+    .eq("book_id", bookId)
+    .order("chapter_number", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching all chapters content:", error.message);
+    throw error;
+  }
+
+  return data;
+}

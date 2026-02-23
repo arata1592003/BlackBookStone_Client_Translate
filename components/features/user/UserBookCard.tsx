@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { DownloadBookDialog } from "../book/DownloadBookDialog";
 
 interface UserBookCardProps {
   novel: UserBookItem;
@@ -36,6 +37,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   const handleNovelAction = (novelId: string, action: string) => {
     console.log(`Novel ${novelId}: ${action} action triggered`);
@@ -181,7 +183,10 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
           <Button
             size="sm"
-            onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "download"); }}
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setIsDownloadModalOpen(true);
+            }}
             className="flex-1 md:w-full bg-secondary-accent hover:bg-secondary-accent/90 text-foreground font-bold text-xs md:text-base h-9 md:h-10"
           >
             <Download size={16} className="md:size-5" />
@@ -236,6 +241,13 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
           </AlertDialog>
         </nav>
       </div>
+
+      <DownloadBookDialog 
+        bookId={novel.id}
+        bookTitle={novel.title || "Truyen"}
+        isOpen={isDownloadModalOpen}
+        onOpenChange={setIsDownloadModalOpen}
+      />
     </article>
   );
 };
