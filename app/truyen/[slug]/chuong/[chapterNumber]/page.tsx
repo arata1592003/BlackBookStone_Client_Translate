@@ -3,6 +3,7 @@ import { BreadcrumbResponsive } from "@/components/ui/bread-cumb";
 import { ChapterPagination } from "@/components/ui/chapter-pagination";
 import { getChapterDetailBySlugAndNumber } from "@/modules/chapter/chapter.service";
 import type { Metadata } from "next";
+import { ChapterViewTracker } from "@/components/features/chapter/ChapterViewTracker";
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
 
@@ -66,6 +67,7 @@ export default async function ChapterReadPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto flex flex-col relative bg-[var(--color-surface-user-account-bg)] min-h-screen">
+      <ChapterViewTracker chapterId={chapter.id} />
       <div className="flex flex-col items-start gap-6 md:gap-[30px] px-4 md:px-8 lg:px-[50px] py-5 relative self-stretch w-full flex-[0_0_auto] bg-surface-section">
         <BreadcrumbResponsive
           slug={slug}

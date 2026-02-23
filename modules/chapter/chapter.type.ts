@@ -1,4 +1,5 @@
 export type ChapterDetail = {
+  id: string;
   slug: string;
   book_name: string;
   chapter_number: number;

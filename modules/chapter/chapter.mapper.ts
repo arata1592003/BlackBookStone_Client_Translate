@@ -1,8 +1,5 @@
-import {
-  ChapterContentRow,
-  ChapterWithBookSlugRow,
-} from "@/modules/chapter/chapter.repo";
-import { ChapterDetail, ChapterRow } from "@/modules/chapter/chapter.type";
+import { ChapterContentRow, ChapterWithBookSlugRow } from "./chapter.repo";
+import { ChapterDetail, ChapterRow } from "./chapter.type";
 
 export const mapToChapterRow = (row: ChapterWithBookSlugRow): ChapterRow => ({
   id: row.id,
@@ -13,24 +10,21 @@ export const mapToChapterRow = (row: ChapterWithBookSlugRow): ChapterRow => ({
 
 export const mapToChapterDetail = (
   slug: string,
-  bookName: string,
+  bookTitle: string,
   row: ChapterContentRow,
   prev: number | null,
   next: number | null,
 ): ChapterDetail => {
-  const content = Array.isArray(row.chapter_content)
-    ? row.chapter_content[0]?.content_translated
-    : (row.chapter_content?.content_translated ?? "");
-
   return {
+    id: row.id,
     slug,
-    book_name: bookName,
+    book_name: bookTitle,
     chapter_number: row.chapter_number,
-    title: row.chapter_title_translated,
-    content: content,
+    title: row.chapter_title_translated ?? `Chương ${row.chapter_number}`,
+    content: (row.chapter_content as any)?.content_translated ?? "",
     views: row.view_count ?? 0,
     total_words: row.total_words_translate ?? 0,
-    created_at: new Date(row.created_at).toLocaleDateString("vi-VN"),
+    created_at: row.created_at,
     prev_chapter: prev,
     next_chapter: next,
   };

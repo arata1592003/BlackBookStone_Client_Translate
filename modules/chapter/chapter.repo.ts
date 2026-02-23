@@ -14,6 +14,7 @@ export type ChapterWithBookSlugRow = {
 };
 
 export type ChapterContentRow = {
+  id: string;
   chapter_number: number;
   chapter_title_translated: string | null;
   total_words_translate: number | null;
@@ -24,6 +25,20 @@ export type ChapterContentRow = {
     | { content_translated: string | null }[]
     | null;
 };
+
+export interface AllChapterContentRow {
+  chapter_number: number;
+  chapter_title_raw: string | null;
+  chapter_title_translated: string | null;
+  summary_translated: string | null;
+  chapter_content: {
+    content_raw: string | null;
+    content_translated: string | null;
+  } | {
+    content_raw: string | null;
+    content_translated: string | null;
+  }[] | null;
+}
 
 export async function fetchNewestChaptersByBookSlug(
   slug: string,
@@ -119,6 +134,7 @@ export async function fetchChapterDetail(
     .from("chapters")
     .select(
       `
+      id,
       chapter_number,
       chapter_title_translated,
       total_words_translate,
@@ -133,7 +149,7 @@ export async function fetchChapterDetail(
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  return data as ChapterContentRow | null;
 }
 
 export async function fetchPrevChapterNumber(
@@ -168,7 +184,7 @@ export async function fetchNextChapterNumber(
   return data?.chapter_number ?? null;
 }
 
-export async function fetchAllChaptersContentByBookId(bookId: string) {
+export async function fetchAllChaptersContentByBookId(bookId: string): Promise<AllChapterContentRow[]> {
   const { data, error } = await supabaseClient
     .from("chapters")
     .select(`
@@ -189,5 +205,15 @@ export async function fetchAllChaptersContentByBookId(bookId: string) {
     throw error;
   }
 
-  return data;
+  return (data as any) || [];
+}
+
+export async function incrementChapterView(chapterId: string): Promise<void> {
+  const { error } = await supabaseClient.rpc("increment_chapter_view", {
+    target_chapter_id: chapterId,
+  });
+
+  if (error) {
+    console.error("Error incrementing chapter view:", error.message);
+  }
 }

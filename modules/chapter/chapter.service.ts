@@ -9,22 +9,30 @@ import {
   fetchNextChapterNumber,
   fetchPrevChapterNumber,
   fetchAllChaptersContentByBookId,
+  incrementChapterView as repoIncrementChapterView,
+  AllChapterContentRow,
 } from "./chapter.repo";
 
+export const increaseChapterView = async (chapterId: string): Promise<void> => {
+  await repoIncrementChapterView(chapterId);
+};
+
 export async function getFullBookDataForDownload(bookId: string) {
-  const chapters = await fetchAllChaptersContentByBookId(bookId);
-  return chapters.map((ch) => ({
-    number: ch.chapter_number,
-    titleRaw: ch.chapter_title_raw,
-    titleTranslated: ch.chapter_title_translated,
-    summary: ch.summary_translated,
-    contentRaw: Array.isArray(ch.chapter_content) 
-      ? ch.chapter_content[0]?.content_raw 
-      : ch.chapter_content?.content_raw,
-    contentTranslated: Array.isArray(ch.chapter_content)
-      ? ch.chapter_content[0]?.content_translated
-      : ch.chapter_content?.content_translated,
-  }));
+  const chapters: AllChapterContentRow[] = await fetchAllChaptersContentByBookId(bookId);
+  return chapters.map((ch) => {
+    const content = Array.isArray(ch.chapter_content) 
+      ? ch.chapter_content[0] 
+      : ch.chapter_content;
+
+    return {
+      number: ch.chapter_number,
+      titleRaw: ch.chapter_title_raw,
+      titleTranslated: ch.chapter_title_translated,
+      summary: ch.summary_translated,
+      contentRaw: content?.content_raw || null,
+      contentTranslated: content?.content_translated || null,
+    };
+  });
 }
 
 export async function getNewestChapterListByBookSlug(
