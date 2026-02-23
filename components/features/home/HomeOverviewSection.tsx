@@ -68,7 +68,7 @@ export const HomeOverviewSection = ({ hotBooks, newChapterBooks, completedBooks 
             Xem thêm
           </Link>
         </div>
-        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-y-6 gap-x-3 md:gap-4 justify-items-center">
+        <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-y-6 gap-x-2 md:gap-4 justify-items-center">
           {completedBooks.slice(0, 20).map((book) => (
             <CompletedBookCard key={book.id} book={book} />
           ))}

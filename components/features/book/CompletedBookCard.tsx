@@ -15,6 +15,8 @@ export const CompletedBookCard = ({ book }: Props) => {
         group
         no-underline
         text-inherit
+        flex-none shrink-0
+        w-[100px] xs:w-[110px] sm:w-[120px] md:w-[130px] lg:w-[140px]
       "
     >
       <div
@@ -22,6 +24,7 @@ export const CompletedBookCard = ({ book }: Props) => {
           flex flex-col
           items-center
           text-center
+          w-full
         "
       >
         <div
@@ -32,8 +35,8 @@ export const CompletedBookCard = ({ book }: Props) => {
             rounded-md
             overflow-hidden
             bg-surface-raised
-            shadow-md
-            group-hover:shadow-lg
+            shadow-sm
+            group-hover:shadow-md
             transition-all
             duration-200
           "
@@ -43,8 +46,8 @@ export const CompletedBookCard = ({ book }: Props) => {
               src={book.cover_image_url}
               alt={book.book_name_translated ?? ""}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes, adjust as needed
-              className="object-cover"
+              sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, 140px"
+              className="object-cover transition-transform group-hover:scale-105"
             />
           ) : (
             <div className="absolute inset-0 bg-muted" />
@@ -54,22 +57,24 @@ export const CompletedBookCard = ({ book }: Props) => {
         <div className="mt-2 w-full">
           <p
             className="
-              text-sm
+              text-xs
               font-medium
               text-text-primary
               line-clamp-2
               group-hover:text-primary-accent
               transition-colors
+              px-1
             "
           >
             {book.book_name_translated}
           </p>
-                      <p
-                        className="
-                        text-xs
-                        text-text-muted
-                        line-clamp-1
-                      "          >
+          <p
+            className="
+              text-[10px]
+              text-text-muted
+              line-clamp-1
+            "
+          >
             {book.totalChapters} Chương
           </p>
         </div>
