@@ -36,6 +36,9 @@ import {
   countSearchResults as repoCountSearchResults,
   searchBooksForClient,
   updateBookPublishStatus as repoUpdateBookPublishStatus,
+  checkBookFollowStatus as repoCheckBookFollowStatus,
+  insertBookFollow as repoInsertBookFollow,
+  deleteBookFollow as repoDeleteBookFollow,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -214,4 +217,28 @@ export async function toggleBookPublishStatus(
   const newStatus = !currentStatus;
   await repoUpdateBookPublishStatus(supabase, bookId, newStatus);
   return newStatus;
+}
+
+export async function isBookFollowed(
+  supabase: SupabaseClient,
+  userId: string,
+  bookId: string,
+): Promise<boolean> {
+  return repoCheckBookFollowStatus(supabase, userId, bookId);
+}
+
+export async function toggleFollowBook(
+  supabase: SupabaseClient,
+  userId: string,
+  bookId: string,
+): Promise<boolean> {
+  const isFollowed = await repoCheckBookFollowStatus(supabase, userId, bookId);
+  
+  if (isFollowed) {
+    await repoDeleteBookFollow(supabase, userId, bookId);
+    return false;
+  } else {
+    await repoInsertBookFollow(supabase, userId, bookId);
+    return true;
+  }
 }

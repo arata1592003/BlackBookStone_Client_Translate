@@ -7,6 +7,17 @@ import { Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface BookCabinetItemProps {
   novel: UserBookItem;
@@ -79,31 +90,49 @@ export const BookCabinetItem = ({ novel, onDelete }: BookCabinetItemProps) => {
         </div>
       </Link>
 
-      {/* Delete Action - Minimal width on mobile */}
-      <div
-        className="
-          flex items-center justify-center
-          self-stretch
-          w-10 md:w-[60px]
-          cursor-pointer
-          transition-colors
-          hover:bg-destructive/70
-          bg-destructive/10
-          md:bg-transparent
-          border-l border-border-default/30
-          group
-        "
-        onClick={(e) => {
-          e.preventDefault();
-          onDelete(novel.id);
-        }}
-        title="Xóa khỏi tủ truyện"
-      >
-        <Trash
-          size={16}
-          className="text-foreground/70 group-hover:text-foreground transition-colors md:size-7"
-        />
-      </div>
+      {/* Delete Action with AlertDialog */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <div
+            className="
+              flex items-center justify-center
+              self-stretch
+              w-10 md:w-[60px]
+              cursor-pointer
+              transition-colors
+              hover:bg-destructive/70
+              bg-destructive/10
+              md:bg-transparent
+              border-l border-border-default/30
+              group
+            "
+            title="Xóa khỏi tủ truyện"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Trash
+              size={16}
+              className="text-foreground/70 group-hover:text-foreground transition-colors md:size-7"
+            />
+          </div>
+        </AlertDialogTrigger>
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa khỏi tủ truyện?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa bộ truyện <strong>{novel.title}</strong> khỏi tủ truyện cá nhân không? Hành động này có thể được hoàn tác bằng cách lưu lại truyện.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-white/20 text-white hover:bg-white/10">Hủy</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => onDelete(novel.id)}
+              className="bg-destructive hover:bg-destructive/90 text-white"
+            >
+              Xác nhận xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </article>
   );
 };

@@ -1,12 +1,15 @@
 "use client";
 
 import { BookInfo } from "@/modules/book/book.types";
-import { Bookmark, List, Play, User as UserIcon, Activity, BookOpen } from "lucide-react";
+import { Bookmark, BookmarkCheck, List, Play, User as UserIcon, Activity, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { checkFollowStatusAction, toggleFollowBookAction } from "@/app/actions/book";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 type Props = {
   bookInfo: BookInfo & {
@@ -16,6 +19,48 @@ type Props = {
 };
 
 export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
+  const { user } = useAuth();
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [isLoadingFollow, setIsLoadingFollow] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (!user) {
+        setIsChecking(false);
+        return;
+      }
+      const result = await checkFollowStatusAction(bookInfo.id);
+      if (result.success) {
+        setIsFollowed(result.isFollowed);
+      }
+      setIsChecking(false);
+    };
+    checkStatus();
+  }, [bookInfo.id, user]);
+
+  const handleToggleFollow = async () => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để lưu truyện.");
+      return;
+    }
+    if (isLoadingFollow) return;
+
+    setIsLoadingFollow(true);
+    try {
+      const result = await toggleFollowBookAction(bookInfo.id);
+      if (result.success) {
+        setIsFollowed(result.isFollowed ?? false);
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error("Follow toggle failed:", error);
+    } finally {
+      setIsLoadingFollow(false);
+    }
+  };
+
   const actionButtons = [
     {
       id: 1,
@@ -24,8 +69,16 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
       href: `/truyen/${bookInfo.slug}/chuong/1`,
       variant: "default" as const,
     },
-    { id: 2, IconComponent: Bookmark, label: "Lưu truyện", variant: "secondary" as const },
-    { id: 3, IconComponent: List, label: "D.S Chương", variant: "secondary" as const },
+    { 
+      id: 2, 
+      IconComponent: isFollowed ? BookmarkCheck : Bookmark, 
+      label: isFollowed ? "Đã lưu" : "Lưu truyện", 
+      variant: "secondary" as const,
+      onClick: handleToggleFollow,
+      isLoading: isLoadingFollow,
+      isActive: isFollowed
+    },
+    { id: 3, IconComponent: List, label: "D.S Chương", variant: "secondary" as const, onClick: onGoChapterList },
   ];
 
   return (
@@ -101,10 +154,16 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
           {actionButtons.map((button) => {
             const Icon = button.IconComponent;
             const isPrimary = button.variant === "default";
+            const isLoading = (button as any).isLoading;
+            const isActive = (button as any).isActive;
 
             const btnContent = (
               <>
-                <Icon size={18} className={isPrimary ? "text-white" : "text-primary-accent"} />
+                {isLoading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Icon size={18} className={isPrimary ? "text-white" : (isActive ? "text-success" : "text-primary-accent")} />
+                )}
                 <span className="font-bold text-sm md:text-base">{button.label}</span>
               </>
             );
@@ -125,10 +184,12 @@ export const BookInfoCard = ({ bookInfo, onGoChapterList }: Props) => {
               <Button
                 key={button.id}
                 variant={button.variant}
-                onClick={onGoChapterList}
+                onClick={button.onClick}
+                disabled={isLoading || isChecking}
                 className={cn(
                   "flex-1 md:flex-none min-w-[130px] md:min-w-[150px] h-11 md:h-12 gap-2 shadow-sm rounded-lg transition-all active:scale-95",
-                  isPrimary ? "bg-primary hover:bg-primary/90 text-white" : "bg-surface-raised border-border-default hover:bg-primary/10"
+                  isPrimary ? "bg-primary hover:bg-primary/90 text-white" : "bg-surface-raised border-border-default hover:bg-primary/10",
+                  isActive && "border-success/50 bg-success/5 text-success"
                 )}
               >
                 {btnContent}

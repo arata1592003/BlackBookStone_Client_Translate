@@ -4,10 +4,11 @@ import { BookCabinetItem } from "@/components/features/user/BookCabinetItem";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { getFollowedBooksForCurrentUser } from "@/modules/book/book.service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toggleFollowBookAction } from "@/app/actions/book";
 
 export default function TuTruyenPage() {
   const { user } = useAuth();
-  const queryClient = useQueryClient(); // Lấy queryClient để vô hiệu hóa cache sau
+  const queryClient = useQueryClient();
 
   const { data: books, isLoading } = useQuery({
     queryKey: ['followedBooks', user?.id],
@@ -15,14 +16,19 @@ export default function TuTruyenPage() {
     enabled: !!user,
   });
 
-  const handleDelete = (id: string) => {
-    // TODO: Triển khai logic xóa ở backend
-    console.log(`Deleting book with id: ${id}`);
-    
-    // Giả sử xóa thành công, ta sẽ vô hiệu hóa query 'followedBooks'
-    // để React Query tự động fetch lại dữ liệu mới.
-    // Sau này khi có API xóa, bạn sẽ đặt lệnh này trong .then() hoặc sau khi await thành công.
-    queryClient.invalidateQueries({ queryKey: ['followedBooks', user?.id] });
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await toggleFollowBookAction(id);
+      if (result.success) {
+        // Cập nhật lại cache của React Query
+        queryClient.invalidateQueries({ queryKey: ['followedBooks', user?.id] });
+      } else {
+        alert(result.error || "Không thể xóa truyện.");
+      }
+    } catch (error) {
+      console.error("Xóa truyện thất bại:", error);
+      alert("Lỗi kết nối. Vui lòng thử lại sau.");
+    }
   };
 
   return (

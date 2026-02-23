@@ -314,6 +314,7 @@ export async function insertBook(
   supabase: SupabaseClient,
   bookPayload: BookInsertPayload,
 ): Promise<string> {
+  console.log(bookPayload);
   const { data, error } = await supabase
     .from("books")
     .insert(bookPayload)
@@ -547,4 +548,46 @@ export async function updateBookPublishStatus(
     console.error("Error updating book publish status:", error.message);
     throw error;
   }
+}
+
+export async function checkBookFollowStatus(
+  supabase: SupabaseClient,
+  userId: string,
+  bookId: string,
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("book_follows")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("book_id", bookId)
+    .maybeSingle();
+
+  if (error) return false;
+  return !!data;
+}
+
+export async function insertBookFollow(
+  supabase: SupabaseClient,
+  userId: string,
+  bookId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("book_follows")
+    .insert({ user_id: userId, book_id: bookId });
+
+  if (error) throw error;
+}
+
+export async function deleteBookFollow(
+  supabase: SupabaseClient,
+  userId: string,
+  bookId: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("book_follows")
+    .delete()
+    .eq("user_id", userId)
+    .eq("book_id", bookId);
+
+  if (error) throw error;
 }

@@ -13,6 +13,8 @@ import {
   getManagedBookDetails,
   getChapterContent,
   toggleBookPublishStatus,
+  toggleFollowBook,
+  isBookFollowed,
 } from "@/modules/book/book.service";
 import { CreateBookInput } from "@/modules/book/book.service.type";
 import { User } from "@supabase/supabase-js";
@@ -206,5 +208,36 @@ export async function toggleBookPublishAction(
       success: false,
       error: (error as Error).message || "Không thể cập nhật trạng thái.",
     };
+  }
+}
+
+export async function toggleFollowBookAction(bookId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "Bạn cần đăng nhập để lưu truyện." };
+  }
+
+  try {
+    const isFollowed = await toggleFollowBook(supabase, user.id, bookId);
+    revalidatePath(`/truyen/[slug]`, "layout");
+    return { success: true, isFollowed };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Lỗi khi thực hiện thao tác." };
+  }
+}
+
+export async function checkFollowStatusAction(bookId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { success: true, isFollowed: false };
+
+  try {
+    const isFollowed = await isBookFollowed(supabase, user.id, bookId);
+    return { success: true, isFollowed };
+  } catch (error) {
+    return { success: false, isFollowed: false };
   }
 }
