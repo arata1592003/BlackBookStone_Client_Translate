@@ -105,6 +105,7 @@ export type UserBookItem = {
   updatedAt: string;
 
   genres: string[];
+  isPublished: boolean;
 };
 
 // Kiểu dữ liệu cho phản hồi từ API lấy book-info

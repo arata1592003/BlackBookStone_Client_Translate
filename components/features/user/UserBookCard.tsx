@@ -5,10 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
-import { AppWindowMac, Eye, SquarePen, Trash } from "lucide-react";
+import { Eye, SquarePen, Trash, Download, Share2, Share, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { toggleBookPublishAction } from "@/app/actions/book";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/components/providers/AuthProvider";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface UserBookCardProps {
   novel: UserBookItem;
@@ -16,12 +31,36 @@ interface UserBookCardProps {
 
 const backgroundPath = "/dark-rock-wall-seamless-texture-free-105.png";
 
-const handleNovelAction = (novelId: string, action: string) => {
-  console.log(`Novel ${novelId}: ${action} action triggered`);
-};
-
 export const UserBookCard = ({ novel }: UserBookCardProps) => {
   const router = useRouter();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handleNovelAction = (novelId: string, action: string) => {
+    console.log(`Novel ${novelId}: ${action} action triggered`);
+  };
+
+  const handleTogglePublish = async () => {
+    if (isPublishing) return;
+
+    setIsPublishing(true);
+    try {
+      const result = await toggleBookPublishAction(novel.id, novel.isPublished);
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: ["ownedBooks", user?.id] });
+      } else {
+        alert(result.error || "Có lỗi xảy ra khi cập nhật trạng thái.");
+      }
+    } catch (error) {
+      console.error("Failed to toggle publish status:", error);
+      alert("Lỗi kết nối hệ thống. Vui lòng thử lại sau.");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const actionText = novel.isPublished ? "ngừng chia sẻ" : "chia sẻ";
 
   return (
     <article
@@ -62,7 +101,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
           </div>
 
           {/* Text Info */}
-          <div className="flex flex-col items-start justify-between p-4 md:px-5 md:py-[10px] flex-1 min-w-0">
+          <div className="flex flex-col items-start justify-between p-3 md:px-5 md:py-[10px] flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 self-stretch w-full mb-1">
               <h3 className="font-roboto font-bold text-foreground text-lg md:text-xl tracking-tight leading-tight truncate max-w-[250px] md:max-w-none">
                 {novel.title}
@@ -117,7 +156,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
         {/* Action Buttons Area (Responsive) */}
         <nav
-          className="flex md:flex-col items-center gap-2 p-3 md:p-2.5 md:w-[120px] bg-background/60 md:bg-transparent border-t md:border-t-0 md:border-l border-border-default/30"
+          className="flex md:flex-col items-center gap-2 p-3 md:p-2.5 md:w-[130px] bg-background/60 md:bg-transparent border-t md:border-t-0 md:border-l border-border-default/30"
           aria-label={`Actions for ${novel.title}`}
         >
           {/* Mobile Only Actions: Read and Delete */}
@@ -142,26 +181,59 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
           <Button
             size="sm"
-            onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "crawl"); }}
-            className="flex-1 md:w-full bg-success hover:bg-success/90 text-foreground font-bold text-xs md:text-base h-9 md:h-10"
-          >
-            <AppWindowMac size={16} className="md:size-5" />
-            <span className="ml-1.5 md:ml-2">Cào</span>
-          </Button>
-          <Button
-            size="sm"
-            onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "translate"); }}
-            className="flex-1 md:w-full bg-accent hover:bg-accent/90 text-foreground font-bold text-xs md:text-base h-9 md:h-10"
-          >
-            Dịch
-          </Button>
-          <Button
-            size="sm"
             onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "download"); }}
             className="flex-1 md:w-full bg-secondary-accent hover:bg-secondary-accent/90 text-foreground font-bold text-xs md:text-base h-9 md:h-10"
           >
-            Tải
+            <Download size={16} className="md:size-5" />
+            <span className="ml-1.5 md:ml-2">Tải</span>
           </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                disabled={isPublishing}
+                onClick={(e) => e.stopPropagation()}
+                className={cn(
+                  "flex-1 md:w-full font-bold text-xs md:text-base h-9 md:h-10 transition-all",
+                  novel.isPublished 
+                    ? "bg-success hover:bg-success/90 text-foreground" 
+                    : "bg-primary hover:bg-primary/90 text-foreground"
+                )}
+              >
+                {isPublishing ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : novel.isPublished ? (
+                  <>
+                    <Share2 size={16} className="md:size-5" />
+                    <span className="ml-1.5 md:ml-2 whitespace-nowrap">Đã share</span>
+                  </>
+                ) : (
+                  <>
+                    <Share size={16} className="md:size-5" />
+                    <span className="ml-1.5 md:ml-2 whitespace-nowrap">Share</span>
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Xác nhận {actionText}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Bạn có chắc chắn muốn {actionText} truyện <strong>{novel.title}</strong> này không? 
+                  {novel.isPublished 
+                    ? " Truyện sẽ không còn hiển thị công khai trên trang chủ." 
+                    : " Truyện sẽ được hiển thị công khai để mọi người cùng đọc."}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Hủy</AlertDialogCancel>
+                <AlertDialogAction onClick={handleTogglePublish} className="bg-primary hover:bg-primary/90">
+                  Xác nhận
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </nav>
       </div>
     </article>

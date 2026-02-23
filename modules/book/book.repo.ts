@@ -532,3 +532,19 @@ export async function fetchChapterContentById(
 
   return data as ChapterContentRow | null;
 }
+
+export async function updateBookPublishStatus(
+  supabase: SupabaseClient,
+  bookId: string,
+  isPublished: boolean,
+): Promise<void> {
+  const { error } = await supabase
+    .from("books")
+    .update({ is_published: isPublished })
+    .eq("id", bookId);
+
+  if (error) {
+    console.error("Error updating book publish status:", error.message);
+    throw error;
+  }
+}

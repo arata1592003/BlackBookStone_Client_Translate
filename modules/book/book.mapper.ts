@@ -145,6 +145,7 @@ export const mapToUserBookItem = (row: UserBookItemRow): UserBookItem => {
 
     updatedAt: row.updated_at,
     genres,
+    isPublished: row.is_published,
   };
 };
 

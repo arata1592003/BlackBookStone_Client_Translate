@@ -12,6 +12,7 @@ import {
   createBook,
   getManagedBookDetails,
   getChapterContent,
+  toggleBookPublishStatus,
 } from "@/modules/book/book.service";
 import { CreateBookInput } from "@/modules/book/book.service.type";
 import { User } from "@supabase/supabase-js";
@@ -186,6 +187,24 @@ export async function getChapterContentAction(
         error instanceof Error
           ? error.message
           : "Có lỗi xảy ra khi lấy nội dung chương.",
+    };
+  }
+}
+
+export async function toggleBookPublishAction(
+  bookId: string,
+  currentStatus: boolean,
+): Promise<{ success: boolean; isPublished?: boolean; error?: string }> {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const isPublished = await toggleBookPublishStatus(supabase, bookId, currentStatus);
+    revalidatePath("/tai-khoan/ban-lam-viec");
+    return { success: true, isPublished };
+  } catch (error: unknown) {
+    console.error("Error in toggleBookPublishAction:", error);
+    return {
+      success: false,
+      error: (error as Error).message || "Không thể cập nhật trạng thái.",
     };
   }
 }

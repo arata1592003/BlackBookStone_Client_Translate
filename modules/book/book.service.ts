@@ -6,7 +6,7 @@ import {
   ChapterContent,
   BookNewChapterCard,
   BookCompletedCard,
-  SearchBookResult, // NEW: Import SearchBookResult
+  SearchBookResult,
 } from "@/modules/book/book.types";
 import {
   mapToBookCardWithAuthor,
@@ -16,7 +16,7 @@ import {
   mapToChapterContent,
   mapToBookNewChapterCard,
   mapToBookCompletedCard,
-  mapToSearchBookResult, // NEW: Import mapToSearchBookResult
+  mapToSearchBookResult,
 } from "./book.mapper";
 import {
   fetchBookInfoBySlug,
@@ -34,7 +34,8 @@ import {
   fetchCompletedBooks,
   searchBooks as repoSearchBooks,
   countSearchResults as repoCountSearchResults,
-  searchBooksForClient, // NEW: Import searchBooksForClient
+  searchBooksForClient,
+  updateBookPublishStatus as repoUpdateBookPublishStatus,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -64,14 +65,13 @@ export async function getCompletedBookList(
 
 export async function searchBooks(
   query: string,
-  offset?: number, // Added offset
+  offset?: number,
   limit?: number,
 ): Promise<BookCardWithAuthor[]> {
-  const rows = await repoSearchBooks(query, offset, limit); // Pass offset
+  const rows = await repoSearchBooks(query, offset, limit);
   return rows.map(mapToBookCardWithAuthor);
 }
 
-// NEW: Function to get detailed search results
 export async function getSearchBooksWithDetails(
   query: string,
   offset?: number,
@@ -204,4 +204,14 @@ export async function getChapterContent(
   if (!chapterContentRow) return null;
 
   return mapToChapterContent(chapterContentRow);
+}
+
+export async function toggleBookPublishStatus(
+  supabase: SupabaseClient,
+  bookId: string,
+  currentStatus: boolean,
+): Promise<boolean> {
+  const newStatus = !currentStatus;
+  await repoUpdateBookPublishStatus(supabase, bookId, newStatus);
+  return newStatus;
 }
