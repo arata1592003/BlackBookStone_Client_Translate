@@ -13,6 +13,7 @@ import { useState } from "react";
 import { toggleBookPublishAction } from "@/app/actions/book";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,14 +31,17 @@ interface UserBookCardProps {
   novel: UserBookItem;
 }
 
-const backgroundPath = "/dark-rock-wall-seamless-texture-free-105.png";
-
 export const UserBookCard = ({ novel }: UserBookCardProps) => {
   const router = useRouter();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const queryClient = useQueryClient();
   const [isPublishing, setIsPublishing] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+
+  const backgroundPath = theme === "dark" 
+    ? "/dark-rock-wall-seamless-texture-free-105.png" 
+    : "/white-rock-wall.png";
 
   const handleNovelAction = (novelId: string, action: string) => {
     console.log(`Novel ${novelId}: ${action} action triggered`);
@@ -70,13 +74,16 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
       onClick={() => router.push(`/tai-khoan/truyen/${novel.id}`)}
       className="group flex flex-col md:flex-row items-stretch gap-0 md:gap-5 relative w-full rounded-lg overflow-hidden border border-solid border-border-default shadow-[0px_4px_12px_var(--color-shadow-default)] cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.005] hover:shadow-xl hover:border-primary bg-surface-card"
     >
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 transition-opacity duration-500">
         <Image
-          src={backgroundPath || "/placeholder.jpg"}
-          alt={novel.title || "Book Cover"}
+          src={backgroundPath}
+          alt="Card Background"
           fill
           style={{ objectFit: "cover" }}
-          className="opacity-40 md:opacity-100"
+          className={cn(
+            "transition-all duration-500",
+            theme === "dark" ? "opacity-40 md:opacity-100" : "opacity-100"
+          )}
         />
       </div>
 
@@ -232,7 +239,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Hủy</AlertDialogCancel>
+                <AlertDialogCancel className="bg-transparent border-white/20 text-white hover:bg-white/10">Hủy</AlertDialogCancel>
                 <AlertDialogAction onClick={handleTogglePublish} className="bg-primary hover:bg-primary/90">
                   Xác nhận
                 </AlertDialogAction>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Inter, Roboto } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import "./globals.css";
 import NextProgressBar from "@/components/layout/NextProgressBar";
@@ -55,13 +56,15 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${roboto.variable} antialiased`}
       >
-        <QueryProvider>
-          <AuthProvider user={user}>{children}</AuthProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AuthProvider user={user}>{children}</AuthProvider>
+          </QueryProvider>
+        </ThemeProvider>
         <NextProgressBar />
         <GoogleAnalytics />
         <FloatingSupportButton supportUrl="https://omg10.com/4/10612805" />

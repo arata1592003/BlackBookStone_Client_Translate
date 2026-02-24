@@ -13,9 +13,9 @@ interface StatCardData {
 
 const StatCard = ({ title, value }: StatCardData) => (
   <article
-    className="flex flex-col justify-between rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_var(--color-shadow-default)] bg-cover bg-center relative min-h-[100px] md:min-h-[120px]"
+    className="flex flex-col justify-between rounded-lg overflow-hidden border border-solid border-border-subtle shadow-[0px_4px_12px_var(--color-shadow-default)] bg-cover bg-center relative min-h-[100px] md:min-h-[120px] transition-all duration-500"
     style={{
-      backgroundImage: "url('/dark-rock-wall-seamless-texture-free-105.png')",
+      backgroundImage: "var(--image-texture)",
     }}
   >
     <div className="flex flex-col justify-between px-3 md:px-5 py-3 md:py-4 flex-1 w-full bg-background/40">
@@ -43,46 +43,25 @@ export const UserStats = () => {
   const stats = useMemo(() => {
     if (!rawStats) return null;
     return [
-      {
-        title: "Đã cào",
-        value: `${rawStats.crawledCount} bộ`,
-      },
-      {
-        title: "Đã dịch",
-        value: `${rawStats.translatedCount} bộ`,
-      },
-      {
-        title: "Tổng chi phí",
-        value: `${rawStats.totalCost.toLocaleString()} đ`,
-      },
-      {
-        title: "Giao dịch",
-        value: `${rawStats.transactionCount} lần`,
-      },
+      { title: "Đã cào", value: `${rawStats.crawledCount} bộ` },
+      { title: "Đã dịch", value: `${rawStats.translatedCount} bộ` },
+      { title: "Tổng chi phí", value: `${rawStats.totalCost.toLocaleString()} đ` },
+      { title: "Giao dịch", value: `${rawStats.transactionCount} lần` },
     ];
   }, [rawStats]);
 
   if (isLoading || !stats) {
     return (
-      <section
-        className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full"
-        aria-label="Statistics loading"
-      >
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full" aria-label="Statistics loading">
         {Array.from({ length: 4 }).map((_, index) => (
-          <Skeleton
-            key={index}
-            className="h-[100px] md:h-[120px] rounded-lg w-full"
-          />
+          <Skeleton key={index} className="h-[100px] md:h-[120px] rounded-lg w-full" />
         ))}
       </section>
     );
   }
 
   return (
-    <section
-      className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full"
-      aria-label="Statistics"
-    >
+    <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8 py-4 w-full" aria-label="Statistics">
       {stats.map((stat, index) => (
         <StatCard key={index} {...stat} />
       ))}
