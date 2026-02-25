@@ -25,6 +25,7 @@ interface CrawlProcessModalProps {
 const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
   bookId,
   bookDetails,
+  currentManagedChapters,
   onClose,
   onConfirmCrawl,
   onCrawlStart,
@@ -50,22 +51,32 @@ const CrawlProcessModal: React.FC<CrawlProcessModalProps> = ({
       if (result.success && result.chapters) {
         setRawChaptersFound(result.chapters);
 
-        const effectiveLastCrawledChapterNumber = recrawlAll
-          ? 0
-          : lastCrawledChapterNumber;
-
-        const filtered = result.chapters.filter(
-          (chapter) =>
-            chapter.chapter_number > effectiveLastCrawledChapterNumber,
+        const existingChapterNumbers = new Set(
+          currentManagedChapters.map((ch) => ch.chapterNumber)
         );
+
+        const filtered = result.chapters.filter((chapter) => {
+          if (recrawlAll) return true;
+          return !existingChapterNumbers.has(chapter.chapter_number);
+        });
+
         setChaptersToCrawl(filtered);
 
         if (result.chapters.length > 0) {
-          setChapterListMessage(
-            `Tìm thấy ${result.chapters.length} chương gốc. Có ${filtered.length} chương mới cần cào (từ chương ${
-              effectiveLastCrawledChapterNumber + 1
-            }).`,
-          );
+          if (recrawlAll) {
+            setChapterListMessage(`Sẵn sàng cào lại toàn bộ ${result.chapters.length} chương.`);
+          } else {
+            const newChapters = result.chapters.filter(ch => ch.chapter_number > lastCrawledChapterNumber).length;
+            const missingChapters = filtered.length - newChapters;
+            
+            let message = `Tìm thấy ${result.chapters.length} chương gốc. Total: ${filtered.length} chương cần cào.`;
+            if (missingChapters > 0) {
+              message += ` (Bao gồm ${missingChapters} chương bị thiếu/lỗi trước đó và ${newChapters} chương mới).`;
+            } else {
+              message += ` (${newChapters} chương mới).`;
+            }
+            setChapterListMessage(message);
+          }
         } else {
           setChapterListMessage("Không tìm thấy chương gốc nào.");
         }

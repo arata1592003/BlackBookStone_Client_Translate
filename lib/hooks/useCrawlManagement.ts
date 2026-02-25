@@ -95,78 +95,86 @@ export const useCrawlManagement = ({
     let successCount = 0;
     let errorCount = 0;
 
-    const chaptersToProcess = recrawlAll
-      ? chaptersToCrawl
-      : chaptersToCrawl.filter(
-          (chapter) => chapter.chapter_number > lastCrawledChapterNumber,
-        );
+    const chaptersToProcess = chaptersToCrawl; // Use the list as-is from the modal
 
-    setTotalChaptersToCrawlThisSession(chaptersToProcess.length); // Set total for this session
+    setTotalChaptersToCrawlThisSession(chaptersToProcess.length);
 
     setCrawlLog((prev) => [
       ...prev,
       `Bắt đầu cào ${chaptersToProcess.length} chương. (Tổng số chương gốc: ${chaptersToCrawl.length})`,
     ]);
 
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 2000; // 2 seconds
+
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     for (const chapter of chaptersToProcess) {
-      console.log(`Checking stop signal for chapter ${chapter.chapter_number}. stopCrawlRef.current: ${stopCrawlRef.current}`);
       if (stopCrawlRef.current) {
         setCrawlLog((prev) => [...prev, "Quá trình cào đã bị dừng."]);
-        console.log(`Crawl stopped for chapter ${chapter.chapter_number}. Breaking loop.`);
         break;
       }
-
 
       setCurrentCrawlingChapter({
         number: chapter.chapter_number,
         url: chapter.chapter_url,
-      }); // Set current crawling chapter
-      setCrawlContentError(null); // Clear previous content error
+      });
+      setCrawlContentError(null);
 
-      setCrawlLog((prev) => [
-        ...prev,
-        `Đang cào chương ${chapter.chapter_number} (${chapter.chapter_url})...`,
-      ]);
-      try {
-        const result = await crawlChapterContentAction(
-          bookId,
-          chapter.chapter_number,
-          chapter.chapter_url,
-        );
+      let attempt = 0;
+      let isSuccess = false;
 
-        if (result.success && result.chapter_id) {
-          successCount++;
-          const newResult: CrawledChapterResult = {
-            chapter_id: result.chapter_id,
-            chapter_number: result.chapter_number!,
-            chapter_title_raw: result.chapter_title_raw!,
-          };
-          setCrawledChapterResults((prev) => [...prev, newResult]); // Add to crawled results
-          setCrawlLog((prev) => [
-            ...prev,
-            `✅ Cào thành công chương ${result.chapter_number}: ${result.chapter_title_raw} (ID: ${result.chapter_id})`,
-          ]);
-        } else {
-          errorCount++;
-          const errorMessage = result.error || "Không xác định.";
-          setCrawlContentError(
-            `Lỗi chương ${chapter.chapter_number}: ${errorMessage}`,
-          ); // Set content error
-          setCrawlLog((prev) => [
-            ...prev,
-            `❌ Lỗi cào chương ${chapter.chapter_number}: ${errorMessage}`,
-          ]);
-        }
-      } catch (error: any) {
-        errorCount++;
-        const errorMessage = error.message || "Không xác định.";
-        setCrawlContentError(
-          `Lỗi không xác định chương ${chapter.chapter_number}: ${errorMessage}`,
-        ); // Set content error
+      while (attempt < MAX_RETRIES && !isSuccess && !stopCrawlRef.current) {
+        attempt++;
+        const attemptPrefix = attempt > 1 ? `[Thử lại lần ${attempt - 1}] ` : "";
+        
         setCrawlLog((prev) => [
-            ...prev,
-            `❌ Lỗi không xác định khi cào chương ${chapter.chapter_number}: ${errorMessage}`,
-          ]);
+          ...prev,
+          `${attemptPrefix}Đang cào chương ${chapter.chapter_number}...`,
+        ]);
+
+        try {
+          const result = await crawlChapterContentAction(
+            bookId,
+            chapter.chapter_number,
+            chapter.chapter_url,
+          );
+
+          if (result.success && result.chapter_id) {
+            successCount++;
+            isSuccess = true;
+            const newResult: CrawledChapterResult = {
+              chapter_id: result.chapter_id,
+              chapter_number: result.chapter_number!,
+              chapter_title_raw: result.chapter_title_raw!,
+            };
+            setCrawledChapterResults((prev) => [...prev, newResult]);
+            setCrawlLog((prev) => [
+              ...prev,
+              `✅ Thành công chương ${result.chapter_number}: ${result.chapter_title_raw}`,
+            ]);
+          } else {
+            const errorMessage = result.error || "Không xác định.";
+            if (attempt < MAX_RETRIES && !stopCrawlRef.current) {
+              setCrawlLog((prev) => [...prev, `⚠️ Lỗi: ${errorMessage}. Thử lại sau ${RETRY_DELAY/1000}s...`]);
+              await sleep(RETRY_DELAY);
+            } else {
+              errorCount++;
+              setCrawlContentError(`Lỗi chương ${chapter.chapter_number}: ${errorMessage}`);
+              setCrawlLog((prev) => [...prev, `❌ Thất bại sau ${attempt} lần thử: ${errorMessage}`]);
+            }
+          }
+        } catch (error: any) {
+          const errorMessage = error.message || "Không xác định.";
+          if (attempt < MAX_RETRIES && !stopCrawlRef.current) {
+            setCrawlLog((prev) => [...prev, `⚠️ Lỗi kết nối: ${errorMessage}. Thử lại sau ${RETRY_DELAY/1000}s...`]);
+            await sleep(RETRY_DELAY);
+          } else {
+            errorCount++;
+            setCrawlContentError(`Lỗi không xác định chương ${chapter.chapter_number}: ${errorMessage}`);
+            setCrawlLog((prev) => [...prev, `❌ Lỗi hệ thống sau ${attempt} lần thử: ${errorMessage}`]);
+          }
+        }
       }
     }
     setCurrentCrawlingChapter(null); // Clear current crawling chapter after loop
