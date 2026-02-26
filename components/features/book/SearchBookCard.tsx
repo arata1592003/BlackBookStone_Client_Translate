@@ -18,20 +18,20 @@ export const SearchBookCard = ({ book }: SearchBookCardProps) => {
     <Link href={`/truyen/${book.slug}`} className="block">
       <div
         className={cn(
-          "group flex gap-3 md:gap-4 p-3 md:p-4 md:h-52", 
+          "group flex gap-2 md:gap-4 p-2 md:p-4 md:h-48", 
           "bg-surface-card rounded-md overflow-hidden",
           "shadow-md hover:shadow-lg transition-all duration-200",
           "border border-border-default hover:border-primary-accent",
         )}
       >
         {/* Image Section */}
-        <div className="relative flex-shrink-0 w-24 xs:w-28 md:w-32 lg:w-36 aspect-[2/3]">
+        <div className="relative flex-shrink-0 w-20 xs:w-24 md:w-28 lg:w-32 aspect-[2/3]">
           <div className="relative w-full h-full rounded-md overflow-hidden border border-border-default">
             <Image
               src={book.cover_image_url || "/placeholder.jpg"}
               alt={book.book_name_translated || "Ảnh bìa truyện"}
               fill
-              sizes="(max-width: 768px) 120px, (max-width: 1200px) 150px, 200px"
+              sizes="(max-width: 768px) 100px, (max-width: 1200px) 120px, 150px"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>

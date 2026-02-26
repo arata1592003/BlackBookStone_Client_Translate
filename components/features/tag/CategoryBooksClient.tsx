@@ -4,8 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SearchBookResult } from "@/modules/book/book.types";
 import { PagePagination } from "@/components/ui/page-pagination";
 import { SearchBookCard } from "../book/SearchBookCard";
-import { cn } from "@/lib/utils";
-import { LayoutGrid, Loader2 } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 
 interface CategoryBooksClientProps {
   tagName: string;
@@ -61,7 +60,7 @@ export default function CategoryBooksClient({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
             {initialBooks.map((book) => (
               <div key={book.id} className="col-span-1">
                 <SearchBookCard book={book} />

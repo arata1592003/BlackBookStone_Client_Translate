@@ -83,10 +83,11 @@ export const mapToSearchBookResult = (
   book_name_translated: row.book_name_translated,
   author_name_translated: row.author_name_translated,
   cover_image_url: row.cover_image_url,
-  view: 0, // Default view to 0, as it's not fetched by SearchBookRepoRow
+  view: row.total_views ?? 0,
   description: row.description,
   status: row.publication_status,
   chapterCount: row.chapter_count,
+  createdAt: row.created_at,
 });
 
 export const mapToBookInfo = (

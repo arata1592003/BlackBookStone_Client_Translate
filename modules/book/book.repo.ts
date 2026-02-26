@@ -27,6 +27,7 @@ export async function fetchNewestBooks(): Promise<BookNewChapterCardRow[]> {
       cover_image_url,
       description,
       publication_status,
+      created_at,
       book_tags (
         tags ( name )
       ),
@@ -56,6 +57,7 @@ interface BookWithChaptersForHotRow {
   cover_image_url: string;
   description: string | null;
   publication_status: string | null;
+  created_at: string;
   chapters: { view_count: number }[];
 }
 
@@ -74,6 +76,7 @@ export async function fetchHotBooks(
       cover_image_url,
       description,
       publication_status,
+      created_at,
       chapters(view_count)
       `,
     )
@@ -123,6 +126,7 @@ export async function fetchCompletedBooks(
       cover_image_url,
       description,
       publication_status,
+      created_at,
       book_chapter_stats (
         total_chapters,
         translated_chapters
@@ -419,6 +423,7 @@ export async function searchBooks(
       cover_image_url,
       description,
       publication_status,
+      created_at,
       book_tags (
         tags ( name )
       )
@@ -647,7 +652,10 @@ export async function fetchBooksByTagName(
   const { data, error } = await query;
 
   if (error) {
-    console.error(`Error fetching books by tag ${decodedTagName}:`, error.message);
+    console.error(
+      `Error fetching books by tag ${decodedTagName}:`,
+      error.message,
+    );
     throw error;
   }
   return (
@@ -675,10 +683,136 @@ export async function countBooksByTagName(tagName: string): Promise<number> {
     .eq("book_tags.tags.name", decodedTagName);
 
   if (error) {
-    console.error(`Error counting books by tag ${decodedTagName}:`, error.message);
+    console.error(
+      `Error counting books by tag ${decodedTagName}:`,
+      error.message,
+    );
     throw error;
   }
   return count ?? 0;
+}
+
+export async function fetchBooksWithFiltersAndSort(options: {
+  status?: string;
+  sortBy?: string;
+  genreName?: string;
+  searchQuery?: string;
+  offset?: number;
+  limit?: number;
+}): Promise<SearchBookRepoRow[]> {
+  const { status, sortBy, genreName, searchQuery, offset, limit } = options;
+
+  let queryBuilder = supabaseClient.from("books").select(
+    `
+    id,
+    slug,
+    book_name_translated,
+    author_name_translated,
+    cover_image_url,
+    description,
+    publication_status,
+    created_at,
+    book_tags${genreName && genreName !== "all" ? "!inner" : ""}(
+      tags${genreName && genreName !== "all" ? "!inner" : ""}(name)
+    ),
+    chapters(view_count)
+    `,
+  );
+
+  queryBuilder = queryBuilder.eq("is_published", true);
+
+  if (status && status !== "all") {
+    queryBuilder = queryBuilder.eq("publication_status", status);
+  }
+
+  if (genreName && genreName !== "all") {
+    queryBuilder = queryBuilder.eq("book_tags.tags.name", genreName);
+  }
+
+  if (searchQuery) {
+    queryBuilder = queryBuilder.or(
+      `book_name_translated.ilike.%${searchQuery}%,author_name_translated.ilike.%${searchQuery}%,book_name_raw.ilike.%${searchQuery}%,author_name_raw.ilike.%${searchQuery}%`,
+    );
+  }
+
+  // Handle direct DB sorting if possible
+  if (sortBy === "newest" || !sortBy) {
+    queryBuilder = queryBuilder.order("created_at", { ascending: false });
+  } else if (sortBy === "oldest") {
+    queryBuilder = queryBuilder.order("created_at", { ascending: true });
+  }
+
+  const { data, error } = await queryBuilder;
+  if (error) {
+    console.error("Error in fetchBooksWithFiltersAndSort:", error.message);
+    throw error;
+  }
+
+  let results = (data as any[]).map((row) => ({
+    ...row,
+    chapter_count: row.chapters?.length || 0,
+    total_views:
+      row.chapters?.reduce(
+        (sum: number, ch: any) => sum + (ch.view_count || 0),
+        0,
+      ) || 0,
+  }));
+
+  // Memory sorting for views and chapters
+  if (sortBy === "views") {
+    results.sort((a, b) => b.total_views - a.total_views);
+  } else if (sortBy === "chapters") {
+    results.sort((a, b) => b.chapter_count - a.chapter_count);
+  }
+
+  // Pagination in memory
+  const paginatedResults =
+    typeof offset === "number" && typeof limit === "number"
+      ? results.slice(offset, offset + limit)
+      : results;
+
+  return paginatedResults;
+}
+
+export async function countBooksWithFiltersAndSort(options: {
+  status?: string;
+  genreName?: string;
+  searchQuery?: string;
+}): Promise<number> {
+  const { status, genreName, searchQuery } = options;
+
+  let queryBuilder = supabaseClient.from("books").select(
+    `
+    id,
+    book_tags${genreName && genreName !== "all" ? "!inner" : ""}(
+      tags${genreName && genreName !== "all" ? "!inner" : ""}(name)
+    )
+    `,
+    { count: "exact", head: true },
+  );
+
+  queryBuilder = queryBuilder.eq("is_published", true);
+
+  if (status && status !== "all") {
+    queryBuilder = queryBuilder.eq("publication_status", status);
+  }
+
+  if (genreName && genreName !== "all") {
+    queryBuilder = queryBuilder.eq("book_tags.tags.name", genreName);
+  }
+
+  if (searchQuery) {
+    queryBuilder = queryBuilder.or(
+      `book_name_translated.ilike.%${searchQuery}%,author_name_translated.ilike.%${searchQuery}%,book_name_raw.ilike.%${searchQuery}%,author_name_raw.ilike.%${searchQuery}%`,
+    );
+  }
+
+  const { count, error } = await queryBuilder;
+  if (error) {
+    console.error("Error in countBooksWithFiltersAndSort:", error.message);
+    throw error;
+  }
+  return count || 0;
 }
 
 export async function fetchLatestUpdatedBooks(
@@ -696,6 +830,7 @@ export async function fetchLatestUpdatedBooks(
       cover_image_url,
       description,
       publication_status,
+      created_at,
       book_tags (
         tags ( name )
       ),

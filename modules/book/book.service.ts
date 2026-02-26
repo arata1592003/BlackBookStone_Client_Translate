@@ -44,6 +44,8 @@ import {
   fetchLatestUpdatedBooks,
   countPublishedBooks,
   countCompletedBooks,
+  fetchBooksWithFiltersAndSort,
+  countBooksWithFiltersAndSort as repoCountBooksWithFiltersAndSort,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -249,6 +251,26 @@ export async function getBooksByTag(
 
 export async function countBooksByTag(tagName: string): Promise<number> {
   return await countBooksByTagName(tagName);
+}
+
+export async function getBooksWithFiltersAndSort(options: {
+  status?: string;
+  sortBy?: string;
+  genreName?: string;
+  searchQuery?: string;
+  offset?: number;
+  limit?: number;
+}): Promise<SearchBookResult[]> {
+  const rows = await fetchBooksWithFiltersAndSort(options);
+  return rows.map(mapToSearchBookResult);
+}
+
+export async function countBooksWithFiltersAndSort(options: {
+  status?: string;
+  genreName?: string;
+  searchQuery?: string;
+}): Promise<number> {
+  return await repoCountBooksWithFiltersAndSort(options);
 }
 
 export async function getLatestUpdatedBooks(

@@ -26,10 +26,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
-  
+
   const tagName = decodeURIComponent(resolvedParams.slug);
   const currentPage = Number(resolvedSearchParams.page) || 1;
   const booksPerPage = 12;

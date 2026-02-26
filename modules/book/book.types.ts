@@ -53,6 +53,7 @@ export type SearchBookResult = BookCardWithAuthor & {
   description: string | null;
   status: string | null; // Mapped from publication_status
   chapterCount: number;
+  createdAt: string;
 };
 
 export type BookNewChapterCard = BookCardWithAuthor & {

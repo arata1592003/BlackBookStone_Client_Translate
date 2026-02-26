@@ -149,14 +149,14 @@ export const HomeHeader = () => {
               <CheckCircle2 size={16} className="text-text-muted group-hover:text-primary-accent" />
               <span className="font-medium">Hoàn thành</span>
             </Link>
-            <div className="flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-text-secondary hover:text-primary-accent transition-colors group">
+            <Link href="/sap-xep" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
               <ListFilter size={16} className="text-text-muted group-hover:text-primary-accent" />
               <span className="font-medium">Sắp xếp</span>
-            </div>
-            <div className="flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-text-secondary hover:text-primary-accent transition-colors group">
+            </Link>
+            <Link href="/sap-xep" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
               <LayoutGrid size={16} className="text-text-muted group-hover:text-primary-accent" />
               <span className="font-medium">Trạng thái</span>
-            </div>
+            </Link>
           </div>
         </div>
       </nav>

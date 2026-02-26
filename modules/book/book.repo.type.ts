@@ -6,10 +6,12 @@ export type BookCardWithAuthorRow = {
   cover_image_url: string | null;
   description: string | null;
   publication_status: string | null;
+  created_at: string;
 };
 
 export type SearchBookRepoRow = BookCardWithAuthorRow & {
   chapter_count: number;
+  total_views?: number;
 };
 
 export type BookNewChapterCardRow = BookCardWithAuthorRow & {
