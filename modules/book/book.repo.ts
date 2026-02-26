@@ -59,7 +59,10 @@ interface BookWithChaptersForHotRow {
   chapters: { view_count: number }[];
 }
 
-export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
+export async function fetchHotBooks(
+  limit: number = 15,
+  offset: number = 0,
+): Promise<BookHotRow[]> {
   const { data, error } = await supabaseClient
     .from("books")
     .select(
@@ -102,7 +105,7 @@ export async function fetchHotBooks(limit: number = 15): Promise<BookHotRow[]> {
 
   return booksWithAggregatedViews
     .sort((a, b) => b.total_views - a.total_views)
-    .slice(0, limit);
+    .slice(offset, offset + limit);
 }
 
 export async function fetchCompletedBooks(

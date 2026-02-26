@@ -58,8 +58,9 @@ export async function getNewestBookList(): Promise<BookNewChapterCard[]> {
 
 export async function getHotBookList(
   limit: number = 15,
+  offset: number = 0,
 ): Promise<BookCardWithAuthor[]> {
-  const rows = await fetchHotBooks(limit);
+  const rows = await fetchHotBooks(limit, offset);
   return rows.map(mapToBookCardWithAuthor);
 }
 
