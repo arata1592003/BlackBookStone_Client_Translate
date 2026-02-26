@@ -31,10 +31,37 @@ const roboto = Roboto({
 });
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} - Đọc truyện online miễn phí`,
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${APP_NAME} - Đọc truyện online miễn phí`,
+    template: `%s | ${APP_NAME}`
+  },
   description: `Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên ${APP_NAME}.`,
+  alternates: {
+    canonical: './',
+  },
+  openGraph: {
+    title: APP_NAME,
+    description: 'Đọc truyện online miễn phí',
+    url: SITE_URL,
+    siteName: APP_NAME,
+    locale: 'vi_VN',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default async function RootLayout({
@@ -55,8 +82,26 @@ export default async function RootLayout({
     console.log(session);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": APP_NAME,
+    "url": SITE_URL,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${SITE_URL}/tim-kiem?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <html lang="vi" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${roboto.variable} antialiased`}
       >

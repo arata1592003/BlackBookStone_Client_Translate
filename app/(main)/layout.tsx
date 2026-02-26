@@ -1,4 +1,5 @@
 import { HomeHeader } from "@/components/layout/HomeHeader";
+import { Footer } from "@/components/layout/Footer";
 import type { Metadata } from "next";
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
@@ -14,11 +15,12 @@ export default function RootMainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <HomeHeader />
-      <div className="bg-[var(--color-surface-user-account-bg)] min-h-screen">
+      <div className="bg-[var(--color-surface-user-account-bg)] flex-1">
         {children}
       </div>
-    </>
+      <Footer />
+    </div>
   );
 }

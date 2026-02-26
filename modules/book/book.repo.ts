@@ -868,3 +868,16 @@ export async function countPublishedBooks(): Promise<number> {
   }
   return count ?? 0;
 }
+
+export async function fetchAllPublishedBooks(): Promise<{ slug: string; updated_at: string }[]> {
+  const { data, error } = await supabaseClient
+    .from("books")
+    .select("slug, updated_at")
+    .eq("is_published", true);
+
+  if (error) {
+    console.error("Error fetching all published books for sitemap:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
