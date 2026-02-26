@@ -41,7 +41,7 @@ export const HomeOverviewSection = ({ hotBooks, newChapterBooks, completedBooks 
           <section className="p-1 rounded-lg bg-surface-card">
             <div className="flex justify-between items-center mb-4 px-3 border-b border-text-muted/20 pb-2">
               <h2 className="text-text-muted text-lg md:text-xl font-semibold">Truyện mới cập nhật</h2>
-              <Link href="/truyen-moi-cap-nhat" className="text-primary hover:underline text-sm font-medium">
+              <Link href="/truyen-moi" className="text-primary hover:underline text-sm font-medium">
                 Xem thêm
               </Link>
             </div>
@@ -64,7 +64,7 @@ export const HomeOverviewSection = ({ hotBooks, newChapterBooks, completedBooks 
       <section className="p-3 rounded-lg bg-surface-card">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-text-muted text-lg md:text-xl font-semibold">Truyện đã hoàn thành</h2>
-          <Link href="/truyen-hoan-thanh" className="text-primary hover:underline text-sm font-medium">
+          <Link href="/truyen-full" className="text-primary hover:underline text-sm font-medium">
             Xem thêm
           </Link>
         </div>

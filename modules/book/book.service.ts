@@ -41,6 +41,8 @@ import {
   deleteBookFollow as repoDeleteBookFollow,
   fetchBooksByTagName,
   countBooksByTagName,
+  fetchLatestUpdatedBooks,
+  countPublishedBooks,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -240,6 +242,18 @@ export async function getBooksByTag(
 
 export async function countBooksByTag(tagName: string): Promise<number> {
   return await countBooksByTagName(tagName);
+}
+
+export async function getLatestUpdatedBooks(
+  offset?: number,
+  limit?: number,
+): Promise<BookNewChapterCard[]> {
+  const rows = await fetchLatestUpdatedBooks(offset, limit);
+  return rows.map(mapToBookNewChapterCard);
+}
+
+export async function countAllPublishedBooks(): Promise<number> {
+  return await countPublishedBooks();
 }
 
 export async function toggleFollowBook(
