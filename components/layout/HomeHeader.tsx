@@ -153,7 +153,7 @@ export const HomeHeader = () => {
               <ListFilter size={16} className="text-text-muted group-hover:text-primary-accent" />
               <span className="font-medium">Sắp xếp</span>
             </Link>
-            <Link href="/sap-xep" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
+            <Link href="/trang-thai" className="flex items-center gap-1.5 whitespace-nowrap text-text-secondary hover:text-primary-accent transition-colors group">
               <LayoutGrid size={16} className="text-text-muted group-hover:text-primary-accent" />
               <span className="font-medium">Trạng thái</span>
             </Link>
