@@ -43,6 +43,7 @@ import {
   countBooksByTagName,
   fetchLatestUpdatedBooks,
   countPublishedBooks,
+  countCompletedBooks,
 } from "./book.repo";
 
 import { BookInsertPayload, BookTagInsertPayload } from "./book.repo.type";
@@ -66,9 +67,14 @@ export async function getHotBookList(
 
 export async function getCompletedBookList(
   limit?: number,
+  offset?: number,
 ): Promise<BookCompletedCard[]> {
-  const rows = await fetchCompletedBooks(limit);
+  const rows = await fetchCompletedBooks(limit, offset);
   return rows.map(mapToBookCompletedCard);
+}
+
+export async function countAllCompletedBooks(): Promise<number> {
+  return await countCompletedBooks();
 }
 
 export async function searchBooks(

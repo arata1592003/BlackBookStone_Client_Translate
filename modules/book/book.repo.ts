@@ -110,6 +110,7 @@ export async function fetchHotBooks(
 
 export async function fetchCompletedBooks(
   limit?: number,
+  offset?: number,
 ): Promise<BookCompletedCardRow[]> {
   let query = supabaseClient
     .from("books")
@@ -131,7 +132,10 @@ export async function fetchCompletedBooks(
     .eq("is_published", true)
     .eq("publication_status", "full")
     .order("created_at", { ascending: false });
-  if (limit) {
+
+  if (typeof offset === "number" && typeof limit === "number") {
+    query = query.range(offset, offset + limit - 1);
+  } else if (limit) {
     query = query.limit(limit);
   }
 
@@ -139,6 +143,20 @@ export async function fetchCompletedBooks(
 
   if (error) throw error;
   return data ?? [];
+}
+
+export async function countCompletedBooks(): Promise<number> {
+  const { count, error } = await supabaseClient
+    .from("books")
+    .select("id", { count: "exact", head: true })
+    .eq("is_published", true)
+    .eq("publication_status", "full");
+
+  if (error) {
+    console.error("Error counting completed books:", error.message);
+    throw error;
+  }
+  return count ?? 0;
 }
 
 export async function fetchBookInfoBySlug(
