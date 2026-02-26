@@ -591,3 +591,71 @@ export async function deleteBookFollow(
 
   if (error) throw error;
 }
+
+export async function fetchBooksByTagName(
+  tagName: string,
+  offset?: number,
+  limit?: number,
+): Promise<SearchBookRepoRow[]> {
+  const decodedTagName = decodeURIComponent(tagName);
+  let query = supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      slug,
+      book_name_translated,
+      author_name_translated,
+      cover_image_url,
+      description,
+      publication_status,
+      book_tags!inner (
+        tags!inner ( name )
+      ),
+      chapters(count)
+      `,
+    )
+    .eq("is_published", true)
+    .eq("book_tags.tags.name", decodedTagName)
+    .order("created_at", { ascending: false });
+
+  if (typeof offset === "number" && typeof limit === "number") {
+    query = query.range(offset, offset + limit - 1);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(`Error fetching books by tag ${decodedTagName}:`, error.message);
+    throw error;
+  }
+  return (
+    data?.map((row: any) => ({
+      ...row,
+      chapter_count: row.chapters?.[0]?.count || 0,
+    })) ?? []
+  );
+}
+
+export async function countBooksByTagName(tagName: string): Promise<number> {
+  const decodedTagName = decodeURIComponent(tagName);
+  const { count, error } = await supabaseClient
+    .from("books")
+    .select(
+      `
+      id,
+      book_tags!inner (
+        tags!inner ( name )
+      )
+      `,
+      { count: "exact", head: true },
+    )
+    .eq("is_published", true)
+    .eq("book_tags.tags.name", decodedTagName);
+
+  if (error) {
+    console.error(`Error counting books by tag ${decodedTagName}:`, error.message);
+    throw error;
+  }
+  return count ?? 0;
+}
