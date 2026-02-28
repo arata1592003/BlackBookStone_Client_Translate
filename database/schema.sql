@@ -138,6 +138,36 @@ CREATE TABLE public.topup_plans (
   created_at timestamp without time zone DEFAULT now(),
   CONSTRAINT topup_plans_pkey PRIMARY KEY (id)
 );
+CREATE TABLE public.translation_rules (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid, -- Null nếu là template hệ thống (admin tạo)
+  name text NOT NULL,
+  content text NOT NULL,
+  type text DEFAULT 'translation' CHECK (type = ANY (ARRAY['translation', 'extraction', 'synthesis'])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT translation_rules_pkey PRIMARY KEY (id),
+  CONSTRAINT translation_rules_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+
+CREATE TABLE public.translation_rule_sets (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  name text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT translation_rule_sets_pkey PRIMARY KEY (id),
+  CONSTRAINT translation_rule_sets_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+
+CREATE TABLE public.translation_rule_set_items (
+  rule_set_id uuid NOT NULL,
+  rule_id uuid NOT NULL,
+  sort_order integer DEFAULT 0,
+  CONSTRAINT translation_rule_set_items_pkey PRIMARY KEY (rule_set_id, rule_id),
+  CONSTRAINT fk_rule_set FOREIGN KEY (rule_set_id) REFERENCES public.translation_rule_sets(id) ON DELETE CASCADE,
+  CONSTRAINT fk_rule FOREIGN KEY (rule_id) REFERENCES public.translation_rules(id) ON DELETE CASCADE
+);
 CREATE TABLE public.users (
   id uuid NOT NULL,
   first_name text,

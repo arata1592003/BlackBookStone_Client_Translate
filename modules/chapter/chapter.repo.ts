@@ -217,3 +217,47 @@ export async function incrementChapterView(chapterId: string): Promise<void> {
     console.error("Error incrementing chapter view:", error.message);
   }
 }
+
+import { SupabaseClient } from "@supabase/supabase-js";
+
+export async function repoDeleteChapterTranslation(
+  supabase: SupabaseClient,
+  chapterId: string
+): Promise<void> {
+  await repoDeleteChaptersTranslation(supabase, [chapterId]);
+}
+
+export async function repoDeleteChaptersTranslation(
+  supabase: SupabaseClient,
+  chapterIds: string[]
+): Promise<void> {
+  if (chapterIds.length === 0) return;
+
+  // 1. Reset chapters table for multiple IDs
+  const { error: chapterError } = await supabase
+    .from("chapters")
+    .update({
+      chapter_title_translated: null,
+      summary_translated: null,
+      chapter_status: false,
+    })
+    .in("id", chapterIds);
+
+  if (chapterError) {
+    console.error("Error resetting chapters metadata:", chapterError.message);
+    throw chapterError;
+  }
+
+  // 2. Reset chapter_content table for multiple IDs
+  const { error: contentError } = await supabase
+    .from("chapter_content")
+    .update({
+      content_translated: null,
+    })
+    .in("chapter_id", chapterIds);
+
+  if (contentError) {
+    console.error("Error resetting chapters content:", contentError.message);
+    throw contentError;
+  }
+}

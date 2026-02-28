@@ -17,6 +17,7 @@ import {
   ChevronUp,
   ArrowLeft,
   BookText,
+  Languages,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +77,10 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
   // Functions for actions
   const handleCrawl = () => {
     router.push(`/tai-khoan/truyen/${book.id}/quan-ly-cao`);
+  };
+
+  const handleTranslate = () => {
+    router.push(`/tai-khoan/truyen/${book.id}/dich`);
   };
 
   const handleEditInfo = () => {
@@ -164,6 +169,13 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             >
               <Globe size={20} />
               Quản lý cào
+            </Button>
+            <Button
+              onClick={handleTranslate}
+              className="w-full py-2 bg-primary-accent hover:bg-primary-accent/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2"
+            >
+              <Languages size={20} />
+              Dịch thuật AI
             </Button>
             <Button className="w-full py-2 border border-destructive text-destructive hover:bg-destructive/20 font-bold rounded-md transition-colors flex items-center justify-center gap-2">
               <Trash2 size={20} />
