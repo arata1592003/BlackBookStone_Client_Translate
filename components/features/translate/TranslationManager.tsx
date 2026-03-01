@@ -23,10 +23,10 @@ import {
 } from "@/components/ui/dialog";
 import { 
   Layers, Play, Square, CheckCircle2, AlertCircle, Loader2, Plus, Save, 
-  FolderOpen, Settings2, Library, Eye, Trash2, X, ClipboardList, Info,
-  Terminal
+  FolderOpen, Settings2, Library, Eye, Trash2, X, ClipboardList, Info, Terminal, Bug 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DebugKnowledgeModal } from "./DebugKnowledgeModal";
 
 // --- SUB-COMPONENTS ---
 
@@ -45,8 +45,8 @@ const RuleSnippetItem = memo(({ rule, isSelected, onToggle }: {
 ));
 RuleSnippetItem.displayName = "RuleSnippetItem";
 
-const ChapterGridItem = memo(({ chapter, isSelected, isNewlyTranslated, onToggle, onView }: { 
-  chapter: ManagedChapter, isSelected: boolean, isNewlyTranslated: boolean, onToggle: (id: string) => void, onView: (ch: ManagedChapter) => void 
+const ChapterGridItem = memo(({ chapter, isSelected, isNewlyTranslated, onToggle, onView, onDebug }: { 
+  chapter: ManagedChapter, isSelected: boolean, isNewlyTranslated: boolean, onToggle: (id: string) => void, onView: (ch: ManagedChapter) => void, onDebug: (ch: ManagedChapter) => void 
 }) => {
   const isTranslated = chapter.status || isNewlyTranslated;
   return (
@@ -59,7 +59,12 @@ const ChapterGridItem = memo(({ chapter, isSelected, isNewlyTranslated, onToggle
             <span className="text-[10px] text-text-muted truncate">{chapter.title || "Không có tiêu đề"}</span>
           </div>
         </div>
-        <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onView(chapter); }} className="h-6 w-6 p-0 hover:bg-primary/10 hover:text-primary transition-colors flex-shrink-0"><Eye size={14} /></Button>
+        <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+          {isTranslated && (
+            <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onDebug(chapter); }} className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive transition-colors"><Bug size={14} /></Button>
+          )}
+          <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); onView(chapter); }} className="h-6 w-6 p-0 hover:bg-primary/10 hover:text-primary transition-colors"><Eye size={14} /></Button>
+        </div>
       </div>
       <div className="mt-auto pt-2 border-t border-border-default/30 flex items-center justify-between">
         {isTranslated ? <span className="bg-success/10 text-success text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase">Đã dịch</span> : <span className="bg-text-faint/10 text-text-faint text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase">Chưa dịch</span>}
@@ -102,6 +107,10 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
   const [viewContent, setViewContent] = useState<ChapterContent | null>(null);
   const [isFetchingContent, setIsFetchingChapterContent] = useState(false);
   const [activeTab, setActiveTab] = useState<"translated" | "raw">("translated");
+
+  // Debug State
+  const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
+  const [debuggingChapter, setDebuggingChapter] = useState<ManagedChapter | null>(null);
 
   const stopSignal = useRef(false);
 
@@ -161,6 +170,11 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
     } catch (err) { console.error(err); } finally { setIsFetchingChapterContent(false); }
   }, [newlyTranslatedIds]);
 
+  const handleDebugChapter = useCallback((chapter: ManagedChapter) => {
+    setDebuggingChapter(chapter);
+    setIsDebugModalOpen(true);
+  }, []);
+
   const handleDeleteSelectedTranslations = async () => {
     const idsToDelete = Array.from(selectedChapterIds).filter((id) => {
       const ch = book.chapters.find((c) => c.id === id);
@@ -180,7 +194,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
     setJobLogs(prev => {
       const newLogs = [...prev];
       const index = newLogs.findIndex(l => l.chapter_number === chapterNumber && (l.status === "processing" || l.status === "pending"));
-      
       if (index !== -1) {
         newLogs[index] = { chapter_number: chapterNumber, status, message };
         return newLogs;
@@ -202,30 +215,20 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         setJobLogs(prev => [{ chapter_number: 0, status: "success", message: "Quá trình đã dừng hẳn." }, ...prev]);
         break;
       }
-      
       let success = false; let attempt = 0;
       while (attempt < MAX_RETRIES && !success && !stopSignal.current) {
         attempt++;
-        
-        // Cập nhật trạng thái "Đang xử lý" - Luôn là log mới nhất của chương này
         updateChapterLog(chapter.chapterNumber, "processing", `Đang dịch...${attempt > 1 ? ` (Lần ${attempt-1})` : ""}`);
-
         const result = await translateChapterAction({
           book_id: book.id, chapter_id: chapter.id, mode, rules: finalPrompt,
           prev_chapters_count: mode === "advance" ? prevCount : undefined,
           next_chapters_count: mode === "advance" ? nextCount : undefined,
         });
-
         if (result.success) {
           success = true; completed++;
           setNewlyTranslatedIds(prev => new Set(prev).add(chapter.id));
-          
-          // Cập nhật log thành "Thành công" thay vì chèn mới
           updateChapterLog(chapter.chapterNumber, "success", "Hoàn thành");
-          
-          startTransition(() => {
-            setProgress(Math.round((completed / total) * 100));
-          });
+          startTransition(() => { setProgress(Math.round((completed / total) * 100)); });
         } else {
           if (attempt === MAX_RETRIES) {
             updateChapterLog(chapter.chapterNumber, "error", result.error || "Lỗi không xác định");
@@ -247,7 +250,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
 
   return (
     <div className="flex flex-col h-full bg-surface-section">
-      {/* HEADER TOOLBAR */}
       <section className="bg-surface-card border-b border-border-default p-4 sticky top-0 z-20 shadow-sm">
         <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -258,7 +260,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
             )}
             <Button variant="outline" onClick={() => setIsConfigModalOpen(true)} className="border-border-default hover:bg-surface-raised font-bold h-11"><Settings2 className="mr-2 text-primary-accent" size={18} /> Thiết lập AI</Button>
           </div>
-          
           {(isTranslating || jobLogs.length > 0) && (
             <div className="flex-1 max-w-md flex items-center gap-4 bg-background/50 px-4 py-2 rounded-xl border border-border-default">
               <div className="flex-1">
@@ -270,7 +271,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
               </div>
             </div>
           )}
-
           <div className="flex items-center gap-2">
             {selectedChapterIds.size > 0 && <Button variant="destructive" size="sm" onClick={handleDeleteSelectedTranslations} className="h-9 font-bold uppercase animate-in fade-in zoom-in-95"><Trash2 size={16} className="mr-1.5" /> Xóa ({selectedChapterIds.size})</Button>}
             <div className="flex bg-background/50 rounded-lg border border-border-default p-1">
@@ -281,7 +281,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         </div>
       </section>
 
-      {/* MAIN GRID */}
       <main className="flex-1 overflow-hidden flex flex-col max-w-screen-2xl mx-auto w-full p-6">
         <section className="flex-1 flex flex-col min-h-0 bg-surface-card rounded-2xl border border-border-default shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
@@ -290,7 +289,9 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
           </div>
           <ScrollArea className="flex-1">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pr-4">
-              {paginatedChapters.map((chapter) => (<ChapterGridItem key={chapter.id} chapter={chapter} isSelected={selectedChapterIds.has(chapter.id)} isNewlyTranslated={newlyTranslatedIds.has(chapter.id)} onToggle={toggleChapter} onView={handleViewContent} />))}
+              {paginatedChapters.map((chapter) => (
+                <ChapterGridItem key={chapter.id} chapter={chapter} isSelected={selectedChapterIds.has(chapter.id)} isNewlyTranslated={newlyTranslatedIds.has(chapter.id)} onToggle={toggleChapter} onView={handleViewContent} onDebug={handleDebugChapter} />
+              ))}
             </div>
           </ScrollArea>
           {totalPages > 1 && (
@@ -302,7 +303,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         </section>
       </main>
 
-      {/* LOG MODAL */}
       <Dialog open={isLogModalOpen} onOpenChange={setIsLogModalOpen}>
         <DialogContent className="max-w-xl bg-surface-card text-text-primary border-border-default flex flex-col h-[70vh]">
           <DialogHeader className="border-b border-border-default pb-4"><DialogTitle className="flex items-center gap-2 text-xl"><Terminal className="text-primary-accent" size={20} /> Nhật ký dịch thuật chi tiết</DialogTitle></DialogHeader>
@@ -315,10 +315,7 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
                      log.status === "success" ? <CheckCircle2 size={14} className="text-success mt-0.5" /> :
                      log.status === "error" ? <AlertCircle size={14} className="text-destructive mt-0.5" /> :
                      <div className="w-3.5 h-3.5 rounded-full bg-text-muted/20 flex items-center justify-center mt-0.5"><div className="w-1.5 h-1.5 rounded-full bg-text-muted" /></div>}
-                    <div className="flex flex-col">
-                      <span className="font-bold">{log.chapter_number > 0 ? `Chương ${log.chapter_number}` : "Hệ thống"}</span>
-                      <span className={cn("text-[10px]", log.status === "error" ? "text-destructive" : "text-text-muted")}>{log.message}</span>
-                    </div>
+                    <div className="flex flex-col"><span className="font-bold">{log.chapter_number > 0 ? `Chương ${log.chapter_number}` : "Hệ thống"}</span><span className={cn("text-[10px]", log.status === "error" ? "text-destructive" : "text-text-muted")}>{log.message}</span></div>
                   </div>
                 ))
               )}
@@ -328,7 +325,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         </DialogContent>
       </Dialog>
 
-      {/* CONFIG MODAL */}
       <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
         <DialogContent className="max-w-2xl bg-surface-card text-text-primary border-border-default">
           <DialogHeader><DialogTitle className="text-2xl font-bold flex items-center gap-2"><Layers className="text-primary-accent" size={24} /> Cấu hình AI</DialogTitle></DialogHeader>
@@ -349,7 +345,6 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         </DialogContent>
       </Dialog>
 
-      {/* VIEW MODAL */}
       <Dialog open={!!viewingChapter} onOpenChange={(open) => !open && setViewingChapter(null)}>
         <DialogContent className="max-w-5xl w-full h-[90vh] bg-surface-card text-text-primary border-border-default flex flex-col p-0 overflow-hidden">
           <DialogHeader className="p-6 border-b border-border-default flex flex-col items-start space-y-1"><DialogTitle className="text-xl">Chương {viewingChapter?.chapterNumber}: {viewingChapter?.title}</DialogTitle><p className="text-xs text-text-muted">Nội dung chi tiết chương truyện</p></DialogHeader>
@@ -359,6 +354,15 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
         </DialogContent>
       </Dialog>
       <TranslationRuleDialog isOpen={isRuleDialogOpen} onOpenChange={setIsRuleDialogOpen} onSaved={loadLibrary} />
+
+      {debuggingChapter && (
+        <DebugKnowledgeModal 
+          isOpen={isDebugModalOpen} 
+          onOpenChange={setIsDebugModalOpen} 
+          bookId={book.id} 
+          chapter={debuggingChapter} 
+        />
+      )}
     </div>
   );
 };
