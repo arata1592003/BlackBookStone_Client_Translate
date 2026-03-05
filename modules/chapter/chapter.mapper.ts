@@ -21,7 +21,7 @@ export const mapToChapterDetail = (
     book_name: bookTitle,
     chapter_number: row.chapter_number,
     title: row.chapter_title_translated ?? `Chương ${row.chapter_number}`,
-    content: (row.chapter_content as any)?.content_translated ?? "",
+    content: row.content_translated ?? "",
     views: row.view_count ?? 0,
     total_words: row.total_words_translate ?? 0,
     created_at: row.created_at,

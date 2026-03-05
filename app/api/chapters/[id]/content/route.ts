@@ -17,9 +17,9 @@ export async function GET(
 
   try {
     const { data, error } = await supabase
-      .from("chapter_content")
+      .from("chapters")
       .select("content_raw, content_translated")
-      .eq("chapter_id", id)
+      .eq("id", id)
       .maybeSingle();
 
     if (error) throw error;
