@@ -5,26 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserBookItem } from "@/modules/book/book.types";
 import { timeAgo } from "@/utils/date";
-import { Eye, SquarePen, Trash, Download, Share2, Share, Loader2 } from "lucide-react";
+import { Eye, SquarePen, Trash, Download } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { toggleBookPublishAction } from "@/app/actions/book";
-import { useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/components/providers/AuthProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { DownloadBookDialog } from "../book/DownloadBookDialog";
 
 interface UserBookCardProps {
@@ -33,40 +19,17 @@ interface UserBookCardProps {
 
 export const UserBookCard = ({ novel }: UserBookCardProps) => {
   const router = useRouter();
-  const { user } = useAuth();
   const { theme } = useTheme();
-  const queryClient = useQueryClient();
-  const [isPublishing, setIsPublishing] = useState(false);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
-  const backgroundPath = theme === "dark" 
-    ? "/dark-rock-wall-seamless-texture-free-105.png" 
-    : "/white-rock-wall.png";
+  const backgroundPath =
+    theme === "dark"
+      ? "/dark-rock-wall-seamless-texture-free-105.png"
+      : "/white-rock-wall.png";
 
   const handleNovelAction = (novelId: string, action: string) => {
     console.log(`Novel ${novelId}: ${action} action triggered`);
   };
-
-  const handleTogglePublish = async () => {
-    if (isPublishing) return;
-
-    setIsPublishing(true);
-    try {
-      const result = await toggleBookPublishAction(novel.id, novel.isPublished);
-      if (result.success) {
-        queryClient.invalidateQueries({ queryKey: ["ownedBooks", user?.id] });
-      } else {
-        alert(result.error || "Có lỗi xảy ra khi cập nhật trạng thái.");
-      }
-    } catch (error) {
-      console.error("Failed to toggle publish status:", error);
-      alert("Lỗi kết nối hệ thống. Vui lòng thử lại sau.");
-    } finally {
-      setIsPublishing(false);
-    }
-  };
-
-  const actionText = novel.isPublished ? "ngừng chia sẻ" : "chia sẻ";
 
   return (
     <article
@@ -82,7 +45,7 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
           style={{ objectFit: "cover" }}
           className={cn(
             "transition-all duration-500",
-            theme === "dark" ? "opacity-40 md:opacity-100" : "opacity-100"
+            theme === "dark" ? "opacity-40 md:opacity-100" : "opacity-100",
           )}
         />
       </div>
@@ -94,18 +57,30 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
           <div className="hidden md:flex self-stretch flex-col border-r border-border-default/30 w-14">
             <div
               className="flex-1 flex items-center justify-center cursor-pointer transition-colors hover:bg-primary/70 group px-4"
-              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "view"); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNovelAction(novel.id, "view");
+              }}
               title="Đọc truyện"
             >
-              <Eye size={20} className="text-foreground/70 group-hover:text-foreground" />
+              <Eye
+                size={20}
+                className="text-foreground/70 group-hover:text-foreground"
+              />
             </div>
             <Separator className="bg-foreground/20" />
             <div
               className="flex-1 flex items-center justify-center cursor-pointer transition-colors hover:bg-destructive/70 group"
-              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "delete"); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNovelAction(novel.id, "delete");
+              }}
               title="Xóa truyện"
             >
-              <Trash size={20} className="text-foreground/70 group-hover:text-foreground" />
+              <Trash
+                size={20}
+                className="text-foreground/70 group-hover:text-foreground"
+              />
             </div>
           </div>
 
@@ -116,24 +91,12 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
                 {novel.title}
               </h3>
 
-              {novel.status && (
-                <Badge 
-                  variant="outline"
-                  className={cn(
-                    "text-[10px] md:text-xs px-1.5 py-0 border-none",
-                    novel.status === "Đang ra" 
-                      ? "bg-[var(--color-book-card-variant1-bg)] text-[var(--color-book-card-variant1-text)]"
-                      : novel.status === "Hoàn thành"
-                      ? "bg-[var(--color-book-card-variant2-bg)] text-[var(--color-book-card-variant2-text)]"
-                      : "bg-[var(--color-book-card-variant3-bg)] text-[var(--color-book-card-variant3-text)]"
-                  )}
-                >
-                  {novel.status}
-                </Badge>
-              )}
               <div
                 className="p-1 hover:bg-primary/20 rounded transition-colors cursor-pointer"
-                onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "edit"); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNovelAction(novel.id, "edit");
+                }}
                 title="Sửa thông tin"
               >
                 <SquarePen size={18} className="text-foreground" />
@@ -142,23 +105,15 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-5 self-stretch w-full mb-2">
               <p className="font-roboto font-normal text-foreground text-xs md:text-base opacity-90">
-                Tình trạng: <span className="font-semibold">{novel.translatedChapters}/{novel.totalChapters}</span>
+                Tiến độ:{" "}
+                <span className="font-semibold">
+                  {novel.translatedChapters}/{novel.totalChapters} chương
+                </span>
               </p>
 
               <p className="font-roboto font-normal text-foreground text-[10px] md:text-sm opacity-70 italic md:not-italic">
                 Cập nhật: {timeAgo(novel.updatedAt)}
               </p>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5 items-center mt-auto">
-              {novel.genres.slice(0, 3).map((genre, index) => (
-                <Badge key={index} variant="secondary" className="bg-foreground/10 text-foreground font-normal text-[10px] md:text-xs">
-                  {genre}
-                </Badge>
-              ))}
-              {novel.genres.length > 3 && (
-                <span className="text-[10px] opacity-50">+{novel.genres.length - 3}</span>
-              )}
             </div>
           </div>
         </div>
@@ -173,7 +128,10 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "view"); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNovelAction(novel.id, "view");
+              }}
               className="bg-primary/20 border-primary/30 text-primary-accent"
             >
               <Eye size={18} />
@@ -181,7 +139,10 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
             <Button
               variant="outline"
               size="icon-sm"
-              onClick={(e) => { e.stopPropagation(); handleNovelAction(novel.id, "delete"); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNovelAction(novel.id, "delete");
+              }}
               className="bg-destructive/20 border-destructive/30 text-destructive"
             >
               <Trash size={18} />
@@ -190,8 +151,8 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
 
           <Button
             size="sm"
-            onClick={(e) => { 
-              e.stopPropagation(); 
+            onClick={(e) => {
+              e.stopPropagation();
               setIsDownloadModalOpen(true);
             }}
             className="flex-1 md:w-full bg-secondary-accent hover:bg-secondary-accent/90 text-foreground font-bold text-xs md:text-base h-9 md:h-10"
@@ -199,57 +160,10 @@ export const UserBookCard = ({ novel }: UserBookCardProps) => {
             <Download size={16} className="md:size-5" />
             <span className="ml-1.5 md:ml-2">Tải</span>
           </Button>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                size="sm"
-                disabled={isPublishing}
-                onClick={(e) => e.stopPropagation()}
-                className={cn(
-                  "flex-1 md:w-full font-bold text-xs md:text-base h-9 md:h-10 transition-all",
-                  novel.isPublished 
-                    ? "bg-success hover:bg-success/90 text-foreground" 
-                    : "bg-primary hover:bg-primary/90 text-foreground"
-                )}
-              >
-                {isPublishing ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : novel.isPublished ? (
-                  <>
-                    <Share2 size={16} className="md:size-5" />
-                    <span className="ml-1.5 md:ml-2 whitespace-nowrap">Đã share</span>
-                  </>
-                ) : (
-                  <>
-                    <Share size={16} className="md:size-5" />
-                    <span className="ml-1.5 md:ml-2 whitespace-nowrap">Share</span>
-                  </>
-                )}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Xác nhận {actionText}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn có chắc chắn muốn {actionText} truyện <strong>{novel.title}</strong> này không? 
-                  {novel.isPublished 
-                    ? " Truyện sẽ không còn hiển thị công khai trên trang chủ." 
-                    : " Truyện sẽ được hiển thị công khai để mọi người cùng đọc."}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="bg-transparent border-white/20 text-white hover:bg-white/10">Hủy</AlertDialogCancel>
-                <AlertDialogAction onClick={handleTogglePublish} className="bg-primary hover:bg-primary/90">
-                  Xác nhận
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </nav>
       </div>
 
-      <DownloadBookDialog 
+      <DownloadBookDialog
         bookId={novel.id}
         bookTitle={novel.title || "Truyen"}
         isOpen={isDownloadModalOpen}

@@ -1,16 +1,9 @@
 "use server";
 
 import { increaseChapterView as serviceIncreaseChapterView } from "@/modules/chapter/chapter.service";
-import {
-  repoDeleteChaptersTranslation,
-  repoDeleteChapterTranslation,
-} from "@/modules/chapter/chapter.repo";
+import { repoDeleteChaptersTranslation } from "@/modules/chapter/chapter.repo";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 
-/**
- * Server Action để tăng lượt xem cho chương.
- * Được gọi khi người dùng truy cập trang đọc chương.
- */
 export async function incrementChapterViewAction(chapterId: string) {
   try {
     await serviceIncreaseChapterView(chapterId);

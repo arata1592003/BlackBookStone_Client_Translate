@@ -1,8 +1,17 @@
 "use client";
 
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
+import { useEffect, useState } from "react";
 
 const NextProgressBar = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
     <ProgressBar
       height="4px"

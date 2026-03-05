@@ -4,12 +4,12 @@ import { TopupPlan, TopupPlanEntity } from "./plan.types";
 function mapTopupPlan(entity: TopupPlanEntity): TopupPlan {
   return {
     id: entity.id,
-    code: entity.code,
-    priceAmount: entity.price_amount,
-    currency: entity.currency,
-    gems: entity.gems,
-    bonusGems: entity.bonus_gems,
-    note: entity.note,
+    name: entity.name,
+    description: entity.description,
+    credits: entity.credits,
+    bonusCredits: entity.bonus_credits,
+    totalCredits: entity.total_credits,
+    priceVnd: entity.price_vnd,
   };
 }
 

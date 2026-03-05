@@ -11,15 +11,15 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
-import { getVisiblePages } from "@/lib/utils"; // Import getVisiblePages
+import { getVisiblePages } from "@/lib/utils";
 
 const loupe1Path = "/icons8-search-50.png";
 
 export default function BanLamViecPage() {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // Add currentPage state
-  const booksPerPage = 10; // Define booksPerPage
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 10;
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -58,7 +58,6 @@ export default function BanLamViecPage() {
       book.title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
-    // Apply pagination here
     const indexOfLastBook = currentPage * booksPerPage;
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
     return filtered.slice(indexOfFirstBook, indexOfLastBook);
@@ -84,15 +83,13 @@ export default function BanLamViecPage() {
   const renderBookList = () => {
     if (isLoading) {
       return (
-        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground">
-        </div>
+        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground"></div>
       );
     }
 
     if (!filteredBooks || filteredBooks.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground">
-        </div>
+        <div className="flex flex-col items-center justify-center flex-1 w-full text-foreground"></div>
       );
     }
 
@@ -196,7 +193,9 @@ export default function BanLamViecPage() {
           )}
 
           <Button
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            onClick={() =>
+              setCurrentPage(Math.min(totalPages, currentPage + 1))
+            }
             disabled={currentPage === totalPages}
             className="px-3 py-1 rounded-md bg-surface-raised hover:bg-surface-raised/70 text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >

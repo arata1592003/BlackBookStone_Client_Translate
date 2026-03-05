@@ -85,5 +85,5 @@ Mỗi module tuân theo cấu trúc 4 tệp: `{mod}.types.ts`, `{mod}.repo.ts`, 
 | `books`              | Book metadata             |
 | `chapters`           | Chapter metadata          |
 | `users`              | User profiles             |
-| `wallet_transactions`| User top-up/spend history |
+| `credit_transactions`| User top-up/spend history |
 | `jobs`               | Background crawl tasks    |

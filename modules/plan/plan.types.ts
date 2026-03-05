@@ -1,21 +1,22 @@
 export type TopupPlanEntity = {
   id: string;
-  code: string;
-  price_amount: number;
-  currency: string;
-  gems: number;
-  bonus_gems: number;
+  name: string;
+  description: string | null;
+  credits: number;
+  bonus_credits: number;
+  total_credits: number;
+  price_vnd: number;
   is_active: boolean;
-  note: string | null;
   created_at: string;
+  updated_at: string;
 };
 
 export type TopupPlan = {
   id: string;
-  code: string;
-  priceAmount: number;
-  currency: string;
-  gems: number;
-  bonusGems: number;
-  note: string | null;
+  name: string;
+  description: string | null;
+  credits: number;
+  bonusCredits: number;
+  totalCredits: number;
+  priceVnd: number;
 };

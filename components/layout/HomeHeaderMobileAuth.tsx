@@ -46,7 +46,7 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
       return <span className="w-20 h-5 bg-foreground/30 animate-pulse rounded-md" />;
     }
     if (userProfile) {
-      return `${userProfile.first_name || ""} ${userProfile.last_name || ""}`.trim();
+      return userProfile.full_name || "Tài khoản";
     }
     return "Tài khoản";
   };

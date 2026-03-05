@@ -20,10 +20,8 @@ export const Footer = () => {
 
   const quickLinks = [
     { label: "Trang chủ", href: "/trang-chu" },
-    { label: "Truyện mới", href: "/truyen-moi" },
-    { label: "Truyện Hot", href: "/truyen-hot" },
-    { label: "Truyện Full", href: "/truyen-full" },
-    { label: "Sắp xếp", href: "/sap-xep" },
+    { label: "Điều khoản", href: "/dieu-khoan-su-dung" },
+    { label: "Chính sách", href: "/chinh-sach-bao-mat" },
   ];
 
   const policyLinks = [

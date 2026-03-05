@@ -28,7 +28,6 @@ export type ChapterEntity = {
   summary_translated: string | null;
   published_at_raw: string | null;
   view_count: number;
-  chapter_status: boolean | null;
   total_words_translate: number | null;
   total_words_raw: number | null;
   url_raw: string | null;

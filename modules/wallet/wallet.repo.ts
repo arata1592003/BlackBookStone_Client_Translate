@@ -6,14 +6,14 @@ export async function fetchTransactionsByUserId(
   limit = 50,
 ): Promise<WalletTransactionEntity[]> {
   const { data, error } = await supabaseClient
-    .from("wallet_transactions")
+    .from("credit_transactions")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching wallet transactions:", error);
+    console.error("Error fetching wallet transactions:", error.message);
     throw error;
   }
 

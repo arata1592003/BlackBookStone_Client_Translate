@@ -1,55 +1,60 @@
 # Gemini's Operational Guide for BlackStoneBook Client
 
-This document outlines the architecture, conventions, and workflow for the BlackStoneBook Client project. I will adhere to these guidelines for all tasks.
+Tài liệu này quy định kiến trúc, quy ước và quy trình làm việc cho dự án BlackStoneBook Client. Tôi sẽ tuân thủ các hướng dẫn này trong mọi tác vụ.
 
 ---
 
 ## 1. Project Overview & Tech Stack
 
-- **Project**: A Next.js web application for an online book reading platform.
+- **Project**: Nền tảng hỗ trợ dịch thuật và quản lý truyện online.
 - **Framework**: Next.js 16 (App Router), React 19.
 - **UI & Styling**: Shadcn UI, Tailwind CSS 4 (CSS-first configuration).
-- **Backend**: Supabase.
-- **Primary Language**: Vietnamese.
+- **Backend**: Supabase (Auth, Database, Storage).
+- **Primary Language**: Tiếng Việt.
 
 ---
 
 ## 2. Core Architecture & Principles
 
-### 2.1 Styling & Theme System (Tailwind 4)
+### 2.1 Database & Data Model (Schema Tối Giản)
+Dự án sử dụng schema database tối giản, tập trung vào tính năng cốt lõi:
+- **`profiles`**: Thay thế cho bảng users. Cột chính: `id`, `full_name`, `avatar_url`. Không dùng `first_name`/`last_name`.
+- **`books`**: Chỉ chứa thông tin cơ bản: `id`, `user_id` (chủ sở hữu), `name`, `expire_at`. Các thông tin metadata khác (tác giả, mô tả, ảnh bìa) hiện đã bị lược bỏ.
+- **`chapters`**: Chứa nội dung truyện. Cột chính: `book_id`, `chapter_number`, `chapter_title_translated`, `content_translated`.
+- **`credit_packages`**: (Trước là topup_plans) Quản lý các gói nạp credit.
+- **`credit_transactions`**: (Trước là wallet_transactions) Lịch sử biến động credit.
 
-- **Source of Truth**: Khối `@theme` trong `app/globals.css`.
-- **Responsive Policy**: **LUÔN LUÔN ưu tiên Mobile-First**. Mọi component phải được thiết kế cho màn hình nhỏ nhất trước, sau đó dùng các prefix `sm:`, `md:`, `lg:`, `xl:` để mở rộng.
-- **Dark/Light Mode**: Mặc định là Dark Mode. Sử dụng class `.light` để ghi đè.
+### 2.2 Repository & Service Pattern (Explicit Client Passing)
+Để hỗ trợ cả **Client Components** và **Server Components/Actions**, mọi Repository và Service phải tuân thủ:
+- **Repository**: Các hàm lấy dữ liệu phải nhận tham số `supabase: SupabaseClient` tùy chọn. Nếu không truyền, mặc định dùng `supabaseClient` (Browser Client).
+- **Server Actions**: Luôn khởi tạo `createServerSupabaseClient` và truyền vào Service/Repo để đảm bảo xác thực qua Cookie và RLS hoạt động đúng.
+- **Data Mapping**: Luôn có lớp Mapper để chuyển đổi từ định dạng Database (snake_case) sang định dạng Frontend (camelCase) và xử lý các giá trị mặc định.
 
-### 2.2 Component Structure & Naming
-
-- **`components/ui/`**: Thành phần nguyên thủy Shadcn (tên tệp viết thường).
-- **`components/features/`**: Thành phần đặc thù theo domain (PascalCase).
-- **`components/layout/`**: Thành phần cấu trúc trang (PascalCase).
-
-### 2.3 Responsive Patterns
-
-Khi xây dựng hoặc sửa đổi UI, tôi phải tuân thủ các mẫu (patterns) sau:
-- **Navigation**: Sử dụng `Sheet` cho menu điều hướng trên Mobile.
-- **Lists & Grids**: Số lượng cột phải thay đổi theo màn hình (ví dụ: `grid-cols-2 md:grid-cols-4 lg:grid-cols-7`).
-- **Cards**: Đảm bảo thẻ truyện không bị cắt trên Mobile. Sử dụng `flex-col` hoặc `flex-row` linh hoạt.
-- **Tables**: Sử dụng cuộn ngang hoặc chuyển đổi sang dạng thẻ (Cards) trên Mobile để tránh tràn màn hình.
+### 2.3 Styling & Theme System (Tailwind 4)
+- **Source of Truth**: Khối `@theme` trong `app/globals.css`. Không dùng `tailwind.config.ts`.
+- **Responsive**: **Mobile-First Always**. Ưu tiên hiển thị trên di động, sau đó dùng `sm:`, `md:`, `lg:` cho màn hình lớn.
+- **Dark Mode**: Là chế độ mặc định.
 
 ---
 
 ## 3. Workflow & Conventions
 
-- **Verification**: Chạy `npm run lint` sau khi thay đổi.
-- **Commit Messages**: Tuân thủ Conventional Commits (`COMMIT_CONVENTION.md`).
-- **Responsive Testing**: Luôn kiểm tra hiển thị trên ít nhất 3 breakpoint: Mobile (mặc định), Tablet (`md:`), và Laptop (`lg:`).
+### 3.1 Naming Conventions
+- **Components**: PascalCase (ví dụ: `UserBookCard.tsx`).
+- **UI primitives**: viết thường (ví dụ: `button.tsx`).
+- **Modules**: Cấu trúc gồm `[domain].repo.ts`, `[domain].service.ts`, `[domain].mapper.ts`, `[domain].types.ts`.
+
+### 3.2 Security (RLS)
+- Mọi bảng mới phải được kích hoạt **Row Level Security (RLS)**.
+- Phải tạo Policy cho role `authenticated` dựa trên `auth.uid()`.
+- Cấp quyền `GRANT SELECT, INSERT... ON TABLE ... TO authenticated`.
 
 ---
 
-## 4. My Mandate
+## 4. My Mandate (Nhiệm vụ của tôi)
 
-1.  **Mobile-First Always**: Không bao giờ bỏ qua hiển thị trên thiết bị di động.
-2.  **Tailwind 4 Native**: Không sử dụng `tailwind.config.ts`. Toàn bộ cấu hình nằm trong `@theme`.
-3.  **Strict Component Policy**: Ưu tiên sử dụng Shadcn UI. 
-4.  **Vietnamese First**: Tất cả văn bản hiển thị phải là tiếng Việt.
-5.  **Naming Integrity**: Giữ tên tệp UI viết thường đồng nhất.
+1.  **Sync with Schema**: Luôn kiểm tra `database/schema.sql` trước khi thay đổi logic dữ liệu.
+2.  **Explicit Client**: Luôn truyền Supabase Client từ Server Actions xuống lớp dưới.
+3.  **Vietnamese First**: Tất cả văn bản hiển thị phải là tiếng Việt.
+4.  **No Hydration Errors**: Đảm bảo các Client Component dùng thư viện bên ngoài (như progress bar) được bọc trong kiểm tra `mounted`.
+5.  **Clean Code**: Xóa bỏ các trường dữ liệu thừa (legacy) ngay khi phát hiện chúng không còn trong schema.

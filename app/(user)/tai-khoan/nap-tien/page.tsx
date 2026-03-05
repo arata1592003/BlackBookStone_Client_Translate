@@ -1,7 +1,7 @@
 "use client";
 
 import { getActivePlans } from "@/modules/plan/plan.service";
-import { Gem } from "lucide-react";
+import { Coins } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,12 +11,11 @@ export default function NapTienPage() {
   const { data: plans, isLoading } = useQuery({
     queryKey: ["activePlans"],
     queryFn: getActivePlans,
-    staleTime: 15 * 60 * 1000, // 15 phút
+    staleTime: 15 * 60 * 1000,
   });
 
   const handlePlanClick = (planId: string) => {
     setSelectedPlanId(planId);
-    // TODO: Implement actual payment initiation logic here
     console.log(`Plan ${planId} selected. Initiate payment.`);
   };
 
@@ -25,7 +24,7 @@ export default function NapTienPage() {
       <div className="flex flex-col items-start gap-2.5">
         <h2 className="text-3xl font-bold text-text-primary">Nạp tiền</h2>
         <p className="text-lg text-text-secondary">
-          Chọn một gói nạp để tăng thêm Gem vào tài khoản của bạn.
+          Chọn một gói nạp để tăng thêm Credit vào tài khoản của bạn.
         </p>
       </div>
 
@@ -49,23 +48,28 @@ export default function NapTienPage() {
               onClick={() => handlePlanClick(plan.id)}
               tabIndex={0}
               role="button"
-              aria-label={`Gói nạp ${plan.priceAmount.toLocaleString("vi-VN")} VNĐ được ${plan.gems.toLocaleString("vi-VN")} Gem`}
+              aria-label={`Gói nạp ${plan.priceVnd.toLocaleString("vi-VN")} VNĐ được ${plan.totalCredits.toLocaleString("vi-VN")} Credit`}
             >
               <div className="flex flex-col items-center gap-3 w-full">
                 <h3 className="text-2xl font-bold text-text-primary">
-                  {plan.priceAmount.toLocaleString("vi-VN")} VNĐ
+                  {plan.priceVnd.toLocaleString("vi-VN")} VNĐ
                 </h3>
                 <div className="flex items-center gap-2 text-3xl font-extrabold text-primary">
-                  <span>{plan.gems.toLocaleString("vi-VN")}</span>
-                  <Gem size={32} className="text-primary" />
+                  <span>{plan.credits.toLocaleString("vi-VN")}</span>
+                  <Coins size={32} className="text-primary" />
                 </div>
-                {plan.bonusGems > 0 && (
+                {plan.bonusCredits > 0 && (
                   <p className="text-sm text-text-secondary flex items-center gap-1">
                     Thưởng thêm{" "}
                     <span className="text-success font-bold">
-                      {plan.bonusGems.toLocaleString("vi-VN")}
+                      {plan.bonusCredits.toLocaleString("vi-VN")}
                     </span>{" "}
-                    <Gem size={16} className="text-success" />
+                    <Coins size={16} className="text-success" />
+                  </p>
+                )}
+                {plan.description && (
+                  <p className="text-xs text-text-muted mt-2 text-center">
+                    {plan.description}
                   </p>
                 )}
               </div>

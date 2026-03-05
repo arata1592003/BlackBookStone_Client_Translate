@@ -1,266 +1,51 @@
 import { supabaseClient } from "@/lib/supabase/client";
 import {
-  BookCardWithAuthorRow,
-  BookInfoRow,
-  ChapterStatRow,
   UserBookItemRow,
   BookInsertPayload,
-  BookTagInsertPayload,
   ManagedBookRow,
   ManagedChapterRow,
   ChapterContentRow,
-  BookNewChapterCardRow,
-  BookCompletedCardRow,
-  SearchBookRepoRow,
+  BookInfoRow,
 } from "@/modules/book/book.repo.type";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export async function fetchNewestBooks(): Promise<BookNewChapterCardRow[]> {
-  const { data, error } = await supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      created_at,
-      book_tags (
-        tags ( name )
-      ),
-      chapters (
-        chapter_number,
-        updated_at
-      )
-      `,
-    )
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(20);
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export type BookHotRow = BookCardWithAuthorRow & {
-  total_views: number;
-};
-
-interface BookWithChaptersForHotRow {
-  id: string;
-  slug: string;
-  book_name_translated: string;
-  author_name_translated: string;
-  cover_image_url: string;
-  description: string | null;
-  publication_status: string | null;
-  created_at: string;
-  chapters: { view_count: number }[];
-}
-
-export async function fetchHotBooks(
-  limit: number = 15,
-  offset: number = 0,
-): Promise<BookHotRow[]> {
-  const { data, error } = await supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      created_at,
-      chapters(view_count)
-      `,
-    )
-    .eq("is_published", true);
-
-  if (error) {
-    console.error(
-      "Error fetching hot books with chapter views:",
-      error.message,
-    );
-    throw error;
-  }
-
-  const booksWithAggregatedViews = data.map(
-    (book: BookWithChaptersForHotRow) => {
-      const total_views =
-        (book.chapters as { view_count: number }[] | null)?.reduce(
-          (sum, chapter) => sum + (chapter.view_count || 0),
-          0,
-        ) || 0;
-
-      const { ...restBook } = book;
-      return {
-        ...restBook,
-        total_views,
-      } as BookHotRow;
-    },
-  );
-
-  return booksWithAggregatedViews
-    .sort((a, b) => b.total_views - a.total_views)
-    .slice(offset, offset + limit);
-}
-
-export async function fetchCompletedBooks(
-  limit?: number,
-  offset?: number,
-): Promise<BookCompletedCardRow[]> {
-  let query = supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      created_at,
-      book_chapter_stats (
-        total_chapters,
-        translated_chapters
-      )
-      `,
-    )
-    .eq("is_published", true)
-    .eq("publication_status", "full")
-    .order("created_at", { ascending: false });
-
-  if (typeof offset === "number" && typeof limit === "number") {
-    query = query.range(offset, offset + limit - 1);
-  } else if (limit) {
-    query = query.limit(limit);
-  }
-
-  const { data, error } = await query;
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function countCompletedBooks(): Promise<number> {
-  const { count, error } = await supabaseClient
-    .from("books")
-    .select("id", { count: "exact", head: true })
-    .eq("is_published", true)
-    .eq("publication_status", "full");
-
-  if (error) {
-    console.error("Error counting completed books:", error.message);
-    throw error;
-  }
-  return count ?? 0;
-}
-
-export async function fetchBookInfoBySlug(
-  slug: string,
-): Promise<BookInfoRow | null> {
-  const { data, error } = await supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      description,
-      publication_status,
-      cover_image_url,
-      users:owner_user_id (
-        first_name,
-        last_name
-      )
-    `,
-    )
-    .eq("slug", slug)
-    .eq("is_published", true)
-    .single();
-
-  if (error || !data) return null;
-  return data;
-}
-
-export async function fetchChapterStatsByBookId(
-  bookId: string,
-): Promise<ChapterStatRow[]> {
-  const { data, error } = await supabaseClient
-    .from("chapters")
-    .select("total_words_translate, view_count")
-    .eq("book_id", bookId)
-    .eq("chapter_status", true);
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function fetchUserBookStats(userId: string) {
-  const { count: crawledCount, error: crawlError } = await supabaseClient
-    .from("jobs")
+export async function fetchUserBookStats(
+  userId: string,
+  supabase: SupabaseClient = supabaseClient,
+) {
+  const { count: crawledCount, error: crawlError } = await supabase
+    .from("book_jobs")
     .select("*", { count: "exact", head: true })
-    .eq("owner_user_id", userId)
-    .eq("type", "crawl")
+    .eq("user_id", userId)
     .eq("status", "DONE");
 
   if (crawlError) {
-    console.error("Error fetching crawled stats:", crawlError.message);
-  }
-
-  const { count: translatedCount, error: translateError } = await supabaseClient
-    .from("jobs")
-    .select("*", { count: "exact", head: true })
-    .eq("owner_user_id", userId)
-    .eq("type", "translate")
-    .eq("status", "DONE");
-
-  if (translateError) {
-    console.error("Error fetching translated stats:", translateError.message);
+    console.error("Error fetching job stats:", crawlError.message);
   }
 
   return {
     crawledCount: crawledCount ?? 0,
-    translatedCount: translatedCount ?? 0,
+    translatedCount: 0, 
   };
 }
 
 export async function fetchBooksByOwner(
   userId: string,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<UserBookItemRow[]> {
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("books")
     .select(
       `
       id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      publication_status,
-      cover_image_url,
-      is_published,
-      draft_expires_at,
+      name,
       updated_at,
-
-      book_tags (
-        tags ( name )
-      ),
-
-      book_chapter_stats (
-        total_chapters,
-        translated_chapters
+      chapters (
+        content_translated
       )
       `,
     )
-    .eq("owner_user_id", userId)
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -269,65 +54,6 @@ export async function fetchBooksByOwner(
   }
 
   return data ?? [];
-}
-
-export async function fetchFollowedBooksByUserId(
-  userId: string,
-): Promise<UserBookItemRow[]> {
-  const { data, error } = await supabaseClient
-    .from("book_follows")
-    .select(
-      `
-      books (
-        id,
-        slug,
-        book_name_translated,
-        author_name_translated,
-        publication_status,
-        cover_image_url,
-        is_published,
-        draft_expires_at,
-        updated_at,
-        book_tags (
-          tags ( name )
-        ),
-        book_chapter_stats (
-          total_chapters,
-          translated_chapters
-        )
-      )
-      `,
-    )
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching followed books:", error.message);
-    return [];
-  }
-
-  return data?.flatMap((item) => item.books ?? []).filter(Boolean) ?? [];
-}
-
-/**
- * Lấy ID của nguồn từ tên nguồn.
- * @param sourceName Tên của nguồn (ví dụ: "manual").
- * @returns ID của nguồn hoặc null nếu không tìm thấy.
- */
-export async function getSourceIdByName(
-  sourceName: string,
-): Promise<string | null> {
-  const { data, error } = await supabaseClient
-    .from("sources")
-    .select("id")
-    .eq("name", sourceName)
-    .single();
-
-  if (error) {
-    console.error("Error in getSourceIdByName:", error.message);
-    return null;
-  }
-  return data?.id || null;
 }
 
 /**
@@ -339,7 +65,6 @@ export async function insertBook(
   supabase: SupabaseClient,
   bookPayload: BookInsertPayload,
 ): Promise<string> {
-  console.log(bookPayload);
   const { data, error } = await supabase
     .from("books")
     .insert(bookPayload)
@@ -356,22 +81,8 @@ export async function insertBook(
   return data.id;
 }
 
-export async function insertBookTags(
-  supabase: SupabaseClient,
-  bookTagsPayloads: BookTagInsertPayload[],
-): Promise<void> {
-  const { error } = await supabase.from("book_tags").insert(bookTagsPayloads);
-
-  if (error) {
-    console.error("Error inserting book tags:", error.message);
-    throw new Error(`Lỗi khi chèn thẻ sách: ${error.message}`);
-  }
-}
-
 /**
  * Xóa một cuốn sách khỏi cơ sở dữ liệu.
- * Dùng để rollback nếu việc chèn các thẻ sách thất bại.
- *
  * @param bookId ID của cuốn sách cần xóa
  */
 export async function deleteBook(
@@ -386,119 +97,13 @@ export async function deleteBook(
   }
 }
 
-export async function countSearchResults(query: string): Promise<number> {
-  const { count, error } = await supabaseClient
-    .from("books")
-    .select(
-      `
-      id
-      `,
-      { count: "exact", head: true },
-    )
-    .or(
-      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
-    )
-    .eq("is_published", true);
-
-  if (error) {
-    console.error("Error counting search results:", error.message);
-    throw error;
-  }
-  return count ?? 0;
-}
-
-export async function searchBooks(
-  query: string,
-  offset?: number,
-  limit?: number,
-): Promise<BookCardWithAuthorRow[]> {
-  let dbQuery = supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      created_at,
-      book_tags (
-        tags ( name )
-      )
-      `,
-    )
-    .or(
-      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
-    )
-    .eq("is_published", true)
-    .order("created_at", { ascending: false });
-
-  if (typeof offset === "number" && typeof limit === "number") {
-    dbQuery = dbQuery.range(offset, offset + limit - 1);
-  }
-
-  const { data, error } = await dbQuery;
-
-  if (error) {
-    console.error("Error searching books:", error.message);
-    throw error;
-  }
-  return data ?? [];
-}
-
-// New function for detailed search results
-export async function searchBooksForClient(
-  query: string,
-  offset?: number,
-  limit?: number,
-): Promise<SearchBookRepoRow[]> {
-  let dbQuery = supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      chapters(count)
-      `,
-    )
-    .or(
-      `book_name_translated.ilike.%${query}%,author_name_translated.ilike.%${query}%,book_name_raw.ilike.%${query}%,author_name_raw.ilike.%${query}%`,
-    )
-    .eq("is_published", true)
-    .order("created_at", { ascending: false });
-
-  if (typeof offset === "number" && typeof limit === "number") {
-    dbQuery = dbQuery.range(offset, offset + limit - 1);
-  }
-
-  const { data, error } = await dbQuery;
-
-  if (error) {
-    console.error("Error searching books for client:", error.message);
-    throw error;
-  }
-
-  return (
-    data?.map((row: any) => ({
-      ...row,
-      chapter_count: row.chapters?.[0]?.count || 0,
-    })) ?? []
-  );
-}
-
 export async function fetchManagedBookDetailsById(
   bookId: string,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<ManagedBookRow | null> {
-  const { data, error } = await supabaseClient
-    .from("books_with_tags")
-    .select("*")
+  const { data, error } = await supabase
+    .from("books")
+    .select("id, name, created_at, updated_at")
     .eq("id", bookId)
     .single();
 
@@ -512,8 +117,9 @@ export async function fetchManagedBookDetailsById(
 
 export async function fetchManagedChaptersByBookId(
   bookId: string,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<ManagedChapterRow[]> {
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from("chapters")
     .select(
       `
@@ -521,10 +127,9 @@ export async function fetchManagedChaptersByBookId(
       chapter_number,
       chapter_title_translated,
       chapter_title_raw,
-      chapter_status,
       updated_at,
       total_words_raw,
-      url_raw 
+      content_translated
       `,
     )
     .eq("book_id", bookId)
@@ -540,16 +145,18 @@ export async function fetchManagedChaptersByBookId(
 
 export async function fetchChapterContentById(
   chapterId: string,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<ChapterContentRow | null> {
-  const { data, error } = await supabaseClient
-    .from("chapter_content")
+  const { data, error } = await supabase
+    .from("chapters")
     .select(
       `
+      id,
       content_raw,
       content_translated
       `,
     )
-    .eq("chapter_id", chapterId)
+    .eq("id", chapterId)
     .single();
 
   if (error) {
@@ -557,327 +164,27 @@ export async function fetchChapterContentById(
     return null;
   }
 
-  return data as ChapterContentRow | null;
+  return data as any;
 }
 
-export async function updateBookPublishStatus(
-  supabase: SupabaseClient,
-  bookId: string,
-  isPublished: boolean,
-): Promise<void> {
-  const { error } = await supabase
-    .from("books")
-    .update({ is_published: isPublished })
-    .eq("id", bookId);
-
-  if (error) {
-    console.error("Error updating book publish status:", error.message);
-    throw error;
-  }
-}
-
-export async function checkBookFollowStatus(
-  supabase: SupabaseClient,
-  userId: string,
-  bookId: string,
-): Promise<boolean> {
+export async function fetchBookInfoById(
+  id: string,
+  supabase: SupabaseClient = supabaseClient,
+): Promise<BookInfoRow | null> {
   const { data, error } = await supabase
-    .from("book_follows")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("book_id", bookId)
-    .maybeSingle();
-
-  if (error) return false;
-  return !!data;
-}
-
-export async function insertBookFollow(
-  supabase: SupabaseClient,
-  userId: string,
-  bookId: string,
-): Promise<void> {
-  const { error } = await supabase
-    .from("book_follows")
-    .insert({ user_id: userId, book_id: bookId });
-
-  if (error) throw error;
-}
-
-export async function deleteBookFollow(
-  supabase: SupabaseClient,
-  userId: string,
-  bookId: string,
-): Promise<void> {
-  const { error } = await supabase
-    .from("book_follows")
-    .delete()
-    .eq("user_id", userId)
-    .eq("book_id", bookId);
-
-  if (error) throw error;
-}
-
-export async function fetchBooksByTagName(
-  tagName: string,
-  offset?: number,
-  limit?: number,
-): Promise<SearchBookRepoRow[]> {
-  const decodedTagName = decodeURIComponent(tagName);
-  let query = supabaseClient
     .from("books")
     .select(
       `
       id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      book_tags!inner (
-        tags!inner ( name )
-      ),
-      chapters(count)
-      `,
-    )
-    .eq("is_published", true)
-    .eq("book_tags.tags.name", decodedTagName)
-    .order("created_at", { ascending: false });
-
-  if (typeof offset === "number" && typeof limit === "number") {
-    query = query.range(offset, offset + limit - 1);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error(
-      `Error fetching books by tag ${decodedTagName}:`,
-      error.message,
-    );
-    throw error;
-  }
-  return (
-    data?.map((row: any) => ({
-      ...row,
-      chapter_count: row.chapters?.[0]?.count || 0,
-    })) ?? []
-  );
-}
-
-export async function countBooksByTagName(tagName: string): Promise<number> {
-  const decodedTagName = decodeURIComponent(tagName);
-  const { count, error } = await supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      book_tags!inner (
-        tags!inner ( name )
+      name,
+      profiles:user_id (
+        full_name
       )
-      `,
-      { count: "exact", head: true },
-    )
-    .eq("is_published", true)
-    .eq("book_tags.tags.name", decodedTagName);
-
-  if (error) {
-    console.error(
-      `Error counting books by tag ${decodedTagName}:`,
-      error.message,
-    );
-    throw error;
-  }
-  return count ?? 0;
-}
-
-export async function fetchBooksWithFiltersAndSort(options: {
-  status?: string;
-  sortBy?: string;
-  genreName?: string;
-  searchQuery?: string;
-  offset?: number;
-  limit?: number;
-}): Promise<SearchBookRepoRow[]> {
-  const { status, sortBy, genreName, searchQuery, offset, limit } = options;
-
-  let queryBuilder = supabaseClient.from("books").select(
-    `
-    id,
-    slug,
-    book_name_translated,
-    author_name_translated,
-    cover_image_url,
-    description,
-    publication_status,
-    created_at,
-    book_tags${genreName && genreName !== "all" ? "!inner" : ""}(
-      tags${genreName && genreName !== "all" ? "!inner" : ""}(name)
-    ),
-    chapters(view_count)
     `,
-  );
-
-  queryBuilder = queryBuilder.eq("is_published", true);
-
-  if (status && status !== "all") {
-    queryBuilder = queryBuilder.eq("publication_status", status);
-  }
-
-  if (genreName && genreName !== "all") {
-    queryBuilder = queryBuilder.eq("book_tags.tags.name", genreName);
-  }
-
-  if (searchQuery) {
-    queryBuilder = queryBuilder.or(
-      `book_name_translated.ilike.%${searchQuery}%,author_name_translated.ilike.%${searchQuery}%,book_name_raw.ilike.%${searchQuery}%,author_name_raw.ilike.%${searchQuery}%`,
-    );
-  }
-
-  // Handle direct DB sorting if possible
-  if (sortBy === "newest" || !sortBy) {
-    queryBuilder = queryBuilder.order("created_at", { ascending: false });
-  } else if (sortBy === "oldest") {
-    queryBuilder = queryBuilder.order("created_at", { ascending: true });
-  }
-
-  const { data, error } = await queryBuilder;
-  if (error) {
-    console.error("Error in fetchBooksWithFiltersAndSort:", error.message);
-    throw error;
-  }
-
-  let results = (data as any[]).map((row) => ({
-    ...row,
-    chapter_count: row.chapters?.length || 0,
-    total_views:
-      row.chapters?.reduce(
-        (sum: number, ch: any) => sum + (ch.view_count || 0),
-        0,
-      ) || 0,
-  }));
-
-  // Memory sorting for views and chapters
-  if (sortBy === "views") {
-    results.sort((a, b) => b.total_views - a.total_views);
-  } else if (sortBy === "chapters") {
-    results.sort((a, b) => b.chapter_count - a.chapter_count);
-  }
-
-  // Pagination in memory
-  const paginatedResults =
-    typeof offset === "number" && typeof limit === "number"
-      ? results.slice(offset, offset + limit)
-      : results;
-
-  return paginatedResults;
-}
-
-export async function countBooksWithFiltersAndSort(options: {
-  status?: string;
-  genreName?: string;
-  searchQuery?: string;
-}): Promise<number> {
-  const { status, genreName, searchQuery } = options;
-
-  let queryBuilder = supabaseClient.from("books").select(
-    `
-    id,
-    book_tags${genreName && genreName !== "all" ? "!inner" : ""}(
-      tags${genreName && genreName !== "all" ? "!inner" : ""}(name)
     )
-    `,
-    { count: "exact", head: true },
-  );
+    .eq("id", id)
+    .single();
 
-  queryBuilder = queryBuilder.eq("is_published", true);
-
-  if (status && status !== "all") {
-    queryBuilder = queryBuilder.eq("publication_status", status);
-  }
-
-  if (genreName && genreName !== "all") {
-    queryBuilder = queryBuilder.eq("book_tags.tags.name", genreName);
-  }
-
-  if (searchQuery) {
-    queryBuilder = queryBuilder.or(
-      `book_name_translated.ilike.%${searchQuery}%,author_name_translated.ilike.%${searchQuery}%,book_name_raw.ilike.%${searchQuery}%,author_name_raw.ilike.%${searchQuery}%`,
-    );
-  }
-
-  const { count, error } = await queryBuilder;
-  if (error) {
-    console.error("Error in countBooksWithFiltersAndSort:", error.message);
-    throw error;
-  }
-  return count || 0;
-}
-
-export async function fetchLatestUpdatedBooks(
-  offset?: number,
-  limit?: number,
-): Promise<BookNewChapterCardRow[]> {
-  let query = supabaseClient
-    .from("books")
-    .select(
-      `
-      id,
-      slug,
-      book_name_translated,
-      author_name_translated,
-      cover_image_url,
-      description,
-      publication_status,
-      created_at,
-      book_tags (
-        tags ( name )
-      ),
-      chapters (
-        chapter_number,
-        updated_at
-      )
-      `,
-    )
-    .eq("is_published", true)
-    .order("updated_at", { ascending: false });
-
-  if (typeof offset === "number" && typeof limit === "number") {
-    query = query.range(offset, offset + limit - 1);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Error fetching latest updated books:", error.message);
-    throw error;
-  }
-  return data ?? [];
-}
-
-export async function countPublishedBooks(): Promise<number> {
-  const { count, error } = await supabaseClient
-    .from("books")
-    .select("id", { count: "exact", head: true })
-    .eq("is_published", true);
-
-  if (error) {
-    console.error("Error counting published books:", error.message);
-    throw error;
-  }
-  return count ?? 0;
-}
-
-export async function fetchAllPublishedBooks(): Promise<{ slug: string; updated_at: string }[]> {
-  const { data, error } = await supabaseClient
-    .from("books")
-    .select("slug, updated_at")
-    .eq("is_published", true);
-
-  if (error) {
-    console.error("Error fetching all published books for sitemap:", error.message);
-    return [];
-  }
-  return data ?? [];
+  if (error || !data) return null;
+  return data;
 }

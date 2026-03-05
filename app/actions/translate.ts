@@ -2,9 +2,6 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import {
-  DebugCharacter,
-  DebugCharacterRelation,
-  DebugTerm,
   KnowledgeInput,
   NewKnowledgeOutput,
   TranslateChapterRequest,

@@ -2,19 +2,20 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import { TranslationRuleInsert } from "@/modules/translate/translate.type";
-import { 
-  insertTranslationRule, 
-  updateTranslationRule, 
+import {
+  insertTranslationRule,
+  updateTranslationRule,
   deleteTranslationRule,
   fetchAllAvailableRules,
   fetchUserRuleSets,
-  saveRuleSet
+  saveRuleSet,
 } from "@/modules/translate/rule.repo";
-import { revalidatePath } from "next/cache";
 
 export async function getRulesLibraryAction() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 
   try {
@@ -27,7 +28,9 @@ export async function getRulesLibraryAction() {
 
 export async function getMyRuleSetsAction() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 
   try {
@@ -40,7 +43,9 @@ export async function getMyRuleSetsAction() {
 
 export async function saveMyRuleSetAction(name: string, ruleIds: string[]) {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 
   try {
@@ -53,21 +58,31 @@ export async function saveMyRuleSetAction(name: string, ruleIds: string[]) {
 
 export async function saveTranslationRuleAction(rule: TranslationRuleInsert) {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 
   try {
-    const result = await insertTranslationRule(supabase, { ...rule, user_id: user.id });
+    const result = await insertTranslationRule(supabase, {
+      ...rule,
+      user_id: user.id,
+    });
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-export async function updateTranslationRuleAction(ruleId: string, updates: Partial<TranslationRuleInsert>) {
+export async function updateTranslationRuleAction(
+  ruleId: string,
+  updates: Partial<TranslationRuleInsert>,
+) {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 
@@ -81,7 +96,9 @@ export async function updateTranslationRuleAction(ruleId: string, updates: Parti
 
 export async function deleteTranslationRuleAction(ruleId: string) {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return { success: false, error: "Chưa đăng nhập" };
 

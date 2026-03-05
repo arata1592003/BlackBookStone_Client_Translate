@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(dir \"C:\\\\Users\\\\Admins\\\\web-app\\\\BlackStoneBook_Client\")",
-      "Bash(dir \"C:\\\\Users\\\\Admins\\\\web-app\\\\BlackStoneBook_Client\\\\components\")",
-      "Bash(npm run build:*)"
-    ]
-  }
-}

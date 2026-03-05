@@ -1,74 +1,37 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
-CREATE TABLE public.book_comments (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  book_id uuid NOT NULL,
-  user_id uuid NOT NULL,
-  content text NOT NULL,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT book_comments_pkey PRIMARY KEY (id),
-  CONSTRAINT book_comments_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(id),
-  CONSTRAINT book_comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
-);
-CREATE TABLE public.book_follows (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+CREATE TABLE public.book_jobs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
   book_id uuid NOT NULL,
+  status text NOT NULL CHECK (status = ANY (ARRAY['PENDING'::text, 'RUNNING'::text, 'DONE'::text, 'ERROR'::text, 'CANCELLED'::text])),
+  total_chapters integer NOT NULL,
+  completed_chapters integer DEFAULT 0,
   created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT book_follows_pkey PRIMARY KEY (id),
-  CONSTRAINT book_follows_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
-  CONSTRAINT book_follows_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(id)
-);
-CREATE TABLE public.book_tags (
-  book_id uuid NOT NULL,
-  tag_id uuid NOT NULL,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT book_tags_pkey PRIMARY KEY (book_id, tag_id),
-  CONSTRAINT fk_book_tags_book FOREIGN KEY (book_id) REFERENCES public.books(id),
-  CONSTRAINT fk_book_tags_tag FOREIGN KEY (tag_id) REFERENCES public.tags(id)
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT book_jobs_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.books (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  source_id uuid NOT NULL,
-  owner_user_id uuid NOT NULL,
-  book_name_raw text,
-  author_name_raw text,
-  book_name_translated text,
-  author_name_translated text,
-  publication_status text,
-  cover_image_url text,
-  url_raw text,
-  is_published boolean DEFAULT false,
-  draft_expires_at timestamp with time zone,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  slug text NOT NULL,
-  description text,
-  source_book_code text,
-  CONSTRAINT books_pkey PRIMARY KEY (id),
-  CONSTRAINT books_source_id_fkey FOREIGN KEY (source_id) REFERENCES public.sources(id),
-  CONSTRAINT books_owner_user_id_fkey FOREIGN KEY (owner_user_id) REFERENCES public.users(id)
-);
-CREATE TABLE public.chapter_access (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
-  chapter_id uuid NOT NULL,
-  paid_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT chapter_access_pkey PRIMARY KEY (id),
-  CONSTRAINT chapter_access_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
-  CONSTRAINT chapter_access_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.chapter_content(chapter_id)
-);
-CREATE TABLE public.chapter_content (
-  chapter_id uuid NOT NULL,
-  content_raw text,
-  content_translated text,
+  name text,
+  expire_at timestamp with time zone DEFAULT (now() + '7 days'::interval),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  is_paid boolean DEFAULT false,
-  CONSTRAINT chapter_content_pkey PRIMARY KEY (chapter_id),
-  CONSTRAINT chapter_content_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.chapters(id)
+  CONSTRAINT books_pkey PRIMARY KEY (id),
+  CONSTRAINT books_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.chapter_jobs (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  parent_job_id uuid NOT NULL,
+  chapter_id uuid NOT NULL,
+  chapter_number integer NOT NULL,
+  status text NOT NULL CHECK (status = ANY (ARRAY['PENDING'::text, 'RUNNING'::text, 'DONE'::text, 'ERROR'::text])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT chapter_jobs_pkey PRIMARY KEY (id),
+  CONSTRAINT chapter_jobs_parent_job_id_fkey FOREIGN KEY (parent_job_id) REFERENCES public.book_jobs(id)
 );
 CREATE TABLE public.chapters (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -77,79 +40,100 @@ CREATE TABLE public.chapters (
   chapter_title_raw text,
   chapter_title_translated text,
   summary_translated text,
-  published_at_raw timestamp with time zone,
-  view_count integer DEFAULT 0,
-  chapter_status boolean,
+  content_raw text,
+  content_translated text,
   total_words_raw integer,
+  total_words_translate integer DEFAULT 0,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  total_words_translate integer DEFAULT 0,
-  url_raw text,
   CONSTRAINT chapters_pkey PRIMARY KEY (id),
   CONSTRAINT chapters_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(id)
 );
-CREATE TABLE public.jobs (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  owner_user_id uuid NOT NULL,
-  type text NOT NULL CHECK (type = ANY (ARRAY['crawl'::text, 'translate'::text, 'main_crawl'::text, 'fetch_chapter_urls'::text])),
-  book_id uuid,
-  status text NOT NULL DEFAULT 'PENDING'::text CHECK (status = ANY (ARRAY['PENDING'::text, 'RUNNING'::text, 'DONE'::text, 'ERROR'::text, 'CANCELLED'::text, 'FETCHING_URLS'::text, 'URLS_FETCHED'::text, 'CRAWLING_CONTENT'::text])),
-  message text,
+CREATE TABLE public.credit_packages (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  name text NOT NULL,
+  description text,
+  credits numeric NOT NULL,
+  bonus_credits numeric NOT NULL DEFAULT 0.00,
+  total_credits numeric DEFAULT (credits + bonus_credits),
+  price_vnd numeric NOT NULL,
+  is_active boolean NOT NULL DEFAULT true,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  last_activity_at timestamp with time zone,
-  CONSTRAINT jobs_pkey PRIMARY KEY (id)
+  CONSTRAINT credit_packages_pkey PRIMARY KEY (id)
 );
-CREATE TABLE public.settings (
-  id uuid NOT NULL,
-  key text NOT NULL UNIQUE,
-  value text NOT NULL,
-  type text NOT NULL,
+CREATE TABLE public.credit_transactions (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  type text NOT NULL CHECK (type = ANY (ARRAY['purchase'::text, 'usage'::text, 'refund'::text, 'adjustment'::text, 'bonus'::text])),
+  amount numeric NOT NULL,
+  balance_before numeric NOT NULL,
+  balance_after numeric NOT NULL,
+  order_id uuid,
   description text,
-  created_at timestamp without time zone DEFAULT now(),
-  updated_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT settings_pkey PRIMARY KEY (id)
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT credit_transactions_pkey PRIMARY KEY (id),
+  CONSTRAINT credit_transactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT credit_transactions_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id)
 );
-CREATE TABLE public.sources (
+CREATE TABLE public.orders (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  name text NOT NULL UNIQUE,
-  base_url text,
-  rate_limit_per_min integer DEFAULT 60,
-  is_active boolean DEFAULT true,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT sources_pkey PRIMARY KEY (id)
+  user_id uuid NOT NULL,
+  package_id uuid NOT NULL,
+  credits numeric NOT NULL,
+  bonus_credits numeric NOT NULL DEFAULT 0.00,
+  total_credits numeric NOT NULL,
+  amount_vnd numeric NOT NULL,
+  order_code text NOT NULL UNIQUE,
+  payment_status text NOT NULL DEFAULT 'pending'::text CHECK (payment_status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text, 'expired'::text, 'refunded'::text])),
+  expired_at timestamp with time zone NOT NULL DEFAULT (now() + '00:30:00'::interval),
+  paid_at timestamp with time zone,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT orders_pkey PRIMARY KEY (id),
+  CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT orders_package_id_fkey FOREIGN KEY (package_id) REFERENCES public.credit_packages(id)
 );
-CREATE TABLE public.tags (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  name text NOT NULL UNIQUE,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT tags_pkey PRIMARY KEY (id)
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  full_name text,
+  avatar_url text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
-CREATE TABLE public.topup_plans (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  code text NOT NULL UNIQUE,
-  price_amount integer NOT NULL CHECK (price_amount > 0),
-  currency text DEFAULT 'VND'::text,
-  gems integer NOT NULL CHECK (gems > 0),
-  bonus_gems integer DEFAULT 0 CHECK (bonus_gems >= 0),
-  is_active boolean DEFAULT true,
-  note text,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT topup_plans_pkey PRIMARY KEY (id)
+CREATE TABLE public.sepay_transactions (
+  id bigint NOT NULL DEFAULT nextval('sepay_transactions_id_seq'::regclass),
+  sepay_id bigint UNIQUE,
+  gateway text,
+  transaction_date timestamp with time zone,
+  account_number text,
+  sub_account text,
+  amount_in numeric NOT NULL DEFAULT 0,
+  amount_out numeric NOT NULL DEFAULT 0,
+  accumulated numeric,
+  code text,
+  transaction_content text,
+  reference_number text,
+  body text,
+  order_id uuid,
+  processed boolean NOT NULL DEFAULT false,
+  processed_at timestamp with time zone,
+  process_note text,
+  raw_payload jsonb,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT sepay_transactions_pkey PRIMARY KEY (id),
+  CONSTRAINT sepay_transactions_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id)
 );
-CREATE TABLE public.translation_rules (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  user_id uuid, -- Null nếu là template hệ thống (admin tạo)
-  name text NOT NULL,
-  content text NOT NULL,
-  type text DEFAULT 'translation' CHECK (type = ANY (ARRAY['translation', 'extraction', 'synthesis'])),
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT translation_rules_pkey PRIMARY KEY (id),
-  CONSTRAINT translation_rules_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+CREATE TABLE public.translation_rule_set_items (
+  rule_set_id uuid NOT NULL,
+  rule_id uuid NOT NULL,
+  sort_order integer DEFAULT 0,
+  CONSTRAINT translation_rule_set_items_pkey PRIMARY KEY (rule_set_id, rule_id),
+  CONSTRAINT fk_rule_set FOREIGN KEY (rule_set_id) REFERENCES public.translation_rule_sets(id),
+  CONSTRAINT fk_rule FOREIGN KEY (rule_id) REFERENCES public.translation_rules(id)
 );
-
 CREATE TABLE public.translation_rule_sets (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
@@ -157,67 +141,26 @@ CREATE TABLE public.translation_rule_sets (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT translation_rule_sets_pkey PRIMARY KEY (id),
-  CONSTRAINT translation_rule_sets_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+  CONSTRAINT translation_rule_sets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
-
-CREATE TABLE public.translation_rule_set_items (
-  rule_set_id uuid NOT NULL,
-  rule_id uuid NOT NULL,
-  sort_order integer DEFAULT 0,
-  CONSTRAINT translation_rule_set_items_pkey PRIMARY KEY (rule_set_id, rule_id),
-  CONSTRAINT fk_rule_set FOREIGN KEY (rule_set_id) REFERENCES public.translation_rule_sets(id) ON DELETE CASCADE,
-  CONSTRAINT fk_rule FOREIGN KEY (rule_id) REFERENCES public.translation_rules(id) ON DELETE CASCADE
-);
-CREATE TABLE public.users (
-  id uuid NOT NULL,
-  first_name text,
-  last_name text,
+CREATE TABLE public.translation_rules (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid,
+  name text NOT NULL,
+  content text NOT NULL,
+  type text DEFAULT 'translation'::text CHECK (type = ANY (ARRAY['translation'::text, 'extraction'::text, 'synthesis'::text])),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
-  is_admin boolean DEFAULT false,
-  phone text,
-  date_of_birth date,
-  CONSTRAINT users_pkey PRIMARY KEY (id),
-  CONSTRAINT users_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
-);
-CREATE TABLE public.wallet_transaction_chapters (
-  wallet_transaction_id uuid NOT NULL,
-  chapter_id uuid NOT NULL,
-  word_count integer CHECK (word_count > 0),
-  words_per_gem integer CHECK (words_per_gem > 0),
-  factor numeric CHECK (factor > 0::numeric),
-  amount_gem bigint CHECK (amount_gem > 0),
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT fk_wtc_wallet_transaction FOREIGN KEY (wallet_transaction_id) REFERENCES public.wallet_transactions(id),
-  CONSTRAINT fk_wtc_chapter FOREIGN KEY (chapter_id) REFERENCES public.chapters(id)
-);
-CREATE TABLE public.wallet_transaction_topup_plans (
-  wallet_transaction_id uuid NOT NULL UNIQUE,
-  topup_plan_id uuid NOT NULL,
-  gems_assigned integer DEFAULT 0,
-  bonus_gems integer DEFAULT 0,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT fk_wttp_wallet_transaction FOREIGN KEY (wallet_transaction_id) REFERENCES public.wallet_transactions(id),
-  CONSTRAINT fk_wttp_topup_plan FOREIGN KEY (topup_plan_id) REFERENCES public.topup_plans(id)
-);
-CREATE TABLE public.wallet_transactions (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  change_gem bigint NOT NULL DEFAULT 0,
-  balance_after bigint DEFAULT 0,
-  reason text NOT NULL,
-  method text,
-  reference_code text,
-  gateway_txn_id text UNIQUE,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT wallet_transactions_pkey PRIMARY KEY (id),
-  CONSTRAINT fk_wallet_transactions_user FOREIGN KEY (user_id) REFERENCES public.users(id)
+  CONSTRAINT translation_rules_pkey PRIMARY KEY (id),
+  CONSTRAINT translation_rules_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.wallets (
   id uuid NOT NULL,
-  balance_gem numeric DEFAULT 0,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
+  credits numeric NOT NULL DEFAULT 0.00,
+  total_credits_purchased numeric NOT NULL DEFAULT 0.00,
+  total_credits_used numeric NOT NULL DEFAULT 0.00,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT wallets_pkey PRIMARY KEY (id),
   CONSTRAINT wallets_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );

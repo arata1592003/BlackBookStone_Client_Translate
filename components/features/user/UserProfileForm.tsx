@@ -1,4 +1,3 @@
-// components/features/user/UserProfileForm.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,10 @@ export const UserProfileForm = () => {
   const { user, userProfile, isProfileLoading } = useAuth();
   const queryClient = useQueryClient();
 
-  const [state, setState] = useState<{ success?: string | null; error?: string | null }>({
+  const [state, setState] = useState<{
+    success?: string | null;
+    error?: string | null;
+  }>({
     success: null,
     error: null,
   });
@@ -27,11 +29,17 @@ export const UserProfileForm = () => {
     if (state?.success) {
       queryClient.invalidateQueries({ queryKey: ["userProfile", user?.id] });
       // Clear message after some time
-      const timer = setTimeout(() => setState({ success: null, error: null }), 5000);
+      const timer = setTimeout(
+        () => setState({ success: null, error: null }),
+        5000,
+      );
       return () => clearTimeout(timer);
     }
     if (state?.error) {
-      const timer = setTimeout(() => setState({ success: null, error: null }), 5000);
+      const timer = setTimeout(
+        () => setState({ success: null, error: null }),
+        5000,
+      );
       return () => clearTimeout(timer);
     }
   }, [state, user?.id, queryClient]);
@@ -42,7 +50,7 @@ export const UserProfileForm = () => {
     setState({ success: null, error: null }); // Reset state
 
     const formData = new FormData(event.currentTarget);
-    const result = await updateUserProfileAction(state, formData); // Truyền state ban đầu
+    const result = await updateUserProfileAction(formData);
 
     setState(result);
     setPending(false);
@@ -54,22 +62,22 @@ export const UserProfileForm = () => {
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-8 w-full" />
         <Skeleton className="h-10 w-full" />
       </div>
     );
   }
 
   const defaultValues: Partial<UserProfile> = {
-    first_name: userProfile?.first_name || "",
-    last_name: userProfile?.last_name || "",
-    phone: userProfile?.phone || "",
-    date_of_birth: userProfile?.date_of_birth || "",
+    full_name: userProfile?.full_name || "",
+    avatar_url: userProfile?.avatar_url || "",
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 w-full max-w-md"
+    >
       {state?.success && (
         <div className="bg-success/20 text-success p-3 rounded-md text-sm">
           {state.success}
@@ -81,29 +89,28 @@ export const UserProfileForm = () => {
         </div>
       )}
 
-      {/* First Name */}
+      {/* Full Name */}
       <div>
-        <Label htmlFor="first_name">Họ</Label>
+        <Label htmlFor="full_name">Họ và tên</Label>
         <Input
-          id="first_name"
-          name="first_name"
+          id="full_name"
+          name="full_name"
           type="text"
-          defaultValue={defaultValues.first_name || ""}
+          defaultValue={defaultValues.full_name || ""}
           required
-          placeholder="Nhập họ của bạn"
+          placeholder="Nhập họ và tên của bạn"
         />
       </div>
 
-      {/* Last Name */}
+      {/* Avatar URL */}
       <div>
-        <Label htmlFor="last_name">Tên</Label>
+        <Label htmlFor="avatar_url">Ảnh đại diện (URL)</Label>
         <Input
-          id="last_name"
-          name="last_name"
+          id="avatar_url"
+          name="avatar_url"
           type="text"
-          defaultValue={defaultValues.last_name || ""}
-          required
-          placeholder="Nhập tên của bạn"
+          defaultValue={defaultValues.avatar_url || ""}
+          placeholder="Dán link ảnh của bạn"
         />
       </div>
 
@@ -119,29 +126,6 @@ export const UserProfileForm = () => {
           disabled
           className="bg-muted cursor-not-allowed"
           placeholder="Email của bạn"
-        />
-      </div>
-
-      {/* Phone */}
-      <div>
-        <Label htmlFor="phone">Số điện thoại</Label>
-        <Input
-          id="phone"
-          name="phone"
-          type="tel"
-          defaultValue={defaultValues.phone || ""}
-          placeholder="Ví dụ: 0912345678"
-        />
-      </div>
-
-      {/* Date of Birth */}
-      <div>
-        <Label htmlFor="date_of_birth">Ngày sinh</Label>
-        <Input
-          id="date_of_birth"
-          name="date_of_birth"
-          type="date"
-          defaultValue={defaultValues.date_of_birth || ""}
         />
       </div>
 

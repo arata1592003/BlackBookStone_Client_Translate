@@ -63,7 +63,7 @@ export const UserHeader = () => {
         <div className="inline-flex items-center gap-2 md:gap-4 relative flex-[0_0_auto]">
           <ThemeToggle />
           <span className="relative hidden md:flex items-center justify-center w-fit font-roboto font-medium text-foreground text-lg md:text-xl tracking-[0.10px] leading-6 whitespace-nowrap">
-            {userProfile?.first_name || userProfile?.last_name || "Người dùng"}
+            {userProfile?.full_name || "Người dùng"}
           </span>
           <Link
             href="/trang-chu"

@@ -15,7 +15,6 @@ import {
 export default function LichSuGiaoDichPage() {
   const { user } = useAuth();
 
-  // Sử dụng useQuery để lấy và cache dữ liệu
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["transactions", user?.id],
     queryFn: () => getTransactionsForCurrentUser(user, 100),
@@ -50,29 +49,48 @@ export default function LichSuGiaoDichPage() {
         <Table>
           <TableHeader className="bg-surface-overlay">
             <TableRow className="hover:bg-transparent border-border-default">
-              <TableHead className="w-2/5 font-bold text-text-secondary">Nội dung</TableHead>
-              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Thay đổi</TableHead>
-              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Số dư sau</TableHead>
-              <TableHead className="w-1/5 text-right font-bold text-text-secondary">Thời gian</TableHead>
+              <TableHead className="w-2/5 font-bold text-text-secondary">
+                Nội dung
+              </TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">
+                Thay đổi
+              </TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">
+                Số dư sau
+              </TableHead>
+              <TableHead className="w-1/5 text-right font-bold text-text-secondary">
+                Thời gian
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={4} className="p-10 text-center text-text-muted">
+                <TableCell
+                  colSpan={4}
+                  className="p-10 text-center text-text-muted"
+                >
                   Đang tải lịch sử giao dịch...
                 </TableCell>
               </TableRow>
             ) : transactions?.length === 0 || !transactions ? (
               <TableRow>
-                <TableCell colSpan={4} className="p-10 text-center text-text-muted">
+                <TableCell
+                  colSpan={4}
+                  className="p-10 text-center text-text-muted"
+                >
                   Không có giao dịch nào.
                 </TableCell>
               </TableRow>
             ) : (
               transactions.map((tx) => (
-                <TableRow key={tx.id} className="border-border-default hover:bg-surface-hover">
-                  <TableCell className="w-2/5 text-text-primary">{tx.content}</TableCell>
+                <TableRow
+                  key={tx.id}
+                  className="border-border-default hover:bg-surface-hover"
+                >
+                  <TableCell className="w-2/5 text-text-primary">
+                    {tx.content}
+                  </TableCell>
                   <TableCell className="w-1/5 text-right font-mono">
                     {formatGemChange(tx.change)}
                   </TableCell>

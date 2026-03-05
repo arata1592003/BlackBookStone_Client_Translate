@@ -1,7 +1,7 @@
-import { ChapterContentRow, ChapterWithBookSlugRow } from "./chapter.repo";
+import { ChapterContentRow, ChapterRowRaw } from "./chapter.repo";
 import { ChapterDetail, ChapterRow } from "./chapter.type";
 
-export const mapToChapterRow = (row: ChapterWithBookSlugRow): ChapterRow => ({
+export const mapToChapterRow = (row: ChapterRowRaw): ChapterRow => ({
   id: row.id,
   chapter_number: row.chapter_number,
   chapter_title_translated: row.chapter_title_translated,
@@ -9,7 +9,7 @@ export const mapToChapterRow = (row: ChapterWithBookSlugRow): ChapterRow => ({
 });
 
 export const mapToChapterDetail = (
-  slug: string,
+  bookId: string,
   bookTitle: string,
   row: ChapterContentRow,
   prev: number | null,
@@ -17,7 +17,7 @@ export const mapToChapterDetail = (
 ): ChapterDetail => {
   return {
     id: row.id,
-    slug,
+    slug: bookId,
     book_name: bookTitle,
     chapter_number: row.chapter_number,
     title: row.chapter_title_translated ?? `Chương ${row.chapter_number}`,

@@ -2,90 +2,17 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 import { revalidatePath } from "next/cache";
-import { bookApi } from "@/lib/api";
-import {
-  BookInfoFromSourceResponse,
-  ManagedBookDetails,
-  ChapterContent,
-} from "@/modules/book/book.types";
+import { ManagedBookDetails, ChapterContent } from "@/modules/book/book.types";
 import {
   createBook,
   getManagedBookDetails,
   getChapterContent,
-  toggleBookPublishStatus,
-  toggleFollowBook,
-  isBookFollowed,
 } from "@/modules/book/book.service";
 import { CreateBookInput } from "@/modules/book/book.service.type";
 import { User } from "@supabase/supabase-js";
 
-interface BookMetadataFromSource {
-  source?: string;
-  source_book_code?: string;
-  book_name_raw?: string;
-  author_name_raw?: string;
-  url_raw?: string;
-  cover_image_url?: string | null;
-}
-
-export async function fetchBookMetadataAction(url: string): Promise<{
-  success: boolean;
-  data?: BookMetadataFromSource;
-  error?: string;
-}> {
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
-    return {
-      success: false,
-      error: "Bạn cần đăng nhập để thực hiện tác vụ này.",
-    };
-  }
-
-  try {
-    const apiResponse: BookInfoFromSourceResponse =
-      await bookApi.fetchBookInfoFromSource({
-        url,
-        accessToken: session.access_token,
-      });
-
-    const metadata: BookMetadataFromSource = {
-      source: apiResponse.source,
-      source_book_code: apiResponse.source_book_code,
-      book_name_raw: apiResponse.book_name_raw,
-      author_name_raw: apiResponse.author_name_raw,
-      url_raw: apiResponse.url_raw,
-      cover_image_url: apiResponse.cover_image_url,
-    };
-
-    return { success: true, data: metadata };
-  } catch (error: unknown) {
-    console.error("Error fetching book metadata from source:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Có lỗi xảy ra khi lấy metadata từ nguồn.",
-    };
-  }
-}
-
 export async function createBookAction(
-  propBookData: {
-    rawUrl?: string;
-    bookNameRaw: string;
-    bookNameTranslated: string;
-    authorNameRaw: string;
-    authorNameTranslated: string;
-    description: string;
-    coverImageUrl: string;
-    sourceBookCode: string;
-    genres: string[];
-  },
+  bookName: string,
   user: User,
 ): Promise<{
   success: boolean;
@@ -94,15 +21,7 @@ export async function createBookAction(
   bookId?: string;
 }> {
   const bookData: CreateBookInput = {
-    book_name_raw: propBookData.bookNameRaw || null,
-    book_name_translated: propBookData.bookNameTranslated,
-    author_name_raw: propBookData.authorNameRaw || null,
-    author_name_translated: propBookData.authorNameTranslated,
-    url_raw: propBookData.rawUrl || null,
-    cover_image_url: propBookData.coverImageUrl || null,
-    description: propBookData.description || null,
-    source_book_code: propBookData.sourceBookCode || null,
-    genres: propBookData.genres?.length ? propBookData.genres : undefined,
+    book_name: bookName,
   };
 
   try {
@@ -113,7 +32,7 @@ export async function createBookAction(
     revalidatePath("/tai-khoan/ban-lam-viec");
     return {
       success: true,
-      message: `Truyện "${bookData.book_name_translated}" đã được thêm thành công!`,
+      message: `Truyện "${bookName}" đã được thêm thành công!`,
       bookId: newBookId,
     };
   } catch (error: unknown) {
@@ -143,7 +62,7 @@ export async function getManagedBookAction(
   }
 
   try {
-    const bookDetails = await getManagedBookDetails(bookId);
+    const bookDetails = await getManagedBookDetails(bookId, supabase);
     if (!bookDetails) {
       return { success: false, error: "Không tìm thấy truyện." };
     }
@@ -176,7 +95,7 @@ export async function getChapterContentAction(
   }
 
   try {
-    const chapterContent = await getChapterContent(chapterId);
+    const chapterContent = await getChapterContent(chapterId, supabase);
     if (!chapterContent) {
       return { success: false, error: "Không tìm thấy nội dung chương." };
     }
@@ -190,54 +109,5 @@ export async function getChapterContentAction(
           ? error.message
           : "Có lỗi xảy ra khi lấy nội dung chương.",
     };
-  }
-}
-
-export async function toggleBookPublishAction(
-  bookId: string,
-  currentStatus: boolean,
-): Promise<{ success: boolean; isPublished?: boolean; error?: string }> {
-  try {
-    const supabase = await createServerSupabaseClient();
-    const isPublished = await toggleBookPublishStatus(supabase, bookId, currentStatus);
-    revalidatePath("/tai-khoan/ban-lam-viec");
-    return { success: true, isPublished };
-  } catch (error: unknown) {
-    console.error("Error in toggleBookPublishAction:", error);
-    return {
-      success: false,
-      error: (error as Error).message || "Không thể cập nhật trạng thái.",
-    };
-  }
-}
-
-export async function toggleFollowBookAction(bookId: string) {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: "Bạn cần đăng nhập để lưu truyện." };
-  }
-
-  try {
-    const isFollowed = await toggleFollowBook(supabase, user.id, bookId);
-    revalidatePath(`/truyen/[slug]`, "layout");
-    return { success: true, isFollowed };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Lỗi khi thực hiện thao tác." };
-  }
-}
-
-export async function checkFollowStatusAction(bookId: string) {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) return { success: true, isFollowed: false };
-
-  try {
-    const isFollowed = await isBookFollowed(supabase, user.id, bookId);
-    return { success: true, isFollowed };
-  } catch (error) {
-    return { success: false, isFollowed: false };
   }
 }

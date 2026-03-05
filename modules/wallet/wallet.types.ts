@@ -1,12 +1,12 @@
 export type WalletTransactionEntity = {
   id: string;
   user_id: string;
-  change_gem: number;
-  balance_after: number | null;
-  reason: string;
-  method: string | null;
-  reference_code: string | null;
-  gateway_txn_id: string | null;
+  type: 'purchase' | 'usage' | 'refund' | 'adjustment' | 'bonus';
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  description: string | null;
+  order_id: string | null;
   created_at: string;
 };
 

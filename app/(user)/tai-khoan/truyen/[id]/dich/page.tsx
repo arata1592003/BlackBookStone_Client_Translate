@@ -3,6 +3,7 @@ import { TranslationManager } from "@/components/features/translate/TranslationM
 import { ArrowLeft, Languages } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase/user/server";
 
 interface TranslationPageProps {
   params: Promise<{
@@ -12,7 +13,8 @@ interface TranslationPageProps {
 
 export default async function TranslationPage({ params }: TranslationPageProps) {
   const { id } = await params;
-  const book = await getManagedBookDetails(id);
+  const supabase = await createServerSupabaseClient();
+  const book = await getManagedBookDetails(id, supabase);
 
   if (!book) {
     notFound();

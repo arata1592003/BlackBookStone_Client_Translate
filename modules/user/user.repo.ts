@@ -1,17 +1,19 @@
 import { supabaseClient } from "@/lib/supabase/client";
 import { UserEntity, UserProfile } from "./user.type";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export async function fetchUserProfileById(
   userId: string,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<UserEntity | null> {
-  const { data, error } = await supabaseClient
-    .from("users")
-    .select("*, phone, date_of_birth")
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
     .eq("id", userId)
     .single();
 
   if (error) {
-    console.error("Error fetching user:", error.message);
+    console.error("Error fetching user profile:", error.message);
     return null;
   }
 
@@ -21,14 +23,13 @@ export async function fetchUserProfileById(
 export async function updateUserProfileInDB(
   userId: string,
   updates: Partial<UserProfile>,
+  supabase: SupabaseClient = supabaseClient,
 ): Promise<UserEntity | null> {
-  const { data, error } = await supabaseClient
-    .from("users")
+  const { data, error } = await supabase
+    .from("profiles")
     .update({
-      first_name: updates.first_name,
-      last_name: updates.last_name,
-      phone: updates.phone,
-      date_of_birth: updates.date_of_birth,
+      full_name: updates.full_name,
+      avatar_url: updates.avatar_url,
       // updated_at sẽ tự động cập nhật nếu được cấu hình trong DB
     })
     .eq("id", userId)
@@ -43,13 +44,14 @@ export async function updateUserProfileInDB(
   return data;
 }
 
-export async function fetchUserTransactionStats(userId: string) {
-  const { data, error } = await supabaseClient
-    .from("wallet_transactions")
-    .select("change_gem")
+export async function fetchUserTransactionStats(
+  userId: string,
+  supabase: SupabaseClient = supabaseClient,
+) {
+  const { data, error } = await supabase
+    .from("credit_transactions")
+    .select("amount, type")
     .eq("user_id", userId);
-
-  console.log(data);
 
   if (error) {
     console.error("Error fetching transaction stats:", error.message);
@@ -59,8 +61,8 @@ export async function fetchUserTransactionStats(userId: string) {
   const transactionCount = data?.length ?? 0;
 
   const totalCost = data
-    .filter((t) => t.change_gem < 0)
-    .reduce((sum, t) => sum + t.change_gem, 0);
+    .filter((t) => t.type === 'usage')
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
   return { totalCost: Math.abs(totalCost), transactionCount: transactionCount };
 }

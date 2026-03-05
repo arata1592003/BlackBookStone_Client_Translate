@@ -26,7 +26,6 @@ import {
   Settings2,
   FileType,
   Hash,
-  Info,
   FolderTree,
   FileStack,
 } from "lucide-react";
@@ -106,10 +105,8 @@ export const DownloadBookDialog = ({
   const generateEpubBlob = async (chapters: any[]) => {
     const epub = new JSZip();
 
-    // 1. mimetype (Must be first and uncompressed)
     epub.file("mimetype", "application/epub+zip", { compression: "STORE" });
 
-    // 2. META-INF/container.xml
     epub.file(
       "META-INF/container.xml",
       `<?xml version="1.0" encoding="UTF-8"?>
@@ -118,7 +115,6 @@ export const DownloadBookDialog = ({
 </container>`,
     );
 
-    // 3. OEBPS/stylesheet.css
     epub.file(
       "OEBPS/stylesheet.css",
       `body { font-family: "Times New Roman", serif; padding: 5%; line-height: 1.6; }
@@ -126,7 +122,6 @@ h1 { text-align: center; color: #333; margin-bottom: 2em; }
 p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
     );
 
-    // 4. Content generation
     let manifest = "";
     let spine = "";
     let toc = "";
@@ -142,8 +137,8 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
 <head><title>${title}</title><link rel="stylesheet" href="stylesheet.css" type="text/css"/></head>
 <body><h1>${title}</h1>${content
         .split("\n")
-        .filter((l) => l.trim())
-        .map((line) => `<p>${line}</p>`)
+        .filter((l: string) => l.trim())
+        .map((line: string) => `<p>${line}</p>`)
         .join("")}</body></html>`;
 
       epub.file(`OEBPS/${fileName}`, html);
@@ -152,7 +147,6 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
       toc += `<navPoint id="nav${ch.number}" playOrder="${i + 1}"><navLabel><text>${title}</text></navLabel><content src="${fileName}"/></navPoint>\n`;
     });
 
-    // 5. OEBPS/content.opf
     epub.file(
       "OEBPS/content.opf",
       `<?xml version="1.0" encoding="UTF-8"?>
@@ -166,7 +160,6 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
 </package>`,
     );
 
-    // 6. OEBPS/toc.ncx
     epub.file(
       "OEBPS/toc.ncx",
       `<?xml version="1.0" encoding="UTF-8"?>
@@ -182,22 +175,21 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
   const generateDocxBlob = async (chapters: any[], bookTitle: string) => {
     const doc = new Document({
       sections: chapters.map((ch) => {
-        // Tách nội dung theo từng đoạn
-        const paragraphs = (ch.contentTranslated || "")
-          .split(/\n\s*\n/) // tách theo dòng trống
+        const paragraphs = (ch.content || "")
+          .split(/\n\s*\n/)
           .map(
             (p: string) =>
               new Paragraph({
-                alignment: AlignmentType.JUSTIFIED, // căn đều 2 bên
+                alignment: AlignmentType.JUSTIFIED,
                 spacing: {
-                  line: 360, // 1.5 line (240 = 1.0)
-                  after: 200, // khoảng cách dưới đoạn
+                  line: 360,
+                  after: 200,
                 },
                 children: [
                   new TextRun({
                     text: p.trim(),
                     font: "Times New Roman",
-                    size: 28, // 14pt (size = pt * 2)
+                    size: 28,
                   }),
                 ],
               }),
@@ -205,14 +197,12 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
 
         return {
           children: [
-            // Tiêu đề chương
             new Paragraph({
-              text: `Chương ${ch.number}: ${ch.titleTranslated || ""}`,
+              text: `Chương ${ch.number}: ${ch.title || ""}`,
               heading: HeadingLevel.HEADING_1,
               alignment: AlignmentType.CENTER,
               spacing: { after: 400 },
             }),
-
             ...paragraphs,
           ],
         };
@@ -235,7 +225,7 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
       if (options.raw) chapterData.contentRaw = ch.contentRaw;
       if (options.translate)
         chapterData.contentTranslated = ch.contentTranslated;
-      if (options.summary) chapterData.summary = ch.summary;
+      if (options.summary) chapterData.summaryTranslated = ch.summaryTranslated;
       return chapterData;
     });
 
@@ -251,13 +241,11 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
     const rawFolder = options.raw ? zip.folder("raw") : null;
     const summaryFolder = options.summary ? zip.folder("summary") : null;
 
-    // Handle EPUB generation separately, it only uses translated content
     if (translateFolder && format === "epub") {
       const epubBlob = await generateEpubBlob(chapters);
       translateFolder.file(`${bookTitle.replace(/\s+/g, "_")}.epub`, epubBlob);
     }
 
-    // Handle other formats (TXT, DOCX, JSON)
     if (saveMode === "split") {
       for (const ch of chapters) {
         const fileNameBase = formatChapterName(
@@ -266,96 +254,65 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
         );
 
         if (translateFolder && format !== "epub" && ch.contentTranslated) {
-          let content = `Chương ${ch.number}: ${ch.titleTranslated || ""}\n\n${ch.contentTranslated}`;
           if (format === "docx") {
-            const docxBlob = await generateDocxBlob([ch], bookTitle);
+            const docxBlob = await generateDocxBlob(
+              [{ number: ch.number, title: ch.titleTranslated, content: ch.contentTranslated }],
+              bookTitle,
+            );
             translateFolder.file(`${fileNameBase}.docx`, docxBlob);
           } else if (format === "json") {
             const jsonBlob = await generateJsonBlob([ch], options);
             translateFolder.file(`${fileNameBase}.json`, jsonBlob);
           } else {
-            // txt
+            const content = `Chương ${ch.number}: ${ch.titleTranslated || ""}\n\n${ch.contentTranslated}`;
             translateFolder.file(`${fileNameBase}.txt`, content);
           }
         }
 
         if (rawFolder && ch.contentRaw) {
-          let content = `Chương ${ch.number}: ${ch.titleRaw || ""}\n\n${ch.contentRaw}`;
           if (format === "docx") {
             const docxBlob = await generateDocxBlob(
-              [
-                {
-                  ...ch,
-                  contentTranslated: ch.contentRaw,
-                  titleTranslated: ch.titleRaw,
-                },
-              ],
+              [{ number: ch.number, title: ch.titleRaw, content: ch.contentRaw }],
               bookTitle,
-            ); // Use raw content for docx
+            );
             rawFolder.file(`${fileNameBase}.docx`, docxBlob);
           } else if (format === "json") {
-            const jsonBlob = await generateJsonBlob(
-              [
-                {
-                  ...ch,
-                  contentTranslated: ch.contentRaw,
-                  titleTranslated: ch.titleRaw,
-                },
-              ],
-              { raw: true, translate: false, summary: false },
-            ); // Only raw for JSON
+            const jsonBlob = await generateJsonBlob([ch], { raw: true, translate: false, summary: false });
             rawFolder.file(`${fileNameBase}.json`, jsonBlob);
           } else {
-            // txt
+            const content = `Chương ${ch.number}: ${ch.titleRaw || ""}\n\n${ch.contentRaw}`;
             rawFolder.file(`${fileNameBase}.txt`, content);
           }
         }
 
-        if (summaryFolder && ch.summary) {
-          let content = `Chương ${ch.number}\n\n${ch.summary}`;
+        if (summaryFolder && ch.summaryTranslated) {
           if (format === "docx") {
             const docxBlob = await generateDocxBlob(
-              [
-                {
-                  ...ch,
-                  contentTranslated: ch.summary,
-                  titleTranslated: `Tóm tắt Chương ${ch.number}`,
-                },
-              ],
+              [{ number: ch.number, title: `Tóm tắt Chương ${ch.number}`, content: ch.summaryTranslated }],
               bookTitle,
-            ); // Use summary for docx
+            );
             summaryFolder.file(`${fileNameBase}.docx`, docxBlob);
           } else if (format === "json") {
-            const jsonBlob = await generateJsonBlob(
-              [
-                {
-                  ...ch,
-                  contentTranslated: ch.summary,
-                  titleTranslated: `Tóm tắt Chương ${ch.number}`,
-                },
-              ],
-              { raw: false, translate: false, summary: true },
-            ); // Only summary for JSON
+            const jsonBlob = await generateJsonBlob([ch], { raw: false, translate: false, summary: true });
             summaryFolder.file(`${fileNameBase}.json`, jsonBlob);
           } else {
-            // txt
+            const content = `Chương ${ch.number}\n\n${ch.summaryTranslated}`;
             summaryFolder.file(`${fileNameBase}.txt`, content);
           }
         }
       }
     } else {
-      // saveMode === "merge"
       const fileName = `${bookTitle.replace(/\s+/g, "_")}`;
 
       if (translateFolder && format !== "epub") {
         if (format === "docx") {
-          const docxBlob = await generateDocxBlob(chapters, bookTitle);
+          const docxChapters = chapters.map(ch => ({ number: ch.number, title: ch.titleTranslated, content: ch.contentTranslated }));
+          const docxBlob = await generateDocxBlob(docxChapters, bookTitle);
           translateFolder.file(`${fileName}.docx`, docxBlob);
         } else if (format === "json") {
           const jsonBlob = await generateJsonBlob(chapters, options);
           translateFolder.file(`${fileName}.json`, jsonBlob);
         } else {
-          // txt
           const content = chapters
             .map(
               (ch) =>
@@ -368,25 +325,13 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
 
       if (rawFolder) {
         if (format === "docx") {
-          const docxChapters = chapters.map((ch) => ({
-            ...ch,
-            contentTranslated: ch.contentRaw,
-            titleTranslated: ch.titleRaw,
-          }));
+          const docxChapters = chapters.map(ch => ({ number: ch.number, title: ch.titleRaw, content: ch.contentRaw }));
           const docxBlob = await generateDocxBlob(docxChapters, bookTitle);
           rawFolder.file(`${fileName}.docx`, docxBlob);
         } else if (format === "json") {
-          const jsonBlob = await generateJsonBlob(
-            chapters.map((ch) => ({
-              ...ch,
-              contentTranslated: ch.contentRaw,
-              titleTranslated: ch.titleRaw,
-            })),
-            { raw: true, translate: false, summary: false },
-          );
+          const jsonBlob = await generateJsonBlob(chapters, { raw: true, translate: false, summary: false });
           rawFolder.file(`${fileName}.json`, jsonBlob);
         } else {
-          // txt
           const content = chapters
             .map(
               (ch) =>
@@ -399,27 +344,15 @@ p { text-indent: 1.5em; margin-bottom: 0.8em; text-align: justify; }`,
 
       if (summaryFolder) {
         if (format === "docx") {
-          const docxChapters = chapters.map((ch) => ({
-            ...ch,
-            contentTranslated: ch.summary,
-            titleTranslated: `Tóm tắt Chương ${ch.number}`,
-          }));
+          const docxChapters = chapters.map(ch => ({ number: ch.number, title: `Tóm tắt Chương ${ch.number}`, content: ch.summaryTranslated }));
           const docxBlob = await generateDocxBlob(docxChapters, bookTitle);
           summaryFolder.file(`${fileName}.docx`, docxBlob);
         } else if (format === "json") {
-          const jsonBlob = await generateJsonBlob(
-            chapters.map((ch) => ({
-              ...ch,
-              contentTranslated: ch.summary,
-              titleTranslated: `Tóm tắt Chương ${ch.number}`,
-            })),
-            { raw: false, translate: false, summary: true },
-          );
+          const jsonBlob = await generateJsonBlob(chapters, { raw: false, translate: false, summary: true });
           summaryFolder.file(`${fileName}.json`, jsonBlob);
         } else {
-          // txt
           const content = chapters
-            .map((ch) => `Chương ${ch.number}\n\n${ch.summary || ""}`)
+            .map((ch) => `Chương ${ch.number}\n\n${ch.summaryTranslated || ""}`)
             .join("\n\n" + "=".repeat(40) + "\n\n");
           summaryFolder.file(`${fileName}.txt`, content);
         }

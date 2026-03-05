@@ -46,7 +46,7 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
       return <span className="w-24 h-6 bg-foreground/30 animate-pulse rounded-md" />;
     }
     if (userProfile) {
-      return `${userProfile.first_name || ""} ${userProfile.last_name || ""}`.trim();
+      return userProfile.full_name || "Tài khoản";
     }
     return "Tài khoản";
   };

@@ -86,12 +86,7 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": APP_NAME,
-    "url": SITE_URL,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": `${SITE_URL}/tim-kiem?q={search_term_string}`,
-      "query-input": "required name=search_term_string"
-    }
+    "url": SITE_URL
   };
 
   return (

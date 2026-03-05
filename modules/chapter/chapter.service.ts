@@ -1,87 +1,97 @@
-import { fetchBookInfoBySlug } from "@/modules/book/book.repo";
+import { fetchBookInfoById } from "@/modules/book/book.repo";
 import { ChapterDetail, ChapterRow } from "@/modules/chapter/chapter.type";
 import { mapToChapterDetail, mapToChapterRow } from "./chapter.mapper";
 import {
-  fetchChapterCountByBookSlug,
+  fetchChapterCountByBookId,
   fetchChapterDetail,
-  fetchChapterListByBookSlug,
-  fetchNewestChaptersByBookSlug,
+  fetchChapterListByBookId,
+  fetchNewestChaptersByBookId,
   fetchNextChapterNumber,
   fetchPrevChapterNumber,
   fetchAllChaptersContentByBookId,
   incrementChapterView as repoIncrementChapterView,
   AllChapterContentRow,
 } from "./chapter.repo";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-export const increaseChapterView = async (chapterId: string): Promise<void> => {
-  await repoIncrementChapterView(chapterId);
+export const increaseChapterView = async (
+  chapterId: string,
+  supabase?: SupabaseClient,
+): Promise<void> => {
+  await repoIncrementChapterView(chapterId, supabase);
 };
 
-export async function getFullBookDataForDownload(bookId: string) {
-  const chapters: AllChapterContentRow[] = await fetchAllChaptersContentByBookId(bookId);
-  return chapters.map((ch) => {
-    const content = Array.isArray(ch.chapter_content) 
-      ? ch.chapter_content[0] 
-      : ch.chapter_content;
-
-    return {
-      number: ch.chapter_number,
-      titleRaw: ch.chapter_title_raw,
-      titleTranslated: ch.chapter_title_translated,
-      summary: ch.summary_translated,
-      contentRaw: content?.content_raw || null,
-      contentTranslated: content?.content_translated || null,
-    };
-  });
+export async function getFullBookDataForDownload(
+  bookId: string,
+  supabase?: SupabaseClient,
+) {
+  const chapters: AllChapterContentRow[] =
+    await fetchAllChaptersContentByBookId(bookId, supabase);
+  
+  return chapters.map((ch) => ({
+    number: ch.chapter_number,
+    titleRaw: ch.chapter_title_raw,
+    titleTranslated: ch.chapter_title_translated,
+    summaryTranslated: ch.summary_translated,
+    contentRaw: ch.content_raw,
+    contentTranslated: ch.content_translated,
+  }));
 }
 
 export async function getNewestChapterListByBookSlug(
-  slug: string,
+  bookId: string,
   limit = 10,
+  supabase?: SupabaseClient,
 ): Promise<ChapterRow[]> {
-  const rows = await fetchNewestChaptersByBookSlug(slug, limit);
+  const rows = await fetchNewestChaptersByBookId(bookId, limit, supabase);
   return rows.map(mapToChapterRow);
 }
 
 export async function getChapterListByBookSlug(
-  slug: string,
+  bookId: string,
   offset = 0,
   limit = 20,
   newestFirst = false,
+  supabase?: SupabaseClient,
 ): Promise<ChapterRow[]> {
-  const rows = await fetchChapterListByBookSlug(
-    slug,
+  const rows = await fetchChapterListByBookId(
+    bookId,
     offset,
     offset + limit - 1,
     newestFirst,
+    supabase,
   );
 
   return rows.map(mapToChapterRow);
 }
 
-export async function getChapterCountByBookSlug(slug: string): Promise<number> {
-  const totalChapter = await fetchChapterCountByBookSlug(slug);
+export async function getChapterCountByBookSlug(
+  bookId: string,
+  supabase?: SupabaseClient,
+): Promise<number> {
+  const totalChapter = await fetchChapterCountByBookId(bookId, supabase);
   return totalChapter;
 }
 
-export async function getChapterDetailBySlugAndNumber(
-  slug: string,
+export async function getChapterDetailByIdAndNumber(
+  bookId: string,
   chapterNumber: number,
+  supabase?: SupabaseClient,
 ): Promise<ChapterDetail> {
-  const book = await fetchBookInfoBySlug(slug);
+  const book = await fetchBookInfoById(bookId, supabase);
   if (!book) throw new Error("Book not found");
 
-  const chapter = await fetchChapterDetail(book.id, chapterNumber);
+  const chapter = await fetchChapterDetail(book.id, chapterNumber, supabase);
   if (!chapter) throw new Error("Chapter not found");
 
   const [prev, next] = await Promise.all([
-    fetchPrevChapterNumber(book.id, chapterNumber),
-    fetchNextChapterNumber(book.id, chapterNumber),
+    fetchPrevChapterNumber(book.id, chapterNumber, supabase),
+    fetchNextChapterNumber(book.id, chapterNumber, supabase),
   ]);
 
   return mapToChapterDetail(
-    slug,
-    book.book_name_translated ?? "",
+    bookId,
+    book.name ?? "",
     chapter,
     prev,
     next,

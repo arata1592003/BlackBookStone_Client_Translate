@@ -12,7 +12,7 @@ export async function getBookDownloadDataAction(bookId: string) {
   }
 
   try {
-    const data = await getFullBookDataForDownload(bookId);
+    const data = await getFullBookDataForDownload(bookId, supabase);
     return { success: true, data };
   } catch (error: any) {
     console.error("Error in getBookDownloadDataAction:", error);
