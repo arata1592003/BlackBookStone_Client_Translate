@@ -194,6 +194,30 @@ export async function incrementChapterView(
   }
 }
 
+export async function insertChapter(
+  supabase: SupabaseClient,
+  chapterData: {
+    book_id: string;
+    chapter_number: number;
+    chapter_title_raw: string;
+    content_raw: string;
+    total_words_raw: number;
+  },
+): Promise<string> {
+  const { data, error } = await supabase
+    .from("chapters")
+    .insert(chapterData)
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("Error inserting chapter:", error.message);
+    throw error;
+  }
+
+  return data.id;
+}
+
 export async function repoDeleteChapterTranslation(
   supabase: SupabaseClient,
   chapterId: string

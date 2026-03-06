@@ -11,6 +11,7 @@ import {
   fetchAllChaptersContentByBookId,
   incrementChapterView as repoIncrementChapterView,
   AllChapterContentRow,
+  insertChapter,
 } from "./chapter.repo";
 import { SupabaseClient } from "@supabase/supabase-js";
 
@@ -20,6 +21,26 @@ export const increaseChapterView = async (
 ): Promise<void> => {
   await repoIncrementChapterView(chapterId, supabase);
 };
+
+export async function addRawChapter(
+  supabase: SupabaseClient,
+  data: {
+    bookId: string;
+    chapterNumber: number;
+    title: string;
+    content: string;
+  },
+): Promise<string> {
+  const totalWordsRaw = data.content.trim().split(/\s+/).length;
+
+  return await insertChapter(supabase, {
+    book_id: data.bookId,
+    chapter_number: data.chapterNumber,
+    chapter_title_raw: data.title,
+    content_raw: data.content,
+    total_words_raw: totalWordsRaw,
+  });
+}
 
 export async function getFullBookDataForDownload(
   bookId: string,

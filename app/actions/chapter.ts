@@ -1,8 +1,38 @@
 "use server";
 
-import { increaseChapterView as serviceIncreaseChapterView } from "@/modules/chapter/chapter.service";
+import { increaseChapterView as serviceIncreaseChapterView, addRawChapter } from "@/modules/chapter/chapter.service";
 import { repoDeleteChaptersTranslation } from "@/modules/chapter/chapter.repo";
 import { createServerSupabaseClient } from "@/lib/supabase/user/server";
+import { revalidatePath } from "next/cache";
+
+export async function addRawChapterAction(data: {
+  bookId: string;
+  chapterNumber: number;
+  title: string;
+  content: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return { success: false, error: "Bạn cần đăng nhập để thực hiện." };
+  }
+
+  try {
+    const chapterId = await addRawChapter(supabase, data);
+    revalidatePath(`/tai-khoan/truyen/${data.bookId}`);
+    revalidatePath(`/tai-khoan/truyen/${data.bookId}/dich`);
+    return { success: true, chapterId };
+  } catch (error: any) {
+    console.error("Failed to add raw chapter:", error);
+    return {
+      success: false,
+      error: error.message || "Không thể thêm chương mới.",
+    };
+  }
+}
 
 export async function incrementChapterViewAction(chapterId: string) {
   try {

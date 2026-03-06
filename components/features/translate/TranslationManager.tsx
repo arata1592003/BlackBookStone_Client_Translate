@@ -22,7 +22,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { 
-  Layers, Play, Square, CheckCircle2, AlertCircle, Loader2, Plus, Save, 
+  Layers, Play, Square, CheckCircle2, AlertCircle, Loader2, Plus, PlusCircle, Save, 
   FolderOpen, Settings2, Library, Eye, Trash2, X, ClipboardList, Info, Terminal, Bug 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -258,6 +258,13 @@ export const TranslationManager = ({ book: initialBook }: { book: ManagedBookDet
             ) : (
               <Button onClick={handleStopTranslation} variant="destructive" disabled={isStopping} className="font-bold h-11 px-6">{isStopping ? <><Loader2 className="mr-2 animate-spin" size={18} /> Đang dừng...</> : <><Square className="mr-2" size={18} /> Dừng dịch</>}</Button>
             )}
+            <Button
+              variant="outline"
+              onClick={() => window.open(`/tai-khoan/truyen/${book.id}/them-chuong`, '_blank')}
+              className="border-border-default hover:bg-surface-raised font-bold h-11"
+            >
+              <PlusCircle className="mr-2 text-success" size={18} /> Thêm chương
+            </Button>
             <Button variant="outline" onClick={() => setIsConfigModalOpen(true)} className="border-border-default hover:bg-surface-raised font-bold h-11"><Settings2 className="mr-2 text-primary-accent" size={18} /> Thiết lập AI</Button>
           </div>
           {(isTranslating || jobLogs.length > 0) && (

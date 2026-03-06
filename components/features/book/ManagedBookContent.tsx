@@ -14,6 +14,7 @@ import {
   ChevronUp,
   ArrowLeft,
   Languages,
+  PlusCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -121,7 +122,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
         <ArrowLeft size={20} />
         Quay lại Bàn làm việc
       </Link>
-      
+
       {/* Header Info */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 bg-surface-card p-6 rounded-lg shadow-md border border-border-default">
         <div>
@@ -129,11 +130,24 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             {book.title}
           </h1>
           <p className="text-text-secondary text-sm">
-            Ngày tạo: <span className="font-semibold text-text-primary">{formattedCreatedAt}</span>
+            Ngày tạo:{" "}
+            <span className="font-semibold text-text-primary">
+              {formattedCreatedAt}
+            </span>
           </p>
         </div>
-        
+
         <div className="flex flex-wrap gap-3">
+          <Button
+            onClick={() =>
+              router.push(`/tai-khoan/truyen/${book.id}/them-chuong`)
+            }
+            variant="outline"
+            className="py-2 border-primary text-primary hover:bg-primary/10 font-bold rounded-md transition-colors flex items-center justify-center gap-2"
+          >
+            <PlusCircle size={20} />
+            Thêm chương
+          </Button>
           <Button
             onClick={handleTranslate}
             className="py-2 bg-primary-accent hover:bg-primary-accent/90 text-foreground font-bold rounded-md transition-colors flex items-center justify-center gap-2"
@@ -141,7 +155,10 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
             <Languages size={20} />
             Dịch thuật AI
           </Button>
-          <Button variant="outline" className="py-2 border-destructive text-destructive hover:bg-destructive/10 font-bold rounded-md transition-colors flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            className="py-2 border-destructive text-destructive hover:bg-destructive/10 font-bold rounded-md transition-colors flex items-center justify-center gap-2"
+          >
             <Trash2 size={20} />
             Xóa truyện
           </Button>
@@ -192,7 +209,7 @@ export default function ManagedBookContent({ book }: ManagedBookContentProps) {
                       {chapter.chapterNumber}
                     </TableCell>
                     <TableCell className="text-text-secondary">
-                      {chapter.title}
+                      {chapter.originalTitle}
                     </TableCell>
                     <TableCell>
                       <Badge
