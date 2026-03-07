@@ -23,7 +23,7 @@ interface HomeHeaderDesktopAuthProps {
   isUserDropdownOpen: boolean;
   setIsUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userDropdownRef: any; 
-  userMenuItems: { id: string; label: string; href: string }[];
+  userMenuItems: { id: string; label: string; href: string; icon: React.ElementType }[];
 }
 
 export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
@@ -46,7 +46,12 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
       return <span className="w-24 h-6 bg-foreground/30 animate-pulse rounded-md" />;
     }
     if (userProfile) {
-      return userProfile.full_name || "Tài khoản";
+      return (
+        <div className="flex items-center gap-2">
+          <User size={18} className="text-primary" />
+          <span>{userProfile.full_name || "Tài khoản"}</span>
+        </div>
+      );
     }
     return "Tài khoản";
   };
@@ -62,27 +67,30 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="px-4 py-2 rounded bg-foreground/20 text-foreground font-medium"
+              className="px-5 py-2.5 rounded-xl bg-foreground/10 hover:bg-foreground/20 text-foreground font-bold transition-all border border-white/5 shadow-sm"
               disabled={isProfileLoading}
             >
               {renderUserButtonContent()}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-surface-card border-border-default" align="end">
+          <DropdownMenuContent className="w-64 bg-surface-card border-border-default p-2 rounded-2xl shadow-2xl" align="end">
+            <div className="px-3 py-3 border-b border-border-default/50 mb-1">
+              <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Quản lý tài khoản</p>
+            </div>
             {userMenuItems.map((item) => (
-              <DropdownMenuItem key={item.id} asChild className="cursor-pointer focus:bg-surface-hover">
-                <Link href={item.href} className="w-full flex items-center">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+              <DropdownMenuItem key={item.id} asChild className="cursor-pointer rounded-xl focus:bg-primary/10 focus:text-primary transition-colors py-2.5 px-3">
+                <Link href={item.href} className="w-full flex items-center gap-3">
+                  <item.icon className="h-4 w-4 opacity-70" />
+                  <span className="font-bold text-sm">{item.label}</span>
                 </Link>
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator className="bg-border-default" />
+            <DropdownMenuSeparator className="bg-border-default/50 my-1" />
             <DropdownMenuItem 
               onClick={handleLogout}
-              className="cursor-pointer focus:bg-destructive/10 text-destructive focus:text-destructive"
+              className="cursor-pointer rounded-xl focus:bg-destructive/10 text-destructive focus:text-destructive py-2.5 px-3 font-bold text-sm"
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-3 h-4 w-4" />
               <span>Đăng xuất</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -91,14 +99,13 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
         <>
           <Button
             variant="ghost"
-            className="px-4 py-2 rounded bg-foreground/20 text-foreground"
+            className="px-6 h-11 rounded-xl bg-foreground/10 hover:bg-foreground/20 text-foreground font-bold transition-all"
             onClick={handleLoginClick}
           >
             Đăng nhập
           </Button>
           <Button
-            variant="ghost"
-            className="px-4 py-2 rounded bg-foreground/20 text-foreground"
+            className="px-6 h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-black shadow-lg shadow-primary/20 transition-all"
             onClick={handleRegisterClick}
           >
             Đăng ký

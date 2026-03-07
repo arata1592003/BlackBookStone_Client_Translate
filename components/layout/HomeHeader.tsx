@@ -12,6 +12,15 @@ import { HomeHeaderDesktopAuth } from "./HomeHeaderDesktopAuth";
 import { HomeHeaderMobileAuth } from "./HomeHeaderMobileAuth";
 import { ThemeToggle } from "../ui/theme-toggle";
 
+import { 
+  LayoutDashboard, 
+  Wallet, 
+  History, 
+  Settings, 
+  UserCircle,
+  LogOut
+} from "lucide-react";
+
 export const HomeHeader = () => {
   const router = useRouter();
   const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
@@ -20,11 +29,36 @@ export const HomeHeader = () => {
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
   const userMenuItems = [
-    { id: "ban-lam-viec", label: "Bàn làm việc", href: "/tai-khoan/ban-lam-viec" },
-    { id: "tu-truyen", label: "Tủ truyện", href: "/tai-khoan/tu-truyen" },
-    { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
-    { id: "lich-su-giao-dich", label: "Lịch sử giao dịch", href: "/tai-khoan/lich-su-giao-dich" },
-    { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
+    { 
+      id: "ban-lam-viec", 
+      label: "Bàn làm việc", 
+      href: "/tai-khoan/ban-lam-viec",
+      icon: LayoutDashboard
+    },
+    { 
+      id: "nap-tien", 
+      label: "Nạp tiền", 
+      href: "/tai-khoan/nap-tien",
+      icon: Wallet
+    },
+    { 
+      id: "lich-su-giao-dich", 
+      label: "Lịch sử giao dịch", 
+      href: "/tai-khoan/lich-su-giao-dich",
+      icon: History
+    },
+    { 
+      id: "thong-tin", 
+      label: "Thông tin cá nhân", 
+      href: "/tai-khoan/thong-tin",
+      icon: UserCircle
+    },
+    { 
+      id: "cai-dat", 
+      label: "Cài đặt", 
+      href: "/tai-khoan/cai-dat",
+      icon: Settings
+    },
   ];
 
   return (

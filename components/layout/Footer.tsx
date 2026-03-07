@@ -47,7 +47,7 @@ export const Footer = () => {
               />
             </Link>
             <p className="text-sm text-text-muted leading-relaxed">
-              {appName} là nền tảng đọc truyện online miễn phí, cập nhật nhanh nhất các bộ truyện dịch, truyện convert chất lượng cao. Trải nghiệm đọc mượt mà, giao diện tối ưu cho mọi thiết bị.
+              {appName} là nền tảng AI tiên tiến hỗ trợ dịch thuật và quản lý truyện online. Chúng tôi cung cấp công cụ mạnh mẽ giúp dịch giả tối ưu hóa quy trình làm việc và nâng cao chất lượng bản dịch.
             </p>
             <div className="flex items-center gap-4">
               <a 

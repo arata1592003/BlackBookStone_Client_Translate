@@ -5,11 +5,22 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { 
+  LayoutDashboard, 
+  Wallet, 
+  History, 
+  UserCircle, 
+  Settings, 
+  LogOut,
+  ChevronRight
+} from "lucide-react";
+import { logout } from "@/app/actions/auth";
 
 interface MenuItem {
   id: string;
   label: string;
   href: string;
+  icon: React.ElementType;
 }
 
 interface UserNavigationMenuProps {
@@ -28,27 +39,37 @@ export const UserNavigationMenu = ({
       id: "ban-lam-viec",
       label: "Bàn làm việc",
       href: "/tai-khoan/ban-lam-viec",
+      icon: LayoutDashboard
     },
-    { id: "nap-tien", label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
+    { 
+      id: "nap-tien", 
+      label: "Nạp tiền", 
+      href: "/tai-khoan/nap-tien",
+      icon: Wallet
+    },
     {
       id: "lich-su-giao-dich",
       label: "Lịch sử giao dịch",
       href: "/tai-khoan/lich-su-giao-dich",
+      icon: History
     },
     {
       id: "thong-tin",
       label: "Thông tin cá nhân",
       href: "/tai-khoan/thong-tin",
+      icon: UserCircle
     },
-    { id: "cai-dat", label: "Cài đặt", href: "/tai-khoan/cai-dat" },
-    { id: "dang-xuat", label: "Đăng xuất", href: "#" },
+    { 
+      id: "cai-dat", 
+      label: "Cài đặt", 
+      href: "/tai-khoan/cai-dat",
+      icon: Settings
+    },
   ];
 
-  const handleMenuItemClick = (item: MenuItem) => {
-    if (item.id === "dang-xuat") {
-      console.log("Logout clicked");
-    } else {
-      router.push(item.href);
+  const handleLogout = async () => {
+    if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      await logout();
     }
   };
 
@@ -57,65 +78,69 @@ export const UserNavigationMenu = ({
   return (
     <nav
       className={cn(
-        "h-full w-[270px] px-0 py-5 bg-cover bg-center z-40 flex flex-col gap-10 items-center transition-all duration-500",
-        !isMobile && "fixed top-0 left-0 border-r border-border-default/30",
-        isMobile && "relative w-full",
+        "h-full w-[280px] bg-surface-card z-40 flex flex-col transition-all duration-500",
+        !isMobile && "fixed top-0 left-0 border-r border-border-default shadow-sm",
+        isMobile && "relative w-full border-none shadow-none",
       )}
-      style={{ backgroundImage: "var(--image-sidebar)" }}
-      aria-label="Main navigation"
+      aria-label="User navigation"
     >
-      <div className="flex items-center justify-center">
-        <Image
-          src={logoSrc}
-          alt="Logo"
-          width={200}
-          height={80}
-          style={{ objectFit: "contain" }}
-          priority
-        />
+      {/* Logo Section */}
+      <div className="p-8 flex items-center justify-center border-b border-border-default/50 bg-surface-raised/30">
+        <Link href="/trang-chu">
+          <Image
+            src={logoSrc}
+            alt="Logo"
+            width={180}
+            height={60}
+            style={{ objectFit: "contain" }}
+            priority
+            className="hover:scale-105 transition-transform"
+          />
+        </Link>
       </div>
 
-      <div className="gap-2.5 pl-2.5 pr-0 py-0 w-full flex flex-col relative self-stretch">
-        <ul
-          className="flex-col items-start gap-2 flex-1 grow flex relative"
-          role="menu"
-        >
+      {/* Menu Items */}
+      <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <p className="px-4 mb-4 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Menu chính</p>
+        <ul className="space-y-1" role="menu">
           {menuItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.id === "ban-lam-viec" && pathname === "/user");
+            const isActive = pathname === item.href;
             return (
-              <li
-                key={item.id}
-                className="items-start gap-1 self-stretch w-full flex-[0_0_auto] flex relative"
-                role="none"
-              >
+              <li key={item.id} role="none">
                 <Button
                   variant="ghost"
                   className={cn(
-                    "items-center gap-1 px-3 py-2 flex-1 grow flex w-full justify-start rounded-none h-auto transition-all",
+                    "w-full justify-start gap-3 h-12 px-4 rounded-xl font-bold transition-all group",
                     isActive
-                      ? "bg-surface-overlay-alpha border-r-[6px] border-accent-red"
-                      : "bg-surface-overlay-alpha hover:bg-foreground/10",
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "text-text-secondary hover:bg-primary/10 hover:text-primary",
                   )}
-                  onClick={() => handleMenuItemClick(item)}
+                  onClick={() => router.push(item.href)}
                   role="menuitem"
-                  aria-current={isActive ? "page" : undefined}
                 >
-                  <span
-                    className={cn(
-                      "font-inter font-normal text-xl tracking-[0] leading-[normal] truncate",
-                      isActive ? "text-accent-red" : "text-foreground",
-                    )}
-                  >
-                    {item.label}
-                  </span>
+                  <item.icon size={20} className={cn("shrink-0", isActive ? "text-primary-foreground" : "text-text-muted group-hover:text-primary")} />
+                  <span className="truncate">{item.label}</span>
+                  {isActive && <ChevronRight size={16} className="ml-auto opacity-50" />}
                 </Button>
               </li>
             );
           })}
         </ul>
       </div>
+
+      {/* Logout Section */}
+      <div className="p-4 mt-auto border-t border-border-default/50 bg-surface-raised/20">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 h-12 px-4 rounded-xl font-bold text-destructive hover:bg-destructive/10 hover:text-destructive group transition-all"
+          onClick={handleLogout}
+        >
+          <LogOut size={20} className="shrink-0 group-hover:-translate-x-1 transition-transform" />
+          <span>Đăng xuất</span>
+        </Button>
+      </div>
     </nav>
   );
 };
+
+import Link from "next/link";

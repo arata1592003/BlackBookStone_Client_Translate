@@ -23,7 +23,7 @@ interface HomeHeaderMobileAuthProps {
   isUserDropdownOpen: boolean;
   setIsUserDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userDropdownRef: any; 
-  userMenuItems: { id: string; label: string; href: string }[];
+  userMenuItems: { id: string; label: string; href: string; icon: React.ElementType }[];
 }
 
 export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
@@ -46,7 +46,12 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
       return <span className="w-20 h-5 bg-foreground/30 animate-pulse rounded-md" />;
     }
     if (userProfile) {
-      return userProfile.full_name || "Tài khoản";
+      return (
+        <div className="flex items-center gap-2">
+          <User size={14} className="text-primary" />
+          <span>{userProfile.full_name || "Tài khoản"}</span>
+        </div>
+      );
     }
     return "Tài khoản";
   };
@@ -64,27 +69,27 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="px-3 py-1.5 rounded bg-foreground/20 text-sm font-medium"
+              className="px-3 py-1.5 rounded-lg bg-foreground/10 text-sm font-bold"
               disabled={isProfileLoading}
             >
               {renderUserButtonContent()}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-surface-card border-border-default" align="end">
+          <DropdownMenuContent className="w-56 bg-surface-card border-border-default rounded-xl shadow-xl" align="end">
             {userMenuItems.map((item) => (
-              <DropdownMenuItem key={item.id} asChild className="cursor-pointer focus:bg-surface-hover">
-                <Link href={item.href} className="w-full flex items-center">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>{item.label}</span>
+              <DropdownMenuItem key={item.id} asChild className="cursor-pointer rounded-lg focus:bg-primary/10 py-2.5">
+                <Link href={item.href} className="w-full flex items-center gap-3">
+                  <item.icon className="h-4 w-4 opacity-70" />
+                  <span className="font-bold text-sm">{item.label}</span>
                 </Link>
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator className="bg-border-default" />
+            <DropdownMenuSeparator className="bg-border-default/50" />
             <DropdownMenuItem 
               onClick={handleLogout}
-              className="cursor-pointer focus:bg-destructive/10 text-destructive focus:text-destructive"
+              className="cursor-pointer rounded-lg focus:bg-destructive/10 text-destructive focus:text-destructive py-2.5 font-bold text-sm"
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-3 h-4 w-4" />
               <span>Đăng xuất</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -94,15 +99,14 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="px-3 py-1.5 rounded bg-foreground/20 text-sm"
+            className="px-3 py-1.5 rounded-lg bg-foreground/10 text-xs font-bold"
             onClick={handleLoginClick}
           >
             Đăng nhập
           </Button>
           <Button
-            variant="ghost"
             size="sm"
-            className="px-3 py-1.5 rounded bg-foreground/20 text-sm"
+            className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-black shadow-md shadow-primary/10"
             onClick={handleRegisterClick}
           >
             Đăng ký

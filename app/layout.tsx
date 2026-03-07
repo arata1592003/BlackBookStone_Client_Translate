@@ -36,16 +36,16 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${APP_NAME} - Đọc truyện online miễn phí`,
+    default: `${APP_NAME} - Công cụ dịch thuật & Quản lý truyện AI chuyên nghiệp`,
     template: `%s | ${APP_NAME}`
   },
-  description: `Đọc truyện online miễn phí với hàng ngàn đầu sách thuộc mọi thể loại. Cập nhật chương mới nhanh chóng và trải nghiệm đọc mượt mà trên ${APP_NAME}.`,
+  description: `${APP_NAME} cung cấp giải pháp dịch thuật AI tiên tiến nhất dành cho dịch giả và tác giả. Quản lý kho truyện, dịch thuật tự động với ngữ cảnh sâu và xuất bản đa định dạng chỉ trong vài phút.`,
   alternates: {
     canonical: './',
   },
   openGraph: {
-    title: APP_NAME,
-    description: 'Đọc truyện online miễn phí',
+    title: `${APP_NAME} - AI Translation Tool`,
+    description: 'Nền tảng hỗ trợ dịch thuật và quản lý truyện online sử dụng trí tuệ nhân tạo.',
     url: SITE_URL,
     siteName: APP_NAME,
     locale: 'vi_VN',
