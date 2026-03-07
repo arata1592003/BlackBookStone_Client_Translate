@@ -1,35 +1,31 @@
-import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+  // "next" là trang muốn quay lại sau khi login, mặc định là bàn làm việc
   const next = searchParams.get("next") ?? "/tai-khoan/ban-lam-viec";
 
   if (code) {
-    // Tạo một phản hồi chuyển hướng trước
-    const response = NextResponse.redirect(`${origin}${next}`);
-
-    // Khởi tạo Supabase Client và truyền đối tượng response vào setAll
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {
-            // Lấy cookie từ request
-            const cookieHeader = request.headers.get('cookie') ?? '';
-            // Parser đơn giản cho header
-            return cookieHeader.split(';').map(c => {
-              const [name, ...value] = c.trim().split('=');
-              return { name, value: value.join('=') };
-            });
+            return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            // Ghi đè cookie trực tiếp vào đối tượng response chúng ta sắp trả về
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            );
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // Đây là lỗi bình thường nếu gọi từ Server Component
+            }
           },
         },
       }
@@ -38,12 +34,17 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!error) {
-      console.log("Auth Callback: Exchange thành công, đang redirect...");
-      return response;
+      // Xác định URL cuối cùng để redirect
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+      const redirectUrl = `${baseUrl}${next}`;
+      
+      return NextResponse.redirect(redirectUrl);
     }
     
-    console.error("Auth Callback Error:", error.message);
+    console.error("Exchange Error:", error.message);
   }
 
-  return NextResponse.redirect(`${origin}/dang-nhap?error=Xác thực thất bại`);
+  // Về trang đăng nhập nếu thất bại
+  const errorBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+  return NextResponse.redirect(`${errorBaseUrl}/dang-nhap?error=Xác thực thất bại`);
 }
