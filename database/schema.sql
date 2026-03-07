@@ -10,6 +10,10 @@ CREATE TABLE public.book_jobs (
   completed_chapters integer DEFAULT 0,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  max_retry integer NOT NULL DEFAULT 3,
+  mode text NOT NULL DEFAULT 'ADVANCE'::text CHECK (mode = ANY (ARRAY['ADVANCE'::text, 'BASIC'::text])),
+  error_msg text,
+  rule_ids ARRAY DEFAULT '{}'::uuid[],
   CONSTRAINT book_jobs_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.books (
@@ -30,6 +34,10 @@ CREATE TABLE public.chapter_jobs (
   status text NOT NULL CHECK (status = ANY (ARRAY['PENDING'::text, 'RUNNING'::text, 'DONE'::text, 'ERROR'::text])),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
+  retry_count integer DEFAULT 0,
+  error_message text,
+  started_at timestamp with time zone,
+  finished_at timestamp with time zone,
   CONSTRAINT chapter_jobs_pkey PRIMARY KEY (id),
   CONSTRAINT chapter_jobs_parent_job_id_fkey FOREIGN KEY (parent_job_id) REFERENCES public.book_jobs(id)
 );
@@ -75,6 +83,18 @@ CREATE TABLE public.credit_transactions (
   CONSTRAINT credit_transactions_pkey PRIMARY KEY (id),
   CONSTRAINT credit_transactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
   CONSTRAINT credit_transactions_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.orders(id)
+);
+CREATE TABLE public.gemini_api_keys (
+  id integer NOT NULL DEFAULT nextval('gemini_api_keys_id_seq'::regclass),
+  key_index integer NOT NULL UNIQUE,
+  key_alias text NOT NULL,
+  status text NOT NULL DEFAULT 'ACTIVE'::text CHECK (status = ANY (ARRAY['ACTIVE'::text, 'RUNNING'::text, 'COOLDOWN'::text, 'DEAD'::text])),
+  cooldown_until timestamp with time zone,
+  last_used_at timestamp with time zone,
+  last_error_at timestamp with time zone,
+  last_error_msg text,
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT gemini_api_keys_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.orders (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -148,7 +168,6 @@ CREATE TABLE public.translation_rules (
   user_id uuid,
   name text NOT NULL,
   content text NOT NULL,
-  type text DEFAULT 'translation'::text CHECK (type = ANY (ARRAY['translation'::text, 'extraction'::text, 'synthesis'::text])),
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT translation_rules_pkey PRIMARY KEY (id),

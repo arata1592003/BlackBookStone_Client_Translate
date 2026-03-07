@@ -13,7 +13,6 @@ export async function fetchAllAvailableRules(
     .from("translation_rules")
     .select("*")
     .or(`user_id.is.null,user_id.eq.${userId}`)
-    .order("type", { ascending: true })
     .order("name", { ascending: true });
 
   if (error) {

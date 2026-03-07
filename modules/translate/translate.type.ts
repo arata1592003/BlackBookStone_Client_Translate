@@ -1,33 +1,72 @@
-export type RuleType = "translation" | "extraction" | "synthesis";
-
 export type TranslationRule = {
   id: string;
   user_id: string | null;
   name: string;
   content: string;
-  type: RuleType;
   created_at: string;
   updated_at: string;
 };
 
 export type TranslationRuleInsert = Omit<TranslationRule, "id" | "created_at" | "updated_at">;
 
-export type TranslationMode = "basic" | "advance";
+export type TranslationMode = "BASIC" | "ADVANCE";
 
-export type TranslateChapterRequest = {
+export type JobStatus = "PENDING" | "RUNNING" | "DONE" | "ERROR" | "CANCELLED";
+
+export type BookTranslateJobRequest = {
+  type: "BOOK_TRANSLATE";
   book_id: string;
-  chapter_id: string;
   mode: TranslationMode;
-  rules?: string; // The final combined prompt
-  prev_chapters_count?: number;
-  next_chapters_count?: number;
+  max_retry: number;
+  rule_ids: string[];
 };
 
-export type TranslateChapterResponse = {
-  chapter_id: string;
-  summary_translated: string;
-  chapter_title_translated: string;
-  content_translated: string;
+export type BookTranslateJobResponse = {
+  job_id: string;
+  status: JobStatus;
+  total_chapters: number;
+  mode: TranslationMode;
+  max_retry: number;
+};
+
+export type JobItem = {
+  id: string;
+  type: "BOOK_TRANSLATE";
+  status: JobStatus;
+  mode: TranslationMode;
+  completed: number;
+  total: number;
+  created_at: string;
+};
+
+export type JobListResponse = {
+  items: JobItem[];
+  total: number;
+};
+
+export type ChapterJobDetail = {
+  id: string;
+  chapter_number: number;
+  status: JobStatus | "DONE"; // API trả về DONE khi hoàn thành
+  retry_count: number;
+  error_message: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+};
+
+export type JobDetailResponse = {
+  id: string;
+  book_id: string;
+  type: "BOOK_TRANSLATE";
+  status: JobStatus;
+  mode: TranslationMode;
+  completed: number;
+  total: number;
+  max_retry: number;
+  error_msg: string | null;
+  created_at: string;
+  updated_at: string;
+  chapters: ChapterJobDetail[];
 };
 
 export type TranslationJobLog = {

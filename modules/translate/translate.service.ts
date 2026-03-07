@@ -1,30 +1,95 @@
 import { apiClient } from "@/lib/api/utils/apiClient";
-import { TranslateChapterRequest, TranslateChapterResponse } from "./translate.type";
+import {
+  BookTranslateJobRequest,
+  BookTranslateJobResponse,
+  JobListResponse,
+  JobDetailResponse,
+  JobStatus,
+  KnowledgeInput,
+  NewKnowledgeOutput,
+} from "./translate.type";
 
-export async function translateChapterService(
-  request: TranslateChapterRequest,
-  accessToken: string
-): Promise<TranslateChapterResponse> {
-  const { book_id, chapter_id, mode, rules, prev_chapters_count, next_chapters_count } = request;
+/**
+ * Bắt đầu một job dịch thuật mới
+ */
+export async function startTranslationJob(
+  request: BookTranslateJobRequest,
+  accessToken: string,
+): Promise<BookTranslateJobResponse> {
+  return await apiClient<BookTranslateJobResponse>("/jobs", {
+    method: "POST",
+    accessToken,
+    body: request as any,
+  });
+}
 
-  if (mode === "basic") {
-    const path = `/translate/basic/books/${book_id}/chapters/${chapter_id}`;
-    return await apiClient<TranslateChapterResponse>(path, {
-      method: "POST",
+/**
+ * Lấy danh sách jobs theo trạng thái
+ */
+export async function fetchJobs(
+  status: JobStatus,
+  page = 1,
+  limit = 20,
+  accessToken: string,
+): Promise<JobListResponse> {
+  return await apiClient<JobListResponse>(
+    `/jobs?status=${status}&page=${page}&limit=${limit}`,
+    { accessToken },
+  );
+}
+
+/**
+ * Lấy chi tiết một job (bao gồm tiến độ từng chương)
+ */
+export async function fetchJobDetail(
+  jobId: string,
+  accessToken: string,
+): Promise<JobDetailResponse> {
+  return await apiClient<JobDetailResponse>(`/jobs/${jobId}`, {
+    accessToken,
+  });
+}
+
+/**
+ * Hủy một job đang chạy
+ */
+export async function cancelJob(
+  jobId: string,
+  accessToken: string,
+): Promise<{ job_id: string; status: "CANCELLED" }> {
+  return await apiClient<{ job_id: string; status: "CANCELLED" }>(
+    `/jobs/${jobId}/cancel`,
+    {
+      method: "PATCH",
       accessToken,
-      body: { rules } as any, // Basic also takes rules now
-    });
-  } else {
-    // Advance mode
-    const path = `/translate/advance/books/${book_id}/chapters/${chapter_id}`;
-    return await apiClient<TranslateChapterResponse>(path, {
-      method: "POST",
-      accessToken,
-      body: {
-        rules,
-        prev_chapters_count,
-        next_chapters_count
-      } as any,
-    });
-  }
+    },
+  );
+}
+
+/**
+ * Lấy kiến thức đầu vào để debug (Dành cho Advance mode)
+ */
+export async function fetchChapterKnowledgeInput(
+  bookId: string,
+  chapterId: string,
+  accessToken: string,
+) {
+  return await apiClient<KnowledgeInput>(
+    `/translate/advance/books/${bookId}/chapters/${chapterId}/debug/knowledge_input`,
+    { accessToken },
+  );
+}
+
+/**
+ * Lấy kiến thức mới trích xuất để debug (Dành cho Advance mode)
+ */
+export async function fetchChapterNewKnowledge(
+  bookId: string,
+  chapterId: string,
+  accessToken: string,
+) {
+  return await apiClient<NewKnowledgeOutput>(
+    `/translate/advance/books/${bookId}/chapters/${chapterId}/debug/new_knowledge`,
+    { accessToken },
+  );
 }
