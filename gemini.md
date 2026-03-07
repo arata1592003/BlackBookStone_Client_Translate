@@ -1,60 +1,53 @@
 # Gemini's Operational Guide for BlackStoneBook Client
 
-Tài liệu này quy định kiến trúc, quy ước và quy trình làm việc cho dự án BlackStoneBook Client. Tôi sẽ tuân thủ các hướng dẫn này trong mọi tác vụ.
+Tài liệu này quy định các quy tắc bắt buộc và quy trình kiểm tra mà tôi (AI Agent) phải thực hiện trước và trong khi sửa đổi mã nguồn. Mục tiêu là duy trì tính đóng gói, khả năng bảo trì và tổ chức hệ thống.
 
 ---
 
-## 1. Project Overview & Tech Stack
+## 1. Nguyên tắc Kiến trúc Cốt lõi (Architectural Pillars)
 
-- **Project**: Nền tảng hỗ trợ dịch thuật và quản lý truyện online.
-- **Framework**: Next.js 16 (App Router), React 19.
-- **UI & Styling**: Shadcn UI, Tailwind CSS 4 (CSS-first configuration).
-- **Backend**: Supabase (Auth, Database, Storage).
-- **Primary Language**: Tiếng Việt.
+### 1.1 Tính đóng gói của Module (Encapsulation)
+- **KHÔNG** gọi trực tiếp `supabaseClient` hoặc thực hiện truy vấn Database trong các Component hoặc Server Actions.
+- **LUÔN** tuân thủ luồng dữ liệu: `Database (Table) -> Repository (.repo) -> Mapper (.mapper) -> Service (.service) -> Server Action/UI`.
+- Mọi logic tính toán, biến đổi dữ liệu phải nằm ở lớp **Service** hoặc **Mapper**.
 
----
+### 1.2 Quy tắc truyền Client (Explicit Client Passing)
+- Để đảm bảo Row Level Security (RLS) hoạt động đúng trên môi trường Server (SSR/Actions):
+    - Các hàm trong **Repository** và **Service** phải nhận tham số `supabase: SupabaseClient` tùy chọn.
+    - Tại **Server Actions**, bắt buộc khởi tạo `createServerSupabaseClient()` và truyền vào lớp dưới.
+    - Nếu không được truyền (gọi từ Client Component), mặc định sử dụng `supabaseClient` (Browser Client).
 
-## 2. Core Architecture & Principles
-
-### 2.1 Database & Data Model (Schema Tối Giản)
-Dự án sử dụng schema database tối giản, tập trung vào tính năng cốt lõi:
-- **`profiles`**: Thay thế cho bảng users. Cột chính: `id`, `full_name`, `avatar_url`. Không dùng `first_name`/`last_name`.
-- **`books`**: Chỉ chứa thông tin cơ bản: `id`, `user_id` (chủ sở hữu), `name`, `expire_at`. Các thông tin metadata khác (tác giả, mô tả, ảnh bìa) hiện đã bị lược bỏ.
-- **`chapters`**: Chứa nội dung truyện. Cột chính: `book_id`, `chapter_number`, `chapter_title_translated`, `content_translated`.
-- **`credit_packages`**: (Trước là topup_plans) Quản lý các gói nạp credit.
-- **`credit_transactions`**: (Trước là wallet_transactions) Lịch sử biến động credit.
-
-### 2.2 Repository & Service Pattern (Explicit Client Passing)
-Để hỗ trợ cả **Client Components** và **Server Components/Actions**, mọi Repository và Service phải tuân thủ:
-- **Repository**: Các hàm lấy dữ liệu phải nhận tham số `supabase: SupabaseClient` tùy chọn. Nếu không truyền, mặc định dùng `supabaseClient` (Browser Client).
-- **Server Actions**: Luôn khởi tạo `createServerSupabaseClient` và truyền vào Service/Repo để đảm bảo xác thực qua Cookie và RLS hoạt động đúng.
-- **Data Mapping**: Luôn có lớp Mapper để chuyển đổi từ định dạng Database (snake_case) sang định dạng Frontend (camelCase) và xử lý các giá trị mặc định.
-
-### 2.3 Styling & Theme System (Tailwind 4)
-- **Source of Truth**: Khối `@theme` trong `app/globals.css`. Không dùng `tailwind.config.ts`.
-- **Responsive**: **Mobile-First Always**. Ưu tiên hiển thị trên di động, sau đó dùng `sm:`, `md:`, `lg:` cho màn hình lớn.
-- **Dark Mode**: Là chế độ mặc định.
+### 1.3 Đồng bộ Schema (Schema Synchronization)
+- Trước khi thay đổi bất kỳ logic dữ liệu nào, **BẮT BUỘC** phải đọc tệp `database/schema.sql`.
+- Đảm bảo các trường dữ liệu (columns), tên bảng và kiểu dữ liệu (Types) luôn khớp 100% với schema thực tế.
+- Xóa bỏ các trường dữ liệu thừa (legacy) ngay khi phát hiện chúng không còn tồn tại trong DB.
 
 ---
 
-## 3. Workflow & Conventions
+## 2. Quy trình Kiểm tra trước khi thực hiện (Pre-change Checklist)
 
-### 3.1 Naming Conventions
-- **Components**: PascalCase (ví dụ: `UserBookCard.tsx`).
-- **UI primitives**: viết thường (ví dụ: `button.tsx`).
-- **Modules**: Cấu trúc gồm `[domain].repo.ts`, `[domain].service.ts`, `[domain].mapper.ts`, `[domain].types.ts`.
-
-### 3.2 Security (RLS)
-- Mọi bảng mới phải được kích hoạt **Row Level Security (RLS)**.
-- Phải tạo Policy cho role `authenticated` dựa trên `auth.uid()`.
-- Cấp quyền `GRANT SELECT, INSERT... ON TABLE ... TO authenticated`.
+Trước khi thực hiện lệnh `replace` hoặc `write_file`, tôi phải tự trả lời các câu hỏi sau:
+1.  **Context Check**: Tôi đã đọc các tệp liên quan trong module đó chưa? (Kiểm tra xem hàm tương tự đã tồn tại chưa).
+2.  **Naming Check**: Tên hàm/biến mới có tuân thủ `NAMING_CONVENTIONS.md` không? (camelCase cho hàm, PascalCase cho component).
+3.  **UI Check**: Văn bản hiển thị có phải là tiếng Việt không? Có hỗ trợ Mobile-First không?
+4.  **Security Check**: Bảng dữ liệu này đã có RLS chưa? Policy có cần cập nhật không?
+5.  **Hydration Check**: Nếu sử dụng thư viện bên thứ ba (như progress bar, icons, charts), tôi đã bọc trong kiểm tra `mounted` chưa?
 
 ---
 
-## 4. My Mandate (Nhiệm vụ của tôi)
+## 3. Quy ước kỹ thuật (Technical Conventions)
 
-1.  **Sync with Schema**: Luôn kiểm tra `database/schema.sql` trước khi thay đổi logic dữ liệu.
-2.  **Explicit Client**: Luôn truyền Supabase Client từ Server Actions xuống lớp dưới.
-3.  **Vietnamese First**: Tất cả văn bản hiển thị phải là tiếng Việt.
-4.  **No Hydration Errors**: Đảm bảo các Client Component dùng thư viện bên ngoài (như progress bar) được bọc trong kiểm tra `mounted`.
-5.  **Clean Code**: Xóa bỏ các trường dữ liệu thừa (legacy) ngay khi phát hiện chúng không còn trong schema.
+- **Styling**: Sử dụng Tailwind CSS 4 qua khối `@theme` trong `app/globals.css`. Không dùng tệp cấu hình `.ts`.
+- **Icons**: Sử dụng duy nhất thư viện `lucide-react`.
+- **SEO**: Luôn cập nhật Metadata cho các trang mới.
+- **Realtime**: Ưu tiên sử dụng `postgres_changes` trên bảng `orders` cho các tính năng cần cập nhật trạng thái tức thì.
+- **Background Jobs**: Sử dụng cơ chế Polling hoặc Realtime để theo dõi tiến độ từ bảng `book_jobs`.
+
+---
+
+## 4. Cam kết vận hành (Operational Commitment)
+
+1.  **Tư duy hệ thống**: Không sửa lỗi cục bộ bằng cách phá vỡ cấu trúc chung.
+2.  **Tài liệu**: Cập nhật `Architecture.md` nếu có thay đổi về luồng dữ liệu hoặc cấu trúc thư mục.
+3.  **Chất lượng**: Luôn ưu tiên viết code sạch, dễ đọc và có kiểu dữ liệu (TypeScript) rõ ràng.
+4.  **Bảo mật**: Tuyệt đối không để lộ thông tin nhạy cảm hoặc bỏ qua các bước kiểm tra quyền (Session/User).

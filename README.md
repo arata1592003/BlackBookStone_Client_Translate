@@ -1,24 +1,23 @@
-# BlackStoneBook Client
+# BlackStoneBook Client - AI Translation Powerhouse
 
-BlackStoneBook Client là một ứng dụng web đọc truyện trực tuyến và quản lý dịch thuật, được xây dựng với các công nghệ hiện đại nhằm tối ưu hóa hiệu suất và trải nghiệm người dùng.
-
-## Công nghệ sử dụng
-
-- **Framework**: Next.js 16 (App Router)
-- **UI Library**: Shadcn UI (Radix UI)
-- **Styling**: Tailwind CSS 4 (CSS-first configuration)
-- **Language**: TypeScript
-- **Backend**: Supabase (PostgreSQL + Auth)
-- **State Management**: React Query (TanStack Query)
-- **Iconography**: Lucide React
+BlackStoneBook Client là một nền tảng Web Tool chuyên nghiệp dành cho dịch giả và tác giả, hỗ trợ dịch thuật và quản lý truyện online sử dụng trí tuệ nhân tạo (AI).
 
 ## Đặc điểm nổi bật
 
-- **Kiến trúc phân lớp**: Tách biệt rõ ràng giữa Presentation, Service, Mapper và Repository.
-- **Hệ thống Theme mạnh mẽ**: Hỗ trợ Dark Mode (mặc định) và Light Mode dựa trên Tailwind 4 và biến CSS.
-- **Tối ưu hóa SEO**: Tích hợp Metadata động cho từng đầu truyện và chương.
-- **Hiệu suất cao**: Sử dụng Server Components cho render ban đầu và Server Actions cho các thao tác dữ liệu.
-- **Giao diện tiếng Việt**: Toàn bộ nội dung và tuyến đường đều sử dụng tiếng Việt.
+- **Dịch thuật AI Ngữ cảnh sâu**: Không chỉ dịch từ ngữ, AI hiểu văn phong, xưng hô và các quy tắc chuyên biệt của từng bộ truyện.
+- **Background Job Processing**: Xử lý dịch thuật hàng nghìn chương ngầm dưới Backend, không lo timeout trình duyệt.
+- **Thanh toán Realtime**: Tích hợp SePay tự động, cập nhật số dư ngay lập tức thông qua Supabase Realtime (Postgres Changes).
+- **Quản lý Kho truyện thông minh**: Tự động tách chương từ file thô (.txt, .docx), hỗ trợ tải lên hàng loạt qua file ZIP.
+- **Ví điện tử tập trung**: Dashboard quản lý tài chính, nạp tiền và lịch sử giao dịch chuyên nghiệp.
+- **Xuất bản đa định dạng**: Đóng gói và tải về truyện dưới dạng DOCX, EPUB (Kindle ready) hoặc JSON.
+
+## Công nghệ sử dụng
+
+- **Framework**: Next.js 16 (App Router) & React 19
+- **UI & Styling**: Shadcn UI & Tailwind CSS 4 (CSS-first)
+- **Backend Service**: Supabase (Database, Auth, Realtime)
+- **State Management**: TanStack Query (React Query)
+- **File Processing**: Mammoth.js (DOCX), JSZip (ZIP)
 
 ## Bắt đầu
 
@@ -34,15 +33,14 @@ npm install
 npm run dev
 ```
 
-Mở [http://localhost:3000](http://localhost:3000) trên trình duyệt của bạn để xem kết quả.
+Mở [http://localhost:3000](http://localhost:3000) để trải nghiệm công cụ.
 
-## Tài liệu tham khảo
+## Tài liệu nội bộ
 
-- [Kiến trúc dự án](./Architecture.md)
-- [Quy tắc đặt tên](./NAMING_CONVENTIONS.md)
-- [Quy ước Commit](./COMMIT_CONVENTION.md)
-- [Hướng dẫn vận hành Gemini](./gemini.md)
+- [Chi tiết Kiến trúc](./Architecture.md): Sơ đồ luồng dữ liệu và cấu trúc thư mục.
+- [Quy ước đặt tên](./NAMING_CONVENTIONS.md): Quy định cho lập trình viên.
+- [Hướng dẫn vận hành AI](./gemini.md): Quy trình làm việc dành cho AI Agent.
 
 ## Triển khai
 
-Dễ dàng triển khai trên Vercel Platform. Tham khảo [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) để biết thêm chi tiết.
+Hỗ trợ deploy mượt mà trên Vercel hoặc VPS thông qua tệp `proxy.ts` để đảm bảo tính ổn định của Middleware.
