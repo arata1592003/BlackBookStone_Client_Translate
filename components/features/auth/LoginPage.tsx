@@ -10,6 +10,7 @@ import {
   AlertCircle, 
   ArrowRight
 } from "lucide-react";
+import { getBaseUrl } from "@/lib/utils";
 
 export const LoginPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +32,7 @@ export const LoginPage = () => {
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${getBaseUrl()}/auth/callback`,
         },
       });
       if (error) throw error;

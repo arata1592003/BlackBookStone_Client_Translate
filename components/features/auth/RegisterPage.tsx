@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Chrome, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getBaseUrl } from "@/lib/utils";
 
 export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ export const RegisterPage = () => {
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${getBaseUrl()}/auth/callback`,
         },
       });
 
