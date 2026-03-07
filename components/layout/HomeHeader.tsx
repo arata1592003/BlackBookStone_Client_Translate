@@ -23,7 +23,7 @@ import {
 
 export const HomeHeader = () => {
   const router = useRouter();
-  const { userProfile, isProfileLoading, isAuthenticated } = useAuth();
+  const { userProfile, walletBalance, isProfileLoading, isAuthenticated } = useAuth();
   const { appName, logoSrc } = useTheme();
 
   const userDropdownRef = useRef<HTMLDivElement>(null);
@@ -36,16 +36,10 @@ export const HomeHeader = () => {
       icon: LayoutDashboard
     },
     { 
-      id: "nap-tien", 
-      label: "Nạp tiền", 
-      href: "/tai-khoan/nap-tien",
+      id: "vi-cua-toi", 
+      label: "Ví của tôi", 
+      href: "/tai-khoan/vi-cua-toi",
       icon: Wallet
-    },
-    { 
-      id: "lich-su-giao-dich", 
-      label: "Lịch sử giao dịch", 
-      href: "/tai-khoan/lich-su-giao-dich",
-      icon: History
     },
     { 
       id: "thong-tin", 
@@ -86,6 +80,7 @@ export const HomeHeader = () => {
             <HomeHeaderMobileAuth
               isAuthenticated={isAuthenticated}
               userProfile={userProfile}
+              walletBalance={walletBalance}
               isProfileLoading={isProfileLoading}
               handleLoginClick={() => router.push("/dang-nhap")}
               handleRegisterClick={() => router.push("/dang-ky")}
@@ -102,6 +97,7 @@ export const HomeHeader = () => {
             <HomeHeaderDesktopAuth
               isAuthenticated={isAuthenticated}
               userProfile={userProfile}
+              walletBalance={walletBalance}
               isProfileLoading={isProfileLoading}
               handleLoginClick={() => router.push("/dang-nhap")}
               handleRegisterClick={() => router.push("/dang-ky")}

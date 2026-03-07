@@ -11,11 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Wallet } from "lucide-react";
+import { formatNumber } from "@/lib/utils";
 
 interface HomeHeaderMobileAuthProps {
   isAuthenticated: boolean;
   userProfile: UserProfile | null;
+  walletBalance: number;
   isProfileLoading: boolean;
   handleLoginClick: () => void;
   handleRegisterClick: () => void;
@@ -29,6 +31,7 @@ interface HomeHeaderMobileAuthProps {
 export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
   isAuthenticated,
   userProfile,
+  walletBalance,
   isProfileLoading,
   handleLoginClick,
   handleRegisterClick,
@@ -49,20 +52,29 @@ export const HomeHeaderMobileAuth: React.FC<HomeHeaderMobileAuthProps> = ({
       return (
         <div className="flex items-center gap-2">
           <User size={14} className="text-primary" />
-          <span>{userProfile.full_name || "Tài khoản"}</span>
+          <span className="max-w-[80px] truncate">{userProfile.full_name || "Tài khoản"}</span>
         </div>
       );
     }
     return "Tài khoản";
   };
 
-  // Tránh Hydration mismatch bằng cách không render Dropdown cho đến khi client-side sẵn sàng
   if (!mounted) {
     return <div className="flex gap-2 lg:hidden h-9" />; 
   }
 
   return (
-    <div className="flex gap-2 lg:hidden">
+    <div className="flex gap-2 items-center lg:hidden">
+      {isAuthenticated && (
+        <Link 
+          href="/tai-khoan/nap-tien"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-success/10 text-success rounded-lg border border-success/20 transition-all"
+        >
+          <Wallet size={12} />
+          <span className="font-black text-[10px]">{formatNumber(walletBalance)}</span>
+        </Link>
+      )}
+
       {isAuthenticated ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

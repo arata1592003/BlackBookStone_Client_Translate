@@ -11,11 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Wallet } from "lucide-react";
+import { formatNumber } from "@/lib/utils";
 
 interface HomeHeaderDesktopAuthProps {
   isAuthenticated: boolean;
   userProfile: UserProfile | null;
+  walletBalance: number;
   isProfileLoading: boolean;
   handleLoginClick: () => void;
   handleRegisterClick: () => void;
@@ -29,6 +31,7 @@ interface HomeHeaderDesktopAuthProps {
 export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
   isAuthenticated,
   userProfile,
+  walletBalance,
   isProfileLoading,
   handleLoginClick,
   handleRegisterClick,
@@ -61,7 +64,17 @@ export const HomeHeaderDesktopAuth: React.FC<HomeHeaderDesktopAuthProps> = ({
   }
 
   return (
-    <div className="hidden lg:flex gap-2 items-center">
+    <div className="hidden lg:flex gap-4 items-center">
+      {isAuthenticated && (
+        <Link 
+          href="/tai-khoan/nap-tien"
+          className="flex items-center gap-2 px-4 py-2 bg-success/10 hover:bg-success/20 text-success rounded-xl border border-success/20 transition-all group"
+        >
+          <Wallet size={16} className="group-hover:scale-110 transition-transform" />
+          <span className="font-black text-sm">{formatNumber(walletBalance)} <span className="text-[10px] uppercase opacity-70">Credit</span></span>
+        </Link>
+      )}
+
       {isAuthenticated ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

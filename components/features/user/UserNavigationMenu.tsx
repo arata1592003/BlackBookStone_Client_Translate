@@ -42,16 +42,10 @@ export const UserNavigationMenu = ({
       icon: LayoutDashboard
     },
     { 
-      id: "nap-tien", 
-      label: "Nạp tiền", 
-      href: "/tai-khoan/nap-tien",
+      id: "vi-cua-toi", 
+      label: "Ví của tôi", 
+      href: "/tai-khoan/vi-cua-toi",
       icon: Wallet
-    },
-    {
-      id: "lich-su-giao-dich",
-      label: "Lịch sử giao dịch",
-      href: "/tai-khoan/lich-su-giao-dich",
-      icon: History
     },
     {
       id: "thong-tin",

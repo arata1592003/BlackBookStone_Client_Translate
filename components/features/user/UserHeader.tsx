@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Home, Menu } from "lucide-react";
+import { Home, Menu, Wallet } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { formatNumber } from "@/lib/utils";
 import {
   Sheet,
   SheetContent,
@@ -17,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export const UserHeader = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, walletBalance } = useAuth();
   const { appName, iconSrc } = useTheme();
 
   return (
@@ -61,6 +62,13 @@ export const UserHeader = () => {
 
         {/* Action Buttons & Profile */}
         <div className="inline-flex items-center gap-2 md:gap-4 relative flex-[0_0_auto]">
+          <Link 
+            href="/tai-khoan/nap-tien"
+            className="flex items-center gap-2 px-3 py-1.5 bg-success/10 hover:bg-success/20 text-success rounded-xl border border-success/20 transition-all group"
+          >
+            <Wallet size={16} className="group-hover:scale-110 transition-transform" />
+            <span className="font-black text-xs md:text-sm">{formatNumber(walletBalance)} <span className="hidden sm:inline text-[10px] uppercase opacity-70">Credit</span></span>
+          </Link>
           <ThemeToggle />
           <span className="relative hidden md:flex items-center justify-center w-fit font-roboto font-medium text-foreground text-lg md:text-xl tracking-[0.10px] leading-6 whitespace-nowrap">
             {userProfile?.full_name || "Người dùng"}
