@@ -2,47 +2,63 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function proxy(request: NextRequest) {
-  const response = NextResponse.next();
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
   const { pathname } = request.nextUrl;
 
   // 1. Bỏ qua các tệp tĩnh và favicon
   if (
     pathname.startsWith('/_next') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/auth')
   ) {
     return response;
   }
 
-  // 2. Khởi tạo Supabase Client
+  // 2. Khởi tạo Supabase Client cho Middleware
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => request.cookies.get(name)?.value,
-        set: (name, value, options) => {
-          response.cookies.set({ name, value, ...options });
+        getAll() {
+          return request.cookies.getAll();
         },
-        remove: (name, options) => {
-          response.cookies.set({ name, value: '', ...options });
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
         },
       },
     }
   );
 
-  // 3. Lấy thông tin session
+  // 3. Lấy thông tin user (getUser giúp làm mới token nếu cần)
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // LUẬT 1: Bảo vệ vùng quản lý /tai-khoan/*
-  if (!session && pathname.startsWith('/tai-khoan')) {
-    return NextResponse.redirect(new URL('/dang-nhap', request.url));
+  if (!user && pathname.startsWith('/tai-khoan')) {
+    const url = new URL('/dang-nhap', request.url);
+    return NextResponse.redirect(url);
   }
 
   // LUẬT 2: Ngăn người dùng đã login quay lại trang đăng nhập/đăng ký
-  if (session && (pathname === '/dang-nhap' || pathname === '/dang-ky')) {
-    return NextResponse.redirect(new URL('/tai-khoan/ban-lam-viec', request.url));
+  if (user && (pathname === '/dang-nhap' || pathname === '/dang-ky')) {
+    const url = new URL('/tai-khoan/ban-lam-viec', request.url);
+    return NextResponse.redirect(url);
   }
 
   return response;
