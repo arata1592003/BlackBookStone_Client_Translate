@@ -3,14 +3,17 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export async function proxy(request: NextRequest) {
   const response = NextResponse.next();
+  const { pathname } = request.nextUrl;
 
+  // 1. Bỏ qua các tệp tĩnh và favicon
   if (
-    request.nextUrl.pathname.startsWith('/_next') ||
-    request.nextUrl.pathname === '/favicon.ico'
+    pathname.startsWith('/_next') ||
+    pathname === '/favicon.ico'
   ) {
     return response;
   }
 
+  // 2. Khởi tạo Supabase Client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -27,12 +30,19 @@ export async function proxy(request: NextRequest) {
     }
   );
 
+  // 3. Lấy thông tin session
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session && request.nextUrl.pathname.startsWith('/tai-khoan')) {
-    return NextResponse.redirect(new URL('/dang-nhap', request.url))
+  // LUẬT 1: Bảo vệ vùng quản lý /tai-khoan/*
+  if (!session && pathname.startsWith('/tai-khoan')) {
+    return NextResponse.redirect(new URL('/dang-nhap', request.url));
+  }
+
+  // LUẬT 2: Ngăn người dùng đã login quay lại trang đăng nhập/đăng ký
+  if (session && (pathname === '/dang-nhap' || pathname === '/dang-ky')) {
+    return NextResponse.redirect(new URL('/tai-khoan/ban-lam-viec', request.url));
   }
 
   return response;
