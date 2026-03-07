@@ -3,9 +3,9 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next") ?? "/tai-khoan/ban-lam-viec";
 
   if (code) {
     const cookieStore = await cookies();
@@ -23,9 +23,7 @@ export async function GET(request: Request) {
                 cookieStore.set(name, value, options)
               );
             } catch {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
+              // This can be ignored if middleware is handling session refresh
             }
           },
         },
@@ -33,20 +31,16 @@ export async function GET(request: Request) {
     );
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
     if (!error) {
-      const isLocalEnv = origin.includes('localhost');
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      } else {
-        // Trên Vercel, đôi khi origin trả về dạng IP hoặc nội bộ, 
-        // nên dùng URL tương đối hoặc SITE_URL nếu có
-        return NextResponse.redirect(`${origin}${next}`);
-      }
+      // Sau khi exchange thành công, cookie đã nằm trong cookieStore.
+      // Chuyển hướng về trang đích (nên dùng URL tuyệt đối để an toàn trên Vercel)
+      return NextResponse.redirect(new URL(next, request.url));
     }
     
-    console.error("OAuth Exchange Error:", error.message);
+    console.error("Auth Callback Error:", error.message);
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/dang-nhap?error=Xác thực thất bại`);
+  // Nếu có lỗi, về trang đăng nhập kèm lỗi
+  return NextResponse.redirect(new URL(`/dang-nhap?error=Xác thực thất bại`, request.url));
 }

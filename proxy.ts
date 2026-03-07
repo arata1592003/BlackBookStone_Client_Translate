@@ -8,19 +8,6 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const { pathname } = request.nextUrl;
-
-  // 1. Bỏ qua các tệp tĩnh và favicon
-  if (
-    pathname.startsWith('/_next') ||
-    pathname === '/favicon.ico' ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/auth')
-  ) {
-    return response;
-  }
-
-  // 2. Khởi tạo Supabase Client cho Middleware
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -44,21 +31,19 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // 3. Lấy thông tin user (getUser giúp làm mới token nếu cần)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getUser() sẽ tự động refresh token nếu nó hết hạn
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // LUẬT 1: Bảo vệ vùng quản lý /tai-khoan/*
+  const { pathname } = request.nextUrl;
+
+  // 1. Nếu chưa đăng nhập mà vào /tai-khoan/* -> Về trang đăng nhập
   if (!user && pathname.startsWith('/tai-khoan')) {
-    const url = new URL('/dang-nhap', request.url);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/dang-nhap', request.url));
   }
 
-  // LUẬT 2: Ngăn người dùng đã login quay lại trang đăng nhập/đăng ký
+  // 2. Nếu đã đăng nhập mà vào trang đăng nhập/đăng ký -> Về Bàn làm việc
   if (user && (pathname === '/dang-nhap' || pathname === '/dang-ky')) {
-    const url = new URL('/tai-khoan/ban-lam-viec', request.url);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/tai-khoan/ban-lam-viec', request.url));
   }
 
   return response;
