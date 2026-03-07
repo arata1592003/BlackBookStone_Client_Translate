@@ -4,7 +4,7 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "App";
 
 export const metadata: Metadata = {
   title: `Miễn trừ trách nhiệm | ${APP_NAME}`,
-  description: `Thông tin về việc miễn trừ trách nhiệm nội dung tại ${APP_NAME}.`,
+  description: `Thông tin về việc miễn trừ trách nhiệm sử dụng công cụ dịch thuật tại ${APP_NAME}.`,
 };
 
 export default function DisclaimerPage() {
@@ -17,65 +17,58 @@ export default function DisclaimerPage() {
       <div className="prose prose-invert max-w-none space-y-6 text-text-secondary">
         <p className="italic text-warning font-medium">
           Vui lòng đọc kỹ thông báo miễn trừ trách nhiệm này trước khi sử dụng
-          dịch vụ của chúng tôi.
+          công cụ của chúng tôi.
         </p>
 
         <section>
           <h2 className="text-xl font-semibold text-text-primary mb-3">
-            1. Nguồn gốc nội dung
+            1. Bản chất dịch vụ
           </h2>
           <p>
-            Tất cả các nội dung (bao gồm nhưng không giới hạn ở văn bản, hình
-            ảnh, thông tin tác giả) trên website này được thu thập, lưu trữ và
-            tổng hợp tự động từ các nguồn công khai trên internet. Chúng tôi
-            không trực tiếp sở hữu hoặc kiểm soát các nội dung này.
+            {APP_NAME} là một nền tảng công nghệ cung cấp công cụ dịch thuật dựa trên trí tuệ nhân tạo (AI). 
+            Chúng tôi <strong>không phải</strong> là nhà xuất bản nội dung và <strong>không</strong> cung cấp bất kỳ nội dung truyện, sách hay văn bản có bản quyền nào trong kho dữ liệu công khai của mình.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-text-primary mb-3">
-            2. Vấn đề bản quyền (Copyright)
+            2. Trách nhiệm của người dùng
           </h2>
           <p>
-            Chúng tôi tôn trọng quyền sở hữu trí tuệ của người khác. Nếu bạn tin
-            rằng bất kỳ nội dung nào trên website của chúng tôi vi phạm bản
-            quyền của bạn, vui lòng gửi thông báo cho chúng tôi kèm theo các tài
-            liệu chứng minh. Chúng tôi sẽ xử lý và gỡ bỏ nội dung vi phạm trong
-            vòng 48-72 giờ làm việc.
+            Người dùng tự chịu trách nhiệm hoàn toàn đối với các nội dung văn bản mà mình tải lên hệ thống. 
+            Việc sử dụng công cụ để dịch thuật các tác phẩm có bản quyền mà không được phép của chủ sở hữu là hành vi vi phạm điều khoản của chúng tôi. 
+            Người dùng phải tự đảm bảo mình có quyền hợp pháp đối với nội dung đó trước khi thực hiện các thao tác trên công cụ.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-text-primary mb-3">
-            3. Tính chính xác của thông tin
+            3. Độ chính xác của bản dịch
           </h2>
           <p>
-            Mặc dù chúng tôi cố gắng cung cấp trải nghiệm tốt nhất, {APP_NAME}{" "}
-            không đảm bảo về tính chính xác, hoàn thiện hoặc độ tin cậy của bất
-            kỳ nội dung nào được đăng tải. Người dùng tự chịu trách nhiệm khi sử
-            dụng thông tin trên website.
+            Kết quả dịch thuật được tạo ra tự động bởi trí tuệ nhân tạo. Mặc dù chúng tôi luôn nỗ lực tối ưu hóa thuật toán, 
+            {APP_NAME} không đảm bảo tính chính xác tuyệt đối, sự trôi chảy hay phù hợp về mặt văn hóa của bản dịch. 
+            Bản dịch chỉ mang tính chất tham khảo cho mục đích cá nhân.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-text-primary mb-3">
-            4. Liên kết bên thứ ba
+            4. Vấn đề bản quyền
           </h2>
           <p>
-            Website có thể chứa các liên kết đến các trang web khác không do
-            chúng tôi quản lý. Chúng tôi không chịu trách nhiệm về nội dung hoặc
-            chính sách của các trang web bên thứ ba đó.
+            Chúng tôi tôn trọng quyền sở hữu trí tuệ. Nếu có bất kỳ vấn đề nào liên quan đến việc sử dụng công cụ trái phép 
+            hoặc xâm phạm bản quyền thông qua nền tảng của chúng tôi, vui lòng liên hệ ngay qua email hacthachtruyen@gmail.com để được hỗ trợ xử lý.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-text-primary mb-3">
-            5. Thay đổi thông báo
+            5. Thiệt hại và Mất mát
           </h2>
           <p>
-            Chúng tôi có quyền sửa đổi nội dung miễn trừ trách nhiệm này vào bất
-            cứ lúc nào. Việc bạn tiếp tục sử dụng website đồng nghĩa với việc
-            chấp nhận các thay đổi này.
+            Chúng tôi không chịu trách nhiệm cho bất kỳ tổn thất tài chính, dữ liệu hoặc các thiệt hại gián tiếp nào phát sinh 
+            từ việc sử dụng hoặc không thể sử dụng công cụ của chúng tôi.
           </p>
         </section>
       </div>

@@ -7,11 +7,11 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { 
   Facebook, 
   Mail, 
-  Info, 
   ShieldCheck, 
   FileText, 
   AlertTriangle,
-  ChevronRight
+  ChevronRight,
+  ExternalLink
 } from "lucide-react";
 
 export const Footer = () => {
@@ -20,8 +20,8 @@ export const Footer = () => {
 
   const quickLinks = [
     { label: "Trang chủ", href: "/trang-chu" },
-    { label: "Điều khoản", href: "/dieu-khoan-su-dung" },
-    { label: "Chính sách", href: "/chinh-sach-bao-mat" },
+    { label: "Bàn làm việc", href: "/tai-khoan/ban-lam-viec" },
+    { label: "Nạp tiền", href: "/tai-khoan/nap-tien" },
   ];
 
   const policyLinks = [
@@ -33,7 +33,7 @@ export const Footer = () => {
   return (
     <footer className="bg-surface-card border-t border-border-default mt-auto">
       <div className="max-w-screen-2xl mx-auto px-4 py-12 md:px-8 xl:px-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           
           {/* 1. BRAND SECTION */}
           <div className="space-y-6">
@@ -51,7 +51,7 @@ export const Footer = () => {
             </p>
             <div className="flex items-center gap-4">
               <a 
-                href="https://www.facebook.com/your-fanpage" 
+                href="https://www.facebook.com/profile.php?id=61585366575326" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-surface-raised text-text-muted hover:text-primary-accent hover:bg-primary/10 transition-all shadow-sm"
@@ -60,7 +60,7 @@ export const Footer = () => {
                 <Facebook size={20} />
               </a>
               <a 
-                href="mailto:contact@blackstonebook.com" 
+                href="mailto:hacthachtruyen@gmail.com" 
                 className="p-2 rounded-full bg-surface-raised text-text-muted hover:text-primary-accent hover:bg-primary/10 transition-all shadow-sm"
                 aria-label="Email Contact"
               >
@@ -92,7 +92,7 @@ export const Footer = () => {
           {/* 3. POLICIES */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-text-primary border-l-4 border-primary-accent pl-3">
-              Chính sách & Quy định
+              Chính sách & Pháp lý
             </h4>
             <ul className="space-y-3">
               {policyLinks.map((link) => (
@@ -111,30 +111,21 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* 4. DISCLAIMER / NOTICE */}
-          <div className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-text-primary border-l-4 border-primary-accent pl-3">
-              Cảnh báo bản quyền
-            </h4>
-            <div className="p-4 rounded-xl bg-surface-raised/50 border border-border-default space-y-3">
-              <div className="flex items-center gap-2 text-warning font-bold text-xs uppercase">
-                <Info size={14} /> Lưu ý
-              </div>
-              <p className="text-[11px] text-text-muted leading-relaxed">
-                Mọi nội dung trên website được thu thập và tổng hợp từ internet. Chúng tôi không sở hữu bản quyền của các tác phẩm này. Nếu bạn là chủ sở hữu bản quyền và muốn gỡ bỏ nội dung, vui lòng liên hệ qua Email hoặc Fanpage.
-              </p>
-            </div>
-          </div>
-
         </div>
 
         {/* BOTTOM SECTION */}
         <div className="mt-12 pt-8 border-t border-border-default flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-text-muted font-medium uppercase tracking-wider">
-          <div>
-            &copy; {currentYear} <span className="text-primary-accent">{appName}</span>. All Rights Reserved.
+          <div className="flex flex-col gap-1">
+            <div>
+              &copy; {currentYear} <span className="text-primary-accent font-bold">{appName}</span>. All Rights Reserved.
+            </div>
+            <div className="lowercase text-[10px] opacity-60">contact: hacthachtruyen@gmail.com</div>
           </div>
           <div className="flex items-center gap-6">
-            <span>Powered by BlackStone Engine</span>
+            <span className="flex items-center gap-1">
+              <ExternalLink size={12} />
+              AI Translation Platform
+            </span>
             <span className="flex items-center gap-1">
               <ShieldCheck size={12} className="text-success" /> 
               An toàn & Bảo mật
