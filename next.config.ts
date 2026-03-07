@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       "img.22biqu.com",
       "image.uukanshu.cc",
       "www.22biqu.com",
+      "img.vietqr.io",
       // "xxxx.supabase.co",
     ],
   },

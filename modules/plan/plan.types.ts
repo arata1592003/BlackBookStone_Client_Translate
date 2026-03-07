@@ -20,3 +20,17 @@ export type TopupPlan = {
   totalCredits: number;
   priceVnd: number;
 };
+
+export type PaymentOrder = {
+  id: string;
+  package_id: string;
+  credits: string;
+  bonus_credits: string;
+  total_credits: string;
+  amount_vnd: string;
+  order_code: string;
+  payment_status: "pending" | "paid" | "expired";
+  expired_at: string;
+  paid_at: string | null;
+  created_at: string;
+};

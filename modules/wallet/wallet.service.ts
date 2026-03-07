@@ -1,27 +1,33 @@
-import { User } from "@supabase/supabase-js";
-import { fetchTransactionsByUserId } from "./wallet.repo";
-import { WalletTransaction, WalletTransactionEntity } from "./wallet.types";
+// modules/wallet/wallet.service.ts
+import { User, SupabaseClient } from "@supabase/supabase-js";
+import { fetchTransactionsByUserId, fetchWalletByUserId } from "./wallet.repo";
+import { WalletTransaction } from "./wallet.types";
+import { mapToWalletTransaction } from "./wallet.mapper";
 
-function mapTransaction(entity: WalletTransactionEntity): WalletTransaction {
-  const isDeduction = entity.type === 'usage';
-  return {
-    id: entity.id,
-    content: entity.description || (isDeduction ? 'Sử dụng credit' : 'Nạp credit'),
-    change: isDeduction ? -Math.abs(entity.amount) : Math.abs(entity.amount),
-    balanceAfter: entity.balance_after,
-    createdAt: new Date(entity.created_at).toLocaleString("vi-VN"),
-  };
+/**
+ * Lấy số dư hiện tại của ví người dùng
+ */
+export async function getWalletBalance(
+  userId: string,
+  supabase?: SupabaseClient,
+): Promise<number> {
+  const wallet = await fetchWalletByUserId(userId, supabase);
+  return Number(wallet?.credits || 0);
 }
 
+/**
+ * Lấy danh sách giao dịch của người dùng hiện tại
+ */
 export async function getTransactionsForCurrentUser(
   user: User,
   limit = 50,
+  supabase?: SupabaseClient,
 ): Promise<WalletTransaction[]> {
   if (!user) {
     console.warn("No current user found to fetch transactions.");
     return [];
   }
 
-  const transactions = await fetchTransactionsByUserId(user.id, limit);
-  return transactions.map(mapTransaction);
+  const transactions = await fetchTransactionsByUserId(user.id, limit, supabase);
+  return transactions.map(mapToWalletTransaction);
 }

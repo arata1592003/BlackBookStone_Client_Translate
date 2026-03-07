@@ -21,7 +21,7 @@ export default function LichSuGiaoDichPage() {
     enabled: !!user,
   });
 
-  const formatGemChange = (change: number) => {
+  const formatCreditChange = (change: number) => {
     const isPositive = change > 0;
     const sign = isPositive ? "+" : "";
     const colorClass = isPositive ? "text-success" : "text-destructive";
@@ -92,7 +92,7 @@ export default function LichSuGiaoDichPage() {
                     {tx.content}
                   </TableCell>
                   <TableCell className="w-1/5 text-right font-mono">
-                    {formatGemChange(tx.change)}
+                    {formatCreditChange(tx.change)}
                   </TableCell>
                   <TableCell className="w-1/5 text-right font-mono text-text-secondary">
                     {tx.balanceAfter?.toLocaleString("vi-VN")}
